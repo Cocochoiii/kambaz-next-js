@@ -1,1 +1,2 @@
-import { redirect } from 'next/navigation'; export default function AccountPage(){redirect('/Account/Signin');}
+import { redirect } from "next/navigation";
+export default function AccountPage(){ redirect("/Account/Signin"); }
