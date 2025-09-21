@@ -6,7 +6,7 @@ const courses = [
   { id: "5004", title: "CS5004 Object-Oriented Design", tag: "OOD in Java", img: "course2.jpg" },
   { id: "5200", title: "CS5200 Database Management Systems", tag: "Relational DBMS", img: "course3.jpg" },
   {id: "5800", title: "CS5800 Algorithms", tag: "Algorithm Analysis", img: "course4.jpg" },
-  { id: "6200", title: "CS6200 Information Retrieval", tag: "Search Engines", img: "course5.jpg" },
+  { id: "6620", title: "CS6620 Fundamentals of Cloud Computing", tag: "Cloud Computing", img: "course5.jpg" },
   { id: "6510", title: "CS6510 Advanced Software Dev", tag: "Large-scale projects", img: "course6.jpg" }
 ];
 export default function Dashboard() {
