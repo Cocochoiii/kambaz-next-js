@@ -1,13 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 const courses = [
-  { id: "1234", code: "CS1234", title: "React JS", img: "reactjs.jpg" },
-  { id: "5001", code: "CS5001", title: "Programming", img: "course1.jpg" },
-  { id: "5800", code: "CS5800", title: "Algorithms", img: "course2.jpg" },
-  { id: "5610", code: "CS5610", title: "Web Development", img: "course3.jpg" },
-  { id: "5500", code: "CS5500", title: "Software Engineering", img: "course4.jpg" },
-  { id: "6200", code: "CS6200", title: "Information Retrieval", img: "course5.jpg" },
-  { id: "6510", code: "CS6510", title: "Advanced Software Dev", img: "course6.jpg" }
+  { id: "5610", title: "CS5610 Web Development", tag: "Full Stack Web", img: "reactjs.jpg" },
+  { id: "5520", title: "CS5520 Mobile Application Development", tag: "Mobile Dev", img: "course1.jpg" },
+  { id: "5004", title: "CS5004 Object-Oriented Design", tag: "OOD in Java", img: "course2.jpg" },
+  { id: "5200", title: "CS5200 Database Management Systems", tag: "Relational DBMS", img: "course3.jpg" },
+  {id: "5800", title: "CS5800 Algorithms", tag: "Algorithm Analysis", img: "course4.jpg" },
+  { id: "6200", title: "CS6200 Information Retrieval", tag: "Search Engines", img: "course5.jpg" },
+  { id: "6510", title: "CS6510 Advanced Software Dev", tag: "Large-scale projects", img: "course6.jpg" }
 ];
 export default function Dashboard() {
   return (
@@ -20,8 +20,8 @@ export default function Dashboard() {
             <Link href={`/Courses/${c.id}`} className="wd-dashboard-course-link">
               <Image src={`/images/${c.img}`} alt={c.title} width={200} height={140} />
               <div>
-                <h5>{c.code} {c.title}</h5>
-                <p className="wd-dashboard-course-title">Course overview</p>
+                  <h5>{c.title}</h5>
+                  <p className="wd-dashboard-course-title">{c.tag}</p>
                 <button>Go</button>
               </div>
             </Link>
