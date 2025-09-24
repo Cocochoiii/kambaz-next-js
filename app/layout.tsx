@@ -1,4 +1,15 @@
-export const metadata = { title: "Kambaz / Labs - Cocochoi", description: "A1 - Next.js implementation" };
+
+import type { Metadata } from "next";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./globals.css";
+export const metadata: Metadata = {
+  title: "Kambaz / Labs – Cocochoi",
+  description: "A2 – CSS & Bootstrap"
+};
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (<html lang="en"><body>{children}</body></html>);
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
 }

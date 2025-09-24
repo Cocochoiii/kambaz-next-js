@@ -9,25 +9,29 @@ const courses = [
   { id: "6620", title: "CS6620 Fundamentals of Cloud Computing", tag: "Cloud Computing", img: "course6.jpg" },
   { id: "6510", title: "CS6510 Advanced Software Dev", tag: "Large-scale projects", img: "course7.jpg" }
 ];
-export default function Dashboard() {
-  return (
-    <div id="wd-dashboard">
-      <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
-      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
-      <div id="wd-dashboard-courses">
-        {courses.map(c => (
-          <div className="wd-dashboard-course" key={c.id} style={{display:"inline-block", margin: 12}}>
-            <Link href={`/Courses/${c.id}`} className="wd-dashboard-course-link">
-              <Image src={`/images/${c.img}`} alt={c.title} width={200} height={140} />
-              <div>
-                  <h5>{c.title}</h5>
-                  <p className="wd-dashboard-course-title">{c.tag}</p>
-                <button>Go</button>
-              </div>
-            </Link>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+export default function Dashboard(){
+    return (
+        <div id="wd-dashboard">
+            <h1 id="wd-dashboard-title">Dashboard</h1><hr/>
+            <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2><hr/>
+            <div id="wd-dashboard-courses">
+                <div className="row row-cols-1 row-cols-md-4 g-4">
+                    {courses.map(c => (
+                        <div className="col" key={c.id}>
+                            <div className="card wd-dashboard-course" style={{width:"300px"}}>
+                                <Link href={`/Courses/${c.id}/Home`} className="text-decoration-none text-dark wd-dashboard-course-link">
+                                    <Image src={`/images/${c.img}`} alt={c.title} width={300} height={160} />
+                                    <div className="card-body">
+                                        <h5 className="card-title text-nowrap overflow-hidden">{c.title}</h5>
+                                        <p className="card-text overflow-hidden" style={{height:"100px"}}>{c.tag}</p>
+                                        <button className="btn btn-primary">Go</button>
+                                    </div>
+                                </Link>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
 }

@@ -1,26 +1,22 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+:root { --neu-red: #cc0000; }
+html, body { padding: 0; margin: 0; }
+body, body * { font-family: Arial, Helvetica, sans-serif; }
+a { color: inherit; }
+#wd-screen-size-label{
+  position: fixed; top: 0; left: 0; background: #000; color:#fff;
+  padding:5px; font-size:12px; z-index:1000; width:220px; text-align:center;
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Kambaz shared */
+#wd-kambaz .wd-main-content-offset { padding-left: 0; }
+@media (min-width: 768px) {
+  #wd-kambaz .wd-main-content-offset { padding-left: 140px !important; }
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.list-group.wd > .list-group-item.active {
+  color: black; background-color: white; border-left: 3px solid black !important;
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.btn-secondary{
+  --bs-btn-color:#000; --bs-btn-bg:#c7cdd1; --bs-btn-border-color:#c7cdd1; --bs-btn-hover-color:#fff;
 }
+.bg-secondary{ --bs-secondary-rgb:199,205,209; }
+.list-group-item{ --bs-list-group-border-color: gray; }
+.wd-lesson{ border-left: 3px solid green !important; }

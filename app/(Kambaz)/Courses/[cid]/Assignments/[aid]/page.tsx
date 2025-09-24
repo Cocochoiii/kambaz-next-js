@@ -1,4 +1,3 @@
-// app/(Kambaz)/Courses/[cid]/Assignments/[aid]/page.tsx
 import { getAssignment } from "../catalog";
 
 export default async function AssignmentEditor({
