@@ -1,0 +1,57 @@
+@media (min-width: 768px) {
+  #wd-kambaz .wd-main-content-offset { padding-left: 124px !important; } /* 110 + ~14 */
+}
+
+/* Label under icons */
+.wd-nav .nav-label {
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 1.1;
+}
+
+/* Base item look */
+.wd-nav .list-group-item {
+  background: #000;
+  color: #fff;
+  border: 0;
+  transition: background .15s ease, color .15s ease;
+}
+
+/* Hover (only when not active) */
+.wd-nav .list-group-item:not(.active):hover {
+  background: #111;
+}
+
+/* Active state (route match) */
+.wd-nav .list-group-item.active {
+  background: #fff;
+  color: #dc3545;          /* Bootstrap 'danger' red */
+}
+
+/* Make links inherit the container color */
+.wd-nav a { color: inherit; }
+.wd-nav a .text-danger { color: #dc3545 !important; }
+
+/* Optional: tighten vertical rhythm on small screens */
+@media (min-height: 600px) {
+  .wd-nav .list-group-item { padding-top: .9rem; padding-bottom: .9rem; }
+}
+
+/* === (Keep your card/dashboard styles below as-is) ======================= */
+
+/* Course card visual polish */
+.course-banner { height: 54px; border-top-left-radius: .5rem; border-top-right-radius: .5rem; display: flex; align-items: center; padding: 0 12px; color: #fff; font-weight: 700; letter-spacing: .3px; }
+.course-code { background: rgba(0, 0, 0, .18); border-radius: 999px; padding: 2px 10px; font-size: .8rem; }
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.course-title { font-weight: 700; }
+.hover-lift { transition: transform .15s ease, box-shadow .15s ease; }
+.hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.08); }
+.card .ratio { border-bottom-left-radius: .5rem; border-bottom-right-radius: .5rem; overflow: hidden; }
+.list-group.wd > .list-group-item.active { color: black; background-color: white; border-left: 3px solid black !important; }
+.btn-secondary{ --bs-btn-color:#000 !important; --bs-btn-bg:#c7cdd1 !important; --bs-btn-border-color:#c7cdd1 !important; }
+.bg-secondary{ --bs-secondary-rgb:199,205,209; }
+.list-group-item{ --bs-list-group-border-color: gray; }
+.wd-lesson{ border-left:3px solid green !important; }
+.card .card-body { padding-bottom: 3rem; }
+.card .btn-go { position: absolute; right: 12px; bottom: 12px; z-index: 2; }
+.card .stretched-link { z-index: 1; }
