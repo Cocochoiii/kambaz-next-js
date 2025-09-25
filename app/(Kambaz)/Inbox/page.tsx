@@ -20,7 +20,7 @@ const MOCK: Msg[] = [
         id: "1",
         from: "Course Bot",
         subject: "Welcome to your Inbox",
-        preview: "This is a placeholder. Wire it to your API when ready.",
+        preview: "Welcome to Canvas.",
         time: "now",
         unread: true,
     },
@@ -39,6 +39,14 @@ const MOCK: Msg[] = [
         preview: "Please check Zoom link in the course page.",
         time: "yesterday",
         course: "5200",
+    },
+    {
+        id: "4",
+        from: "CS5800 TA",
+        subject: "Midterm exam for next week",
+        preview: "Check the practice exam on module page.",
+        time: "yesterday",
+        course: "5800",
     },
 ];
 

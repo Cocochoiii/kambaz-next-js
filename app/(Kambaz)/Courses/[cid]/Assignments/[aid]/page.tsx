@@ -1,125 +1,169 @@
+"use client";
+
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import { getAssignment } from "../catalog";
 
-export default async function AssignmentEditor({
-                                                 params,
-                                               }: {
-  params: Promise<{ cid: string; aid: string }>;
-}) {
-  const { cid, aid } = await params;
+export default function AssignmentEditor() {
+  const { cid, aid } = useParams<{ cid: string; aid: string }>();
   const seed = getAssignment(cid, aid);
 
   return (
-      <div id="wd-assignments-editor">
-        <label htmlFor="wd-name">Assignment Name</label>
-        <input id="wd-name" defaultValue={seed.title} />
-        <br /><br />
-        {/* FIX: textarea must use defaultValue/value, not children */}
-        <textarea id="wd-description" defaultValue={seed.description} />
-        <br />
+      <div id="wd-assignments-editor" className="container-fluid">
+        <Form>
+          <Form.Group className="mb-3">
+            <Form.Label className="fw-semibold">Assignment Name</Form.Label>
+            <Form.Control id="wd-name" defaultValue={seed.title} />
+          </Form.Group>
 
-        <table>
-          <tbody>
-          <tr>
-            <td align="right" valign="top">
-              <label htmlFor="wd-points">Points</label>
-            </td>
-            <td>
-              <input id="wd-points" type="number" defaultValue={seed.points} />
-            </td>
-          </tr>
-          <tr>
-            <td align="right">
-              <label htmlFor="wd-group">Assignment Group</label>
-            </td>
-            <td>
-              <select id="wd-group">
-                <option>ASSIGNMENTS</option>
-                <option>QUIZZES</option>
-                <option>EXAMS</option>
-                <option>PROJECT</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td align="right">
-              <label htmlFor="wd-display-grade-as">Display Grade as</label>
-            </td>
-            <td>
-              <select id="wd-display-grade-as">
-                <option>Percentage</option>
-                <option>Points</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td align="right">
-              <label htmlFor="wd-submission-type">Submission Type</label>
-            </td>
-            <td>
-              <select id="wd-submission-type">
-                <option>Online</option>
-                <option>On Paper</option>
-              </select>
-              <div>
-                <label>
-                  <input id="wd-text-entry" type="checkbox" defaultChecked /> Text
-                  Entry
-                </label>
-                <br />
-                <label>
-                  <input id="wd-website-url" type="checkbox" defaultChecked /> Website
-                  URL
-                </label>
-                <br />
-                <label>
-                  <input id="wd-media-recordings" type="checkbox" /> Media Recordings
-                </label>
-                <br />
-                <label>
-                  <input id="wd-student-annotation" type="checkbox" /> Student
-                  Annotation
-                </label>
-                <br />
-                <label>
-                  <input id="wd-file-upload" type="checkbox" /> File Uploads
-                </label>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td align="right">
-              <label htmlFor="wd-assign-to">Assign to</label>
-            </td>
-            <td>
-              <input id="wd-assign-to" defaultValue="Everyone" />
-            </td>
-          </tr>
-          <tr>
-            <td align="right">
-              <label htmlFor="wd-due-date">Due</label>
-            </td>
-            <td>
-              <input id="wd-due-date" type="date" defaultValue="2025-09-22" />
-            </td>
-          </tr>
-          <tr>
-            <td align="right">
-              <label htmlFor="wd-available-from">Available from</label>
-            </td>
-            <td>
-              <input id="wd-available-from" type="date" defaultValue="2025-09-01" />
-            </td>
-          </tr>
-          <tr>
-            <td align="right">
-              <label htmlFor="wd-available-until">Available until</label>
-            </td>
-            <td>
-              <input id="wd-available-until" type="date" defaultValue="2025-12-31" />
-            </td>
-          </tr>
-          </tbody>
-        </table>
+          <Form.Group className="mb-4">
+            <Form.Control
+                as="textarea"
+                id="wd-description"
+                rows={6}
+                defaultValue={seed.description}
+            />
+          </Form.Group>
+
+          <Row className="g-4">
+            <Col md={6} lg={5} xxl={4}>
+              <table className="table table-borderless align-middle mb-0">
+                <tbody>
+                <tr>
+                  <td className="text-end pe-3" style={{ width: 160 }}>
+                    <Form.Label htmlFor="wd-points" className="mb-0">
+                      Points
+                    </Form.Label>
+                  </td>
+                  <td>
+                    <Form.Control
+                        id="wd-points"
+                        type="number"
+                        defaultValue={seed.points}
+                        style={{ maxWidth: 140 }}
+                    />
+                  </td>
+                </tr>
+
+                <tr>
+                  <td className="text-end pe-3">
+                    <Form.Label htmlFor="wd-group" className="mb-0">
+                      Assignment Group
+                    </Form.Label>
+                  </td>
+                  <td>
+                    <Form.Select id="wd-group" style={{ maxWidth: 260 }}>
+                      <option>ASSIGNMENTS</option>
+                      <option>QUIZZES</option>
+                      <option>EXAMS</option>
+                      <option>PROJECT</option>
+                    </Form.Select>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td className="text-end pe-3">
+                    <Form.Label htmlFor="wd-display-grade-as" className="mb-0">
+                      Display Grade as
+                    </Form.Label>
+                  </td>
+                  <td>
+                    <Form.Select id="wd-display-grade-as" style={{ maxWidth: 260 }}>
+                      <option>Percentage</option>
+                      <option>Points</option>
+                    </Form.Select>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td className="text-end pe-3">
+                    <Form.Label htmlFor="wd-submission-type" className="mb-0">
+                      Submission Type
+                    </Form.Label>
+                  </td>
+                  <td>
+                    <Form.Select id="wd-submission-type" style={{ maxWidth: 260 }} className="mb-2">
+                      <option>Online</option>
+                      <option>On Paper</option>
+                    </Form.Select>
+                    <div className="ps-1">
+                      <Form.Check id="wd-text-entry" label="Text Entry" defaultChecked />
+                      <Form.Check id="wd-website-url" label="Website URL" defaultChecked />
+                      <Form.Check id="wd-media-recordings" label="Media Recordings" />
+                      <Form.Check id="wd-student-annotation" label="Student Annotation" />
+                      <Form.Check id="wd-file-upload" label="File Uploads" />
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td className="text-end pe-3">
+                    <Form.Label htmlFor="wd-assign-to" className="mb-0">
+                      Assign to
+                    </Form.Label>
+                  </td>
+                  <td>
+                    <Form.Control id="wd-assign-to" defaultValue="Everyone" style={{ maxWidth: 260 }} />
+                  </td>
+                </tr>
+
+                <tr>
+                  <td className="text-end pe-3">
+                    <Form.Label htmlFor="wd-due-date" className="mb-0">
+                      Due
+                    </Form.Label>
+                  </td>
+                  <td>
+                    <Form.Control
+                        id="wd-due-date"
+                        type="date"
+                        defaultValue="2025-05-13"
+                        style={{ maxWidth: 220 }}
+                    />
+                  </td>
+                </tr>
+
+                <tr>
+                  <td className="text-end pe-3">
+                    <Form.Label htmlFor="wd-available-from" className="mb-0">
+                      Available from
+                    </Form.Label>
+                  </td>
+                  <td>
+                    <Form.Control
+                        id="wd-available-from"
+                        type="date"
+                        defaultValue="2025-05-06"
+                        style={{ maxWidth: 220 }}
+                    />
+                  </td>
+                </tr>
+
+                <tr>
+                  <td className="text-end pe-3">
+                    <Form.Label htmlFor="wd-available-until" className="mb-0">
+                      Until
+                    </Form.Label>
+                  </td>
+                  <td>
+                    <Form.Control id="wd-available-until" type="date" style={{ maxWidth: 220 }} />
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </Col>
+          </Row>
+
+          <div className="d-flex gap-2 mt-4">
+            <Link href={`/Courses/${cid}/Assignments`} className="btn btn-light">
+              Cancel
+            </Link>
+            <Link href={`/Courses/${cid}/Assignments`} className="btn btn-danger">
+              Save
+            </Link>
+          </div>
+        </Form>
       </div>
   );
 }

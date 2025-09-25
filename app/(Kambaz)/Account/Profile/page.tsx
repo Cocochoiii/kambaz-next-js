@@ -1,21 +1,41 @@
+// app/(Kambaz)/Account/Profile/page.tsx
+"use client";
+
 import Link from "next/link";
-export default function Profile(){
+import { Form, Button } from "react-bootstrap";
+
+export default function Profile() {
     return (
-        <div id="wd-profile-screen">
-            <h3>Profile</h3>
-            <input defaultValue="coco" placeholder="username" className="wd-username" /><br/>
-            <input defaultValue="123" placeholder="password" type="password" className="wd-password" /><br/>
-            <input defaultValue="Coco" placeholder="First Name" id="wd-firstname" /><br/>
-            <input defaultValue="Choi" placeholder="Last Name" id="wd-lastname" /><br/>
-            <input defaultValue="2000-03-28" type="date" id="wd-dob" /><br/>
-            <input defaultValue="coco@example.com" type="email" id="wd-email" /><br/>
-            <select defaultValue="STUDENT" id="wd-role">
-                <option value="USER">User</option>
-                <option value="ADMIN">Admin</option>
-                <option value="FACULTY">Faculty</option>
-                <option value="STUDENT">Student</option>
-            </select><br/>
-            <Link href="/Account/Signin"> Sign out </Link>
+        <div id="wd-profile-screen" className="pt-2">
+            <h2 className="mb-3">Profile</h2>
+
+            <Form className="w-100" style={{ maxWidth: 520 }}>
+                <Form.Control defaultValue="coco" placeholder="username" className="mb-2" />
+                <Form.Control defaultValue="123" type="password" placeholder="password" className="mb-2" />
+
+                <div className="row g-2">
+                    <div className="col-sm-6">
+                        <Form.Control defaultValue="Coco" placeholder="First Name" />
+                    </div>
+                    <div className="col-sm-6">
+                        <Form.Control defaultValue="Choi" placeholder="Last Name" />
+                    </div>
+                </div>
+
+                <Form.Control defaultValue="2000-03-28" type="date" className="mt-2 mb-2" />
+                <Form.Control defaultValue="coco@example.com" type="email" className="mb-2" />
+
+                <Form.Select defaultValue="STUDENT" className="mb-3">
+                    <option value="USER">User</option>
+                    <option value="ADMIN">Admin</option>
+                    <option value="FACULTY">Faculty</option>
+                    <option value="STUDENT">Student</option>
+                </Form.Select>
+
+                <Link href="/Account/Signin" className="btn btn-danger w-100">
+                    Signout
+                </Link>
+            </Form>
         </div>
     );
 }
