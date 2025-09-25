@@ -84,7 +84,6 @@ export default function SettingsPage() {
                             </div>
 
                             <small className="text-muted">
-                                This is a local demo toggle. Hook it to your theme provider if you want it persistent.
                             </small>
                         </div>
                     </div>
