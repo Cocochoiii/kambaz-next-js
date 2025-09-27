@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { AiOutlineDashboard } from "react-icons/ai";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -11,16 +11,20 @@ export default function KambazNavigation() {
     const pathname = usePathname();
 
     const links = [
-        { href: "/Account",   label: "Account",   icon: FaRegCircleUser },
         { href: "/Dashboard", label: "Dashboard", icon: AiOutlineDashboard },
-        { href: "/Calendar",  label: "Calendar",  icon: IoCalendarOutline },
-        { href: "/Inbox",     label: "Inbox",     icon: FaInbox },
-        { href: "/Labs",      label: "Labs",      icon: LiaBookSolid },
-        { href: "/Settings",  label: "Settings",  icon: LiaCogSolid },
+        { href: "/Dashboard", label: "Courses", icon: LiaBookSolid }, // Routes to Dashboard as per spec
+        { href: "/Calendar", label: "Calendar", icon: IoCalendarOutline },
+        { href: "/Inbox", label: "Inbox", icon: FaInbox },
+        { href: "/Labs", label: "Labs", icon: LiaBookSolid },
+        { href: "/Settings", label: "Settings", icon: LiaCogSolid },
     ];
 
-    const isActive = (href: string) =>
-        pathname === href || pathname.startsWith(`${href}/`);
+    const isActive = (href: string, label: string) => {
+        if (label === "Courses") {
+            return pathname.includes("/Courses/");
+        }
+        return pathname === href || pathname.startsWith(`${href}/`);
+    };
 
     return (
         <ul
@@ -30,27 +34,45 @@ export default function KambazNavigation() {
         >
             <li className="list-group-item bg-black border-0 text-center" id="wd-neu-link">
                 <a href="https://www.northeastern.edu/" target="_blank" rel="noreferrer">
-                    <img src="/images/NEU.png" width={80} alt="Northeastern University" />
+                    <img src="/images/NEU.png" width={75} alt="Northeastern University" />
                 </a>
             </li>
             <br />
 
-            {links.map(({ href, label, icon: Icon }) => {
-                const active = isActive(href);
+            {/* Account Link */}
+            <li
+                className={`list-group-item border-0 text-center ${
+                    pathname.includes("Account") ? "bg-white text-danger" : "bg-black text-white"
+                }`}
+            >
+                <Link
+                    href="/Account"
+                    className={`text-decoration-none ${pathname.includes("Account") ? "text-danger" : "text-white"}`}
+                >
+                    <FaRegCircleUser className={`fs-1 ${pathname.includes("Account") ? "text-danger" : "text-white"}`} />
+                    <br />
+                    Account
+                </Link>
+            </li>
+
+            {/* Dynamic Links */}
+            {links.map((link) => {
+                const active = isActive(link.href, link.label);
+                const Icon = link.icon;
                 return (
                     <li
-                        key={href}
+                        key={link.label}
                         className={`list-group-item border-0 text-center ${
                             active ? "bg-white" : "bg-black"
                         }`}
                     >
                         <Link
-                            href={href}
+                            href={link.href}
                             className={`text-decoration-none ${active ? "text-danger" : "text-white"}`}
                         >
                             <Icon className={`fs-1 ${active ? "text-danger" : "text-white"}`} />
                             <br />
-                            {label}
+                            {link.label}
                         </Link>
                     </li>
                 );
