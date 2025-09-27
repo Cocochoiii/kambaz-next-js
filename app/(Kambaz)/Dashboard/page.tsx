@@ -40,22 +40,26 @@ export default function Dashboard() {
                                     <PiNotePencilLight />
                                 </span>
 
-                                <h5 className="wd-dashboard-course-title course-title line-clamp-2 mt-2 mb-1">
+                                {/* ONLY Course Name and Semester Info */}
+                                <h5 className="wd-dashboard-course-title course-title mt-2 mb-1">
                                     {course.name}
                                 </h5>
-                                <div className="wd-dashboard-course-description text-muted small line-clamp-2" style={{ height: "60px" }}>
-                                    {course.description}
+                                <div className="text-muted small">
+                                    {course.number}
+                                </div>
+                                <div className="text-muted small">
+                                    {course.term} · {course.semester}
                                 </div>
 
                                 {/* Stretched link - covers entire card */}
                                 <Link
                                     href={`/Courses/${course._id}/Home`}
-                                    className="wd-dashboard-course-link stretched-link"
+                                    className="stretched-link"
                                     aria-label={`Open ${course.name}`}
                                 />
                             </div>
 
-                            {/* Go Button - positioned above stretched link with higher z-index */}
+                            {/* Go Button */}
                             <Link href={`/Courses/${course._id}/Home`} className="btn btn-primary btn-sm btn-go">
                                 Go
                             </Link>
