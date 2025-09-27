@@ -1,24 +1,19 @@
+// app/(Kambaz)/Courses/[cid]/Modules/page.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import ListGroup from "react-bootstrap/ListGroup";
 import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "./LessonControlButtons";
 import ModuleControlButtons from "./ModuleControlButtons";
 import ModulesControls from "./ModulesControls";
-import { perCourse as courseModules } from "../../courseData";
+import GreenCheckmark from "./GreenCheckmark";
+import * as db from "../../../Database";
 
-type ModuleSpec = { title: string; items: string[] };
-
-function ModulesContent({ cid }: { cid: string }) {
-    const modules = useMemo<ModuleSpec[]>(
-        () =>
-            courseModules[cid] ?? [
-                { title: "Week 1", items: ["Overview"] },
-                { title: "Week 2", items: ["Coming soon"] },
-            ],
-        [cid]
-    );
+export default function ModulesPage() {
+    const { cid } = useParams<{ cid: string }>();
+    const modules = db.modules.filter((module: any) => module.course === cid);
 
     const [collapsed, setCollapsed] = useState<boolean[]>(
         () => modules.map(() => false)
@@ -33,10 +28,13 @@ function ModulesContent({ cid }: { cid: string }) {
         <div id="wd-courses-modules">
             <ModulesControls onToggleAll={toggleAll} allCollapsed={allCollapsed} />
 
-            <ListGroup className="rounded-0" id="wd-modules">
-                {modules.map((m, i) => (
-                    <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray" key={i}>
-                        {/* header (click to collapse/expand) */}
+            <ListGroup id="wd-modules" className="rounded-0">
+                {modules.map((module: any, i: number) => (
+                    <ListGroup.Item
+                        key={module._id}
+                        className="wd-module p-0 mb-5 fs-5 border-gray"
+                    >
+                        {/* Module Header - Clickable */}
                         <button
                             className="w-100 text-start border-0 p-0"
                             onClick={() => toggleOne(i)}
@@ -44,37 +42,41 @@ function ModulesContent({ cid }: { cid: string }) {
                             aria-controls={`wd-module-panel-${i}`}
                         >
                             <div className="wd-title p-3 ps-2 bg-secondary">
-                                <BsGripVertical className="me-2 wd-grip" /> {m.title}
+                                <BsGripVertical className="me-2 wd-grip" />
+                                {module.name}
                                 <ModuleControlButtons />
                             </div>
                         </button>
 
-                        {/* body */}
-                        <div id={`wd-module-panel-${i}`} hidden={collapsed[i]}>
-                            <ListGroup className="wd-lessons rounded-0">
-                                <ListGroup.Item className="wd-lesson p-3 ps-1">
-                                    <BsGripVertical className="me-2 wd-grip" />
-                                    LEARNING OBJECTIVES
-                                    <LessonControlButtons />
-                                </ListGroup.Item>
-
-                                {m.items.map((txt, j) => (
-                                    <ListGroup.Item className="wd-lesson p-3 ps-1" key={j}>
+                        {/* Module Lessons - Collapsible */}
+                        {module.lessons && (
+                            <div id={`wd-module-panel-${i}`} hidden={collapsed[i]}>
+                                <ListGroup className="wd-lessons rounded-0">
+                                    {/* LEARNING OBJECTIVES item - just a single row */}
+                                    <ListGroup.Item className="wd-lesson p-3 ps-1">
                                         <BsGripVertical className="me-2 wd-grip" />
-                                        {txt}
+                                        <GreenCheckmark />
+                                        LEARNING OBJECTIVES
                                         <LessonControlButtons />
                                     </ListGroup.Item>
-                                ))}
-                            </ListGroup>
-                        </div>
+
+                                    {/* Individual Lesson Items */}
+                                    {module.lessons.map((lesson: any) => (
+                                        <ListGroup.Item
+                                            key={lesson._id}
+                                            className="wd-lesson p-3 ps-1"
+                                        >
+                                            <BsGripVertical className="me-2 wd-grip" />
+                                            {lesson.name}
+                                            <LessonControlButtons />
+                                        </ListGroup.Item>
+                                    ))}
+                                </ListGroup>
+                            </div>
+                        )}
                     </ListGroup.Item>
                 ))}
             </ListGroup>
         </div>
     );
-}
-
-export default function ModulesPage({ params }: { params: { cid: string } }) {
-    const { cid } = params;
-    return <ModulesContent cid={cid} />;
 }

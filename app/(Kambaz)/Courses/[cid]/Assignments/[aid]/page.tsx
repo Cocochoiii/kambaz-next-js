@@ -1,20 +1,25 @@
+// app/(Kambaz)/Courses/[cid]/Assignments/[aid]/page.tsx
 "use client";
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { getAssignment } from "../catalog";
+import * as db from "../../../../Database";
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams<{ cid: string; aid: string }>();
-  const seed = getAssignment(cid, aid);
+  const assignment = db.assignments.find((a: any) => a._id === aid);
+
+  if (!assignment) {
+    return <div>Assignment not found</div>;
+  }
 
   return (
       <div id="wd-assignments-editor" className="container-fluid">
         <Form>
           <Form.Group className="mb-3">
             <Form.Label className="fw-semibold">Assignment Name</Form.Label>
-            <Form.Control id="wd-name" defaultValue={seed.title} />
+            <Form.Control id="wd-name" defaultValue={assignment.title} />
           </Form.Group>
 
           <Form.Group className="mb-4">
@@ -22,7 +27,7 @@ export default function AssignmentEditor() {
                 as="textarea"
                 id="wd-description"
                 rows={6}
-                defaultValue={seed.description}
+                defaultValue={assignment.description}
             />
           </Form.Group>
 
@@ -40,7 +45,7 @@ export default function AssignmentEditor() {
                     <Form.Control
                         id="wd-points"
                         type="number"
-                        defaultValue={seed.points}
+                        defaultValue={assignment.points}
                         style={{ maxWidth: 140 }}
                     />
                   </td>
@@ -118,7 +123,7 @@ export default function AssignmentEditor() {
                     <Form.Control
                         id="wd-due-date"
                         type="date"
-                        defaultValue="2025-05-13"
+                        defaultValue={assignment.dueDate}
                         style={{ maxWidth: 220 }}
                     />
                   </td>
@@ -134,7 +139,7 @@ export default function AssignmentEditor() {
                     <Form.Control
                         id="wd-available-from"
                         type="date"
-                        defaultValue="2025-05-06"
+                        defaultValue={assignment.availableFrom}
                         style={{ maxWidth: 220 }}
                     />
                   </td>
@@ -147,7 +152,12 @@ export default function AssignmentEditor() {
                     </Form.Label>
                   </td>
                   <td>
-                    <Form.Control id="wd-available-until" type="date" style={{ maxWidth: 220 }} />
+                    <Form.Control
+                        id="wd-available-until"
+                        type="date"
+                        defaultValue={assignment.availableUntil}
+                        style={{ maxWidth: 220 }}
+                    />
                   </td>
                 </tr>
                 </tbody>

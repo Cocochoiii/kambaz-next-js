@@ -1,8 +1,8 @@
+// app/(Kambaz)/Courses/[cid]/Assignments/page.tsx
 "use client";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { assignmentCatalog } from "./catalog";
 import { ListGroup, Badge, Button, Form } from "react-bootstrap";
 import {
     BsGripVertical,
@@ -11,12 +11,11 @@ import {
     BsCheckCircleFill,
     BsPlus
 } from "react-icons/bs";
+import * as db from "../../../Database";
 
 export default function Assignments() {
     const { cid } = useParams<{ cid: string }>();
-    const items =
-        assignmentCatalog[cid] ??
-        [{ title: "A1 – Basics", description: "", points: 100 }];
+    const assignments = db.assignments.filter((assignment: any) => assignment.course === cid);
 
     return (
         <div id="wd-assignments" className="mt-2">
@@ -54,35 +53,39 @@ export default function Assignments() {
                 </div>
 
                 <ListGroup variant="flush" id="wd-assignment-list">
-                    {items.map((a, idx) => {
-                        const aid = 100 + idx;
-                        return (
-                            <ListGroup.Item key={aid} className="py-3 d-flex align-items-start">
-                                <div className="me-2 pt-1">
-                                    <BsGripVertical className="text-secondary" />
+                    {assignments.map((assignment: any) => (
+                        <ListGroup.Item
+                            key={assignment._id}
+                            className="py-3 d-flex align-items-start"
+                        >
+                            <div className="me-2 pt-1">
+                                <BsGripVertical className="text-secondary" />
+                            </div>
+                            <div className="me-3 pt-1">
+                                <BsFileEarmarkText className="text-success fs-5" />
+                            </div>
+                            <div className="flex-grow-1">
+                                <Link
+                                    className="wd-assignment-link fw-semibold text-decoration-none"
+                                    href={`/Courses/${cid}/Assignments/${assignment._id}`}
+                                >
+                                    {assignment.title}
+                                </Link>
+                                <div className="text-muted small">
+                                    Multiple Modules <span className="mx-2">|</span>
+                                    Not available until {new Date(assignment.availableFrom).toLocaleDateString()} at 12:00am{" "}
+                                    <span className="mx-2">|</span>
+                                    Due {new Date(assignment.dueDate).toLocaleDateString()} at 11:59pm{" "}
+                                    <span className="mx-2">|</span>
+                                    {assignment.points} pts
                                 </div>
-                                <div className="me-3 pt-1">
-                                    <BsFileEarmarkText className="text-success fs-5" />
-                                </div>
-                                <div className="flex-grow-1">
-                                    <Link
-                                        className="wd-assignment-link fw-semibold text-decoration-none"
-                                        href={`/Courses/${cid}/Assignments/${aid}`}
-                                    >
-                                        {a.title}
-                                    </Link>
-                                    <div className="text-muted small">
-                                        Multiple Modules <span className="mx-2">|</span> Not available until May 6 at 12:00am{" "}
-                                        <span className="mx-2">|</span> {a.points} pts
-                                    </div>
-                                </div>
-                                <div className="ms-3 d-flex align-items-center gap-2">
-                                    <BsCheckCircleFill className="text-success" />
-                                    <BsThreeDotsVertical className="text-secondary" />
-                                </div>
-                            </ListGroup.Item>
-                        );
-                    })}
+                            </div>
+                            <div className="ms-3 d-flex align-items-center gap-2">
+                                <BsCheckCircleFill className="text-success" />
+                                <BsThreeDotsVertical className="text-secondary" />
+                            </div>
+                        </ListGroup.Item>
+                    ))}
                 </ListGroup>
             </div>
         </div>

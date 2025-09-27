@@ -1,35 +1,33 @@
+// app/(Kambaz)/Dashboard/page.tsx
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { PiNotePencilLight } from "react-icons/pi";
-
-const courses = [
-    { id: "5610", title: "CS5610 Web Development", tag: "Full Stack Web", img: "course1.jpg" },
-    { id: "5520", title: "CS5520 Mobile Application Development", tag: "Mobile Dev", img: "course2.jpg" },
-    { id: "5004", title: "CS5004 Object-Oriented Design", tag: "OOD in Java", img: "course3.jpg" },
-    { id: "5200", title: "CS5200 Database Management Systems", tag: "Relational DBMS", img: "course4.jpg" },
-    { id: "5800", title: "CS5800 Algorithms", tag: "Algorithm Analysis", img: "course5.jpg" },
-    { id: "6620", title: "CS6620 Fundamentals of Cloud Computing", tag: "Cloud Computing", img: "course6.jpg" },
-    { id: "6510", title: "CS6510 Advanced Software Dev", tag: "Large-scale projects", img: "course7.jpg" },
-];
+import * as db from "../Database";
 
 export default function Dashboard() {
+    const courses = db.courses;
+
     return (
         <div id="wd-dashboard" className="container-fluid">
-            <div className="d-flex align-items-end justify-content-between mb-2">
-                <h1 className="mb-0">Dashboard</h1>
-            </div>
-            <p className="text-muted mb-4">Published Courses ({courses.length})</p>
+            <h1 id="wd-dashboard-title" className="mb-0">Dashboard</h1>
+            <hr />
+            <h2 id="wd-dashboard-published" className="text-muted mb-4">
+                Published Courses ({courses.length})
+            </h2>
+            <hr />
 
-            {/* four */}
-            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                {courses.map((c) => (
-                    <div className="col" key={c.id}>
+            {/* Course Cards Grid */}
+            <div id="wd-dashboard-courses" className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                {courses.map((course) => (
+                    <div className="col wd-dashboard-course" key={course._id} style={{ maxWidth: "300px" }}>
                         <div className="card h-100 shadow-sm border-0 hover-lift position-relative">
-                            {/* ratio */}
+                            {/* Image with ratio */}
                             <div className="ratio ratio-16x9">
                                 <Image
-                                    src={`/images/${c.img}`}
-                                    alt={c.title}
+                                    src={`/images/${course.image}`}
+                                    alt={course.name}
                                     fill
                                     sizes="(max-width: 768px) 100vw, 25vw"
                                     style={{ objectFit: "cover" }}
@@ -39,22 +37,26 @@ export default function Dashboard() {
                             <div className="card-body">
                                 {/* Icon */}
                                 <span className="canvas-tile-icon text-secondary" title="Course card icon">
-                  <PiNotePencilLight />
-                </span>
+                                    <PiNotePencilLight />
+                                </span>
 
-                                <h5 className="course-title line-clamp-2 mt-2 mb-1">{c.title}</h5>
-                                <div className="text-muted small line-clamp-2">{c.tag}</div>
+                                <h5 className="wd-dashboard-course-title course-title line-clamp-2 mt-2 mb-1">
+                                    {course.name}
+                                </h5>
+                                <div className="wd-dashboard-course-description text-muted small line-clamp-2" style={{ height: "60px" }}>
+                                    {course.description}
+                                </div>
 
-                                {/* Click the whole cards */}
+                                {/* Stretched link - covers entire card */}
                                 <Link
-                                    href={`/Courses/${c.id}/Home`}
-                                    className="stretched-link"
-                                    aria-label={`Open ${c.title}`}
+                                    href={`/Courses/${course._id}/Home`}
+                                    className="wd-dashboard-course-link stretched-link"
+                                    aria-label={`Open ${course.name}`}
                                 />
                             </div>
 
-                            {/*Go */}
-                            <Link href={`/Courses/${c.id}/Home`} className="btn btn-primary btn-sm btn-go">
+                            {/* Go Button - positioned above stretched link with higher z-index */}
+                            <Link href={`/Courses/${course._id}/Home`} className="btn btn-primary btn-sm btn-go">
                                 Go
                             </Link>
                         </div>

@@ -1,6 +1,8 @@
+// app/(Kambaz)/Courses/[cid]/Home/page.tsx
 "use client";
 
 import { useMemo, useState } from "react";
+import { useParams } from "next/navigation";
 import ListGroup from "react-bootstrap/ListGroup";
 import { BsGripVertical } from "react-icons/bs";
 import ModuleControlButtons from "../Modules/ModuleControlButtons";
@@ -8,23 +10,17 @@ import LessonControlButtons from "../Modules/LessonControlButtons";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 import PublishAllMenu from "../Modules/PublishAllMenu";
 import Status from "./Status";
-import { getCourseName, getHomeBlurb, perCourse } from "../../courseData";
+import * as db from "../../../Database";
 
-type ModuleSpec = { title: string; items: string[] };
+export default function HomePage() {
+    const { cid } = useParams<{ cid: string }>();
+    const course = db.courses.find((c: any) => c._id === cid);
 
-export default function HomePage({ params }: { params: { cid: string } }) {
-    const { cid } = params;
-
-    // keep per-course data
-    const allModules = useMemo<ModuleSpec[]>(
-        () => perCourse[cid] ?? [{ title: "Week 1", items: ["Overview"] }],
-        [cid]
-    );
-
-    // Home shows a preview (first 2 modules)
+    // Get all modules for this course, but only show first 2 on Home
+    const allModules = db.modules.filter((m: any) => m.course === cid);
     const modules = allModules.slice(0, 2);
 
-    // --- collapse state like Modules ---
+    // Collapse state management
     const [collapsed, setCollapsed] = useState<boolean[]>(
         () => modules.map(() => false)
     );
@@ -33,15 +29,19 @@ export default function HomePage({ params }: { params: { cid: string } }) {
     const toggleOne = (i: number) =>
         setCollapsed(prev => prev.map((c, idx) => (idx === i ? !c : c)));
 
+    if (!course) {
+        return <div>Course not found</div>;
+    }
+
     return (
         <div id="wd-courses-home">
-            <h1 className="text-danger m-0">Course {cid} — {getCourseName(cid)}</h1>
-            <p className="text-muted mt-1">{getHomeBlurb(cid)}</p>
+            <h1 className="text-danger m-0">Course {cid} — {course.name}</h1>
+            <p className="text-muted mt-1">{course.description}</p>
 
             <div className="d-flex gap-4">
-                {/* center column */}
+                {/* Main content column */}
                 <div className="flex-fill">
-                    {/* toolbar (identical look & feel to Modules) */}
+                    {/* Toolbar matching Modules */}
                     <div className="wd-toolbar btn-toolbar gap-2 my-2">
                         <button
                             className="btn btn-secondary"
@@ -62,11 +62,11 @@ export default function HomePage({ params }: { params: { cid: string } }) {
                         </button>
                     </div>
 
-                    {/* modules preview with per-module toggle just like Modules */}
-                    {modules.map((m, i) => (
-                        <ListGroup className="rounded-0 mb-4" key={i}>
+                    {/* Modules preview (first 2 modules) */}
+                    {modules.map((module: any, i: number) => (
+                        <ListGroup className="rounded-0 mb-4" key={module._id}>
                             <ListGroup.Item className="p-0 border-gray">
-                                {/* clickable header to collapse/expand */}
+                                {/* Clickable header */}
                                 <button
                                     className="w-100 text-start border-0 p-0"
                                     onClick={() => toggleOne(i)}
@@ -75,11 +75,11 @@ export default function HomePage({ params }: { params: { cid: string } }) {
                                 >
                                     <div className="p-3 bg-secondary">
                                         <BsGripVertical className="me-2 wd-grip" />
-                                        {m.title} <ModuleControlButtons />
+                                        {module.name} <ModuleControlButtons />
                                     </div>
                                 </button>
 
-                                {/* panel */}
+                                {/* Panel */}
                                 <div id={`wd-home-module-panel-${i}`} hidden={collapsed[i]}>
                                     <ListGroup className="wd-lessons rounded-0">
                                         <ListGroup.Item className="wd-lesson p-3 ps-1">
@@ -90,7 +90,9 @@ export default function HomePage({ params }: { params: { cid: string } }) {
                                                 <LessonControlButtons />
                                             </div>
                                             <ul className="mt-2 mb-0">
-                                                {m.items.map((x, j) => <li key={j}>{x}</li>)}
+                                                {module.lessons && module.lessons.map((lesson: any) => (
+                                                    <li key={lesson._id}>{lesson.name}</li>
+                                                ))}
                                             </ul>
                                         </ListGroup.Item>
                                     </ListGroup>
@@ -100,7 +102,7 @@ export default function HomePage({ params }: { params: { cid: string } }) {
                     ))}
                 </div>
 
-                {/* right status column – stays hidden under xl via your CSS */}
+                {/* Right status column - hidden on smaller screens */}
                 <div id="wd-course-status-col" className="d-none d-xl-block" style={{ width: 340 }}>
                     <Status />
                 </div>

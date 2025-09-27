@@ -1,16 +1,42 @@
-import Link from "next/link";
+// app/(Kambaz)/Courses/CourseNavigation.tsx
+"use client";
 
-export default function CourseNavigation({ cid }: { cid: string }){
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+export default function CourseNavigation({ cid }: { cid: string }) {
+    const pathname = usePathname();
+
+    const links = ["Home", "Modules", "Piazza", "Zoom", "Assignments", "Quizzes", "Grades", "People"];
+
+    const isActive = (section: string) => {
+        const currentPath = pathname.split('/').pop();
+        if (section === "People" && pathname.includes("/People/Table")) return true;
+        return currentPath === section;
+    };
+
     return (
         <div id="wd-courses-navigation">
-            <Link id="wd-course-home-link" href={`/Courses/${cid}/Home`}>Home</Link><br/>
-            <Link id="wd-course-modules-link" href={`/Courses/${cid}/Modules`}>Modules</Link><br/>
-            <Link id="wd-course-piazza-link" href={`/Courses/${cid}/Piazza`}>Piazza</Link><br/>
-            <Link id="wd-course-zoom-link" href={`/Courses/${cid}/Zoom`}>Zoom</Link><br/>
-            <Link id="wd-course-assignments-link" href={`/Courses/${cid}/Assignments`}>Assignments</Link><br/>
-            <Link id="wd-course-quizzes-link" href={`/Courses/${cid}/Quizzes`}>Quizzes</Link><br/>
-            <Link id="wd-course-grades-link" href={`/Courses/${cid}/Grades`}>Grades</Link><br/>
-            <Link id="wd-course-people-link" href={`/Courses/${cid}/People/Table`}>People</Link><br/>
+            {links.map((link) => {
+                const href = link === "People"
+                    ? `/Courses/${cid}/People/Table`
+                    : `/Courses/${cid}/${link}`;
+                const active = isActive(link);
+
+                return (
+                    <div key={link}>
+                        <Link
+                            id={`wd-course-${link.toLowerCase()}-link`}
+                            href={href}
+                            className={active ? "text-dark fw-semibold" : "text-danger"}
+                            style={{ textDecoration: "none" }}
+                        >
+                            {link}
+                        </Link>
+                        <br />
+                    </div>
+                );
+            })}
         </div>
     );
 }
