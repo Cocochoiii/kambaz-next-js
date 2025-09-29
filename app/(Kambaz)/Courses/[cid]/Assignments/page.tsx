@@ -1,8 +1,7 @@
-// app/(Kambaz)/Courses/[cid]/Assignments/page.tsx
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ListGroup, Badge, Button, Form } from "react-bootstrap";
 import {
     BsGripVertical,
@@ -11,11 +10,28 @@ import {
     BsCheckCircleFill,
     BsPlus
 } from "react-icons/bs";
-import * as db from "../../../Database";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteAssignment } from "./reducer";
 
 export default function Assignments() {
     const { cid } = useParams<{ cid: string }>();
-    const assignments = db.assignments.filter((assignment: any) => assignment.course === cid);
+    const router = useRouter();
+    const dispatch = useDispatch();
+    const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
+
+    const courseAssignments = assignments.filter((a: any) => a.course === cid);
+    const isFaculty = currentUser?.role === "FACULTY";
+
+    const handleDelete = (assignmentId: string) => {
+        if (window.confirm("Are you sure you want to delete this assignment?")) {
+            dispatch(deleteAssignment(assignmentId));
+        }
+    };
+
+    const handleAddAssignment = () => {
+        router.push(`/Courses/${cid}/Assignments/new`);
+    };
 
     return (
         <div id="wd-assignments" className="mt-2">
@@ -25,12 +41,16 @@ export default function Assignments() {
                     placeholder="Search…"
                     style={{ maxWidth: 380 }}
                 />
-                <Button id="wd-add-assignment-group" variant="light" className="ms-auto">
-                    + Group
-                </Button>
-                <Button id="wd-add-assignment" variant="danger">
-                    + Assignment
-                </Button>
+                {isFaculty && (
+                    <>
+                        <Button id="wd-add-assignment-group" variant="light" className="ms-auto">
+                            + Group
+                        </Button>
+                        <Button id="wd-add-assignment" variant="danger" onClick={handleAddAssignment}>
+                            + Assignment
+                        </Button>
+                    </>
+                )}
             </div>
 
             <div className="border rounded mb-3">
@@ -43,17 +63,21 @@ export default function Assignments() {
                         <Badge bg="light" text="dark" className="border">
                             40% of Total
                         </Badge>
-                        <Button size="sm" variant="light">
-                            <BsPlus />
-                        </Button>
-                        <Button size="sm" variant="light">
-                            <BsThreeDotsVertical />
-                        </Button>
+                        {isFaculty && (
+                            <>
+                                <Button size="sm" variant="light" onClick={handleAddAssignment}>
+                                    <BsPlus />
+                                </Button>
+                                <Button size="sm" variant="light">
+                                    <BsThreeDotsVertical />
+                                </Button>
+                            </>
+                        )}
                     </div>
                 </div>
 
                 <ListGroup variant="flush" id="wd-assignment-list">
-                    {assignments.map((assignment: any) => (
+                    {courseAssignments.map((assignment: any) => (
                         <ListGroup.Item
                             key={assignment._id}
                             className="py-3 d-flex align-items-start"
@@ -82,6 +106,15 @@ export default function Assignments() {
                             </div>
                             <div className="ms-3 d-flex align-items-center gap-2">
                                 <BsCheckCircleFill className="text-success" />
+                                {isFaculty && (
+                                    <Button
+                                        variant="link"
+                                        className="text-danger p-0"
+                                        onClick={() => handleDelete(assignment._id)}
+                                    >
+                                        🗑️
+                                    </Button>
+                                )}
                                 <BsThreeDotsVertical className="text-secondary" />
                             </div>
                         </ListGroup.Item>

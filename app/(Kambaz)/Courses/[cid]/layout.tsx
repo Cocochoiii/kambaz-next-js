@@ -1,16 +1,39 @@
-// app/(Kambaz)/Courses/[cid]/layout.tsx
 "use client";
 
 import type { ReactNode } from "react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { FaAlignJustify } from "react-icons/fa";
 import CourseNavigation from "../CourseNavigation";
 import * as db from "../../Database";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export default function CoursesLayout({ children }: { children: ReactNode }) {
     const { cid } = useParams<{ cid: string }>();
     const pathname = usePathname();
+    const router = useRouter();
     const course = db.courses.find((c: any) => c._id === cid);
+
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
+
+    // Check if user is enrolled or is faculty
+    const isEnrolled = enrollments.some(
+        (e: any) => e.user === currentUser?._id && e.course === cid
+    );
+    const canAccess = isEnrolled || currentUser?.role === "FACULTY";
+
+    useEffect(() => {
+        if (!currentUser) {
+            router.push("/Account/Signin");
+        } else if (!canAccess) {
+            router.push("/Dashboard");
+        }
+    }, [currentUser, canAccess, router]);
+
+    if (!canAccess) {
+        return null;
+    }
 
     // Extract the section name from the pathname for breadcrumb
     const pathParts = pathname.split('/');

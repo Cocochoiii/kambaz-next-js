@@ -1,37 +1,69 @@
-// app/(Kambaz)/Courses/[cid]/Home/page.tsx
 "use client";
 
 import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import ListGroup from "react-bootstrap/ListGroup";
 import { BsGripVertical } from "react-icons/bs";
+import { Form, Button } from "react-bootstrap";
 import ModuleControlButtons from "../Modules/ModuleControlButtons";
 import LessonControlButtons from "../Modules/LessonControlButtons";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 import PublishAllMenu from "../Modules/PublishAllMenu";
+import ModuleEditor from "../Modules/ModuleEditor";
 import Status from "./Status";
-import * as db from "../../../Database";
+import { useSelector, useDispatch } from "react-redux";
+import { addModule, deleteModule, updateModule, editModule } from "../Modules/reducer";
 
 export default function HomePage() {
     const { cid } = useParams<{ cid: string }>();
-    const course = db.courses.find((c: any) => c._id === cid);
+    const dispatch = useDispatch();
+    const { modules } = useSelector((state: any) => state.modulesReducer);
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const { courses } = useSelector((state: any) => state.coursesReducer);
+
+    const course = courses.find((c: any) => c._id === cid);
+
+    // Module name state for the editor
+    const [moduleName, setModuleName] = useState("");
+    const [showModuleEditor, setShowModuleEditor] = useState(false);
 
     // Get all modules for this course, but only show first 2 on Home
-    const allModules = db.modules.filter((m: any) => m.course === cid);
-    const modules = allModules.slice(0, 2);
+    const allModules = modules.filter((m: any) => m.course === cid);
+    const displayModules = allModules.slice(0, 2);
 
     // Collapse state management
     const [collapsed, setCollapsed] = useState<boolean[]>(
-        () => modules.map(() => false)
+        () => displayModules.map(() => false)
     );
     const allCollapsed = collapsed.every(Boolean);
     const toggleAll = () => setCollapsed(collapsed.map(() => !allCollapsed));
     const toggleOne = (i: number) =>
         setCollapsed(prev => prev.map((c, idx) => (idx === i ? !c : c)));
 
+    // Module management functions
+    const handleAddModule = () => {
+        dispatch(addModule({ name: moduleName, course: cid }));
+        setModuleName("");
+        setShowModuleEditor(false);
+    };
+
+    const handleDeleteModule = (moduleId: string) => {
+        dispatch(deleteModule(moduleId));
+    };
+
+    const handleEditModule = (moduleId: string) => {
+        dispatch(editModule(moduleId));
+    };
+
+    const handleUpdateModule = (module: any) => {
+        dispatch(updateModule(module));
+    };
+
     if (!course) {
         return <div>Course not found</div>;
     }
+
+    const isFaculty = currentUser?.role === "FACULTY";
 
     return (
         <div id="wd-courses-home">
@@ -57,13 +89,19 @@ export default function HomePage() {
 
                         <PublishAllMenu idPrefix="wd-home" label="Publish All" />
 
-                        <button className="btn btn-danger" id="wd-home-new-module">
-                            + Module
-                        </button>
+                        {isFaculty && (
+                            <button
+                                className="btn btn-danger"
+                                id="wd-home-new-module"
+                                onClick={() => setShowModuleEditor(true)}
+                            >
+                                + Module
+                            </button>
+                        )}
                     </div>
 
                     {/* Modules preview (first 2 modules) */}
-                    {modules.map((module: any, i: number) => (
+                    {displayModules.map((module: any, i: number) => (
                         <ListGroup className="rounded-0 mb-4" key={module._id}>
                             <ListGroup.Item className="p-0 border-gray">
                                 {/* Clickable header */}
@@ -75,7 +113,29 @@ export default function HomePage() {
                                 >
                                     <div className="p-3 bg-secondary">
                                         <BsGripVertical className="me-2 wd-grip" />
-                                        {module.name} <ModuleControlButtons />
+                                        {!module.editing && module.name}
+                                        {module.editing && (
+                                            <Form.Control
+                                                className="w-50 d-inline-block"
+                                                onClick={(e) => e.stopPropagation()}
+                                                onChange={(e) =>
+                                                    handleUpdateModule({ ...module, name: e.target.value })
+                                                }
+                                                onKeyDown={(e) => {
+                                                    if (e.key === "Enter") {
+                                                        handleUpdateModule({ ...module, editing: false });
+                                                    }
+                                                }}
+                                                defaultValue={module.name}
+                                            />
+                                        )}
+                                        {isFaculty && (
+                                            <ModuleControlButtons
+                                                moduleId={module._id}
+                                                deleteModule={handleDeleteModule}
+                                                editModule={handleEditModule}
+                                            />
+                                        )}
                                     </div>
                                 </button>
 
@@ -107,6 +167,16 @@ export default function HomePage() {
                     <Status />
                 </div>
             </div>
+
+            {/* Module Editor Dialog */}
+            <ModuleEditor
+                show={showModuleEditor}
+                handleClose={() => setShowModuleEditor(false)}
+                dialogTitle="Add Module"
+                moduleName={moduleName}
+                setModuleName={setModuleName}
+                addModule={handleAddModule}
+            />
         </div>
     );
 }
