@@ -11,10 +11,10 @@ export default function AccountLayout({
     return (
         <div id="wd-account" className="container-fluid py-3">
             <div className="row align-items-start" style={{ "--bs-gutter-x": "0.5rem" } as any}>
-                <aside className="col-8 col-md-2 pe-md-2">
-                    <AccountNavigation />
+                <aside className="col-12 col-md-3 col-xl-2 pe-md-2">
+                <AccountNavigation />
                 </aside>
-                <main className="col-8 col-md-4 col-xl-2">
+                <main className="col-12 col-md-9 col-xl-6">
                     {children}
                 </main>
             </div>

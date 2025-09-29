@@ -16,7 +16,10 @@ export default function Signin() {
         const user = db.users.find(
             (u: any) => u.username === credentials.username && u.password === credentials.password
         );
-        if (!user) return;
+        if (!user) {
+            alert("Invalid username or password");
+            return;
+        }
         dispatch(setCurrentUser(user));
         router.push("/Dashboard");
     };
@@ -30,6 +33,7 @@ export default function Signin() {
                 className="mb-2"
                 placeholder="username"
                 id="wd-username"
+                autoFocus
             />
             <Form.Control
                 value={credentials.password}

@@ -82,7 +82,13 @@ export default function AssignmentEditor() {
                         id="wd-points"
                         type="number"
                         value={assignment.points}
-                        onChange={(e) => setAssignment({ ...assignment, points: parseInt(e.target.value) })}
+                        onChange={(e) =>
+                            setAssignment({
+                              ...assignment,
+                              points: Number.isNaN(parseInt(e.target.value, 10)) ? 0 : parseInt(e.target.value, 10)
+                            })
+                        }
+
                         style={{ maxWidth: 140 }}
                     />
                   </td>

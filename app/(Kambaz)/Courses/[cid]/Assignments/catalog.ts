@@ -63,7 +63,8 @@ export const assignmentCatalog: Catalog = {
 
 // Helper
 export function getAssignment(cid: string, aid: string): AssignmentSeed {
-    const index = Math.max(0, (parseInt(aid, 10) || 100) - 100); // 100→0, 101→1, etc.
+    const num = parseInt(aid.replace(/\D+/g, ""), 10); // "A101" -> 101
+    const index = Number.isNaN(num) ? 0 : Math.max(0, num - 100);// 100→0, 101→1, etc.
     return assignmentCatalog[cid]?.[index] ?? {
         title: "A1 – ENV + HTML",
         description: "Submit a link to your deployed app.",

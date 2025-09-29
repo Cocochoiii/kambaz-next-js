@@ -97,11 +97,18 @@ export default function Assignments() {
                                 </Link>
                                 <div className="text-muted small">
                                     Multiple Modules <span className="mx-2">|</span>
-                                    Not available until {new Date(assignment.availableFrom).toLocaleDateString()} at 12:00am{" "}
+                                    {assignment.availableFrom
+                                        ? <>Not available until {new Date(assignment.availableFrom).toLocaleDateString()} at 12:00am</>
+                                        : <>Not available yet</>
+                                    }
                                     <span className="mx-2">|</span>
-                                    Due {new Date(assignment.dueDate).toLocaleDateString()} at 11:59pm{" "}
+                                    {assignment.dueDate
+                                        ? <>Due {new Date(assignment.dueDate).toLocaleDateString()} at 11:59pm</>
+                                        : <>Due —</>
+                                    }
                                     <span className="mx-2">|</span>
                                     {assignment.points} pts
+
                                 </div>
                             </div>
                             <div className="ms-3 d-flex align-items-center gap-2">
