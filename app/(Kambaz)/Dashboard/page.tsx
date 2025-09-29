@@ -15,60 +15,47 @@ export default function Dashboard() {
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
 
-    // State for enrollment view toggle
     const [showAllCourses, setShowAllCourses] = useState(false);
 
-    // Check if user is enrolled in a course
-    const isEnrolled = (courseId: string) => {
-        if (!currentUser) return false;
-        return enrollments.some(
-            (e: any) => e.user === currentUser._id && e.course === courseId
-        );
-    };
+    const isFaculty = (currentUser?.role ?? "").toString().toUpperCase() === "FACULTY";
 
-    // Filter courses based on enrollment and view mode
-    const displayedCourses = showAllCourses || currentUser?.role === "FACULTY"
-        ? courses
-        : courses.filter((c: any) => isEnrolled(c._id));
+    const isEnrolled = (courseId: string) =>
+        !!currentUser &&
+        enrollments.some((e: any) => e.user === currentUser._id && e.course === courseId);
 
-    // Course management handlers
-    const handleAddCourse = () => {
-        dispatch(addCourse());
-    };
+    const displayedCourses =
+        showAllCourses || isFaculty ? courses : courses.filter((c: any) => isEnrolled(c._id));
 
-    const handleDeleteCourse = (courseId: string) => {
-        dispatch(deleteCourse(courseId));
-    };
+    // course CRUD
+    const handleAddCourse = () => dispatch(addCourse());
+    const handleDeleteCourse = (courseId: string) => dispatch(deleteCourse(courseId));
+    const handleUpdateCourse = () => dispatch(updateCourse());
+    const handleSetCourse = (c: any) => dispatch(setCourse(c));
 
-    const handleUpdateCourse = () => {
-        dispatch(updateCourse());
-    };
-
-    const handleSetCourse = (course: any) => {
-        dispatch(setCourse(course));
-    };
-
-    // Enrollment handlers
+    // enrollment
     const handleEnroll = (courseId: string) => {
         if (!currentUser) return;
         dispatch(enrollUser({ userId: currentUser._id, courseId }));
     };
-
     const handleUnenroll = (courseId: string) => {
         if (!currentUser) return;
         dispatch(unenrollUser({ userId: currentUser._id, courseId }));
     };
+
+    // helper to render image path safely whether you store "file.jpg" or "/images/file.jpg"
+    const resolveImg = (img?: string) =>
+        !img ? "/images/course1.jpg" : img.startsWith("/") ? img : `/images/${img}`;
 
     return (
         <div id="wd-dashboard" className="container-fluid">
             <h1 id="wd-dashboard-title" className="mb-0">Dashboard</h1>
             <hr />
 
-            {/* Faculty Course Management Form */}
-            {currentUser?.role === "FACULTY" && (
+            {/* FACULTY: inline editor form that Edit button populates */}
+            {isFaculty && (
                 <>
-                    <h5>
-                        New Course
+                    <h5 className="mb-3">
+                        Edit / New Course
                         <Button
                             className="btn btn-primary float-end"
                             onClick={handleAddCourse}
@@ -84,15 +71,70 @@ export default function Dashboard() {
                             Update
                         </Button>
                     </h5>
-                    <br />
 
+                    <div className="row g-2 mb-2">
+                        <div className="col-lg-6">
+                            <Form.Label className="small">Course Name</Form.Label>
+                            <Form.Control
+                                value={course.name || ""}
+                                onChange={(e) => handleSetCourse({ ...course, name: e.target.value })}
+                            />
+                        </div>
+                        <div className="col-lg-3">
+                            <Form.Label className="small">Number</Form.Label>
+                            <Form.Control
+                                value={course.number || ""}
+                                onChange={(e) => handleSetCourse({ ...course, number: e.target.value })}
+                            />
+                        </div>
+                        <div className="col-lg-3">
+                            <Form.Label className="small">Image (filename or /images/...)</Form.Label>
+                            <Form.Control
+                                value={course.image || ""}
+                                onChange={(e) => handleSetCourse({ ...course, image: e.target.value })}
+                                placeholder="course1.jpg"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="row g-2 mb-2">
+                        <div className="col-lg-3">
+                            <Form.Label className="small">Semester</Form.Label>
+                            <Form.Control
+                                value={course.semester || ""}
+                                onChange={(e) => handleSetCourse({ ...course, semester: e.target.value })}
+                                placeholder="Spring 2025"
+                            />
+                        </div>
+                        <div className="col-lg-3">
+                            <Form.Label className="small">Term</Form.Label>
+                            <Form.Control
+                                value={course.term || ""}
+                                onChange={(e) => handleSetCourse({ ...course, term: e.target.value })}
+                                placeholder="Full Term"
+                            />
+                        </div>
+                        <div className="col-lg-3">
+                            <Form.Label className="small">Start Date</Form.Label>
+                            <Form.Control
+                                type="date"
+                                value={course.startDate || ""}
+                                onChange={(e) => handleSetCourse({ ...course, startDate: e.target.value })}
+                            />
+                        </div>
+                        <div className="col-lg-3">
+                            <Form.Label className="small">End Date</Form.Label>
+                            <Form.Control
+                                type="date"
+                                value={course.endDate || ""}
+                                onChange={(e) => handleSetCourse({ ...course, endDate: e.target.value })}
+                            />
+                        </div>
+                    </div>
+
+                    <Form.Label className="small">Description</Form.Label>
                     <Form.Control
-                        value={course.name}
-                        className="mb-2"
-                        onChange={(e) => handleSetCourse({ ...course, name: e.target.value })}
-                    />
-                    <Form.Control
-                        value={course.description}
+                        value={course.description || ""}
                         as="textarea"
                         rows={3}
                         onChange={(e) => handleSetCourse({ ...course, description: e.target.value })}
@@ -101,12 +143,12 @@ export default function Dashboard() {
                 </>
             )}
 
-            {/* Courses Header with Enrollment Toggle */}
+            {/* header + toggle */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 id="wd-dashboard-published" className="text-muted mb-0">
                     Published Courses ({displayedCourses.length})
                 </h2>
-                {currentUser?.role !== "FACULTY" && (
+                {!isFaculty && (
                     <Button
                         variant="primary"
                         onClick={() => setShowAllCourses(!showAllCourses)}
@@ -118,17 +160,16 @@ export default function Dashboard() {
             </div>
             <hr />
 
-            {/* Courses Grid */}
+            {/* grid */}
             <div id="wd-dashboard-courses" className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
                 {displayedCourses.map((c: any) => {
                     const enrolled = isEnrolled(c._id);
-
                     return (
                         <div className="col wd-dashboard-course" key={c._id} style={{ maxWidth: "300px" }}>
                             <div className="card h-100 shadow-sm border-0 hover-lift position-relative">
                                 <div className="ratio ratio-16x9">
                                     <Image
-                                        src={`/images/${c.image}`}
+                                        src={resolveImg(c.image)}
                                         alt={c.name}
                                         fill
                                         sizes="(max-width: 768px) 100vw, 25vw"
@@ -137,55 +178,52 @@ export default function Dashboard() {
                                 </div>
 
                                 <div className="card-body position-relative" style={{ paddingBottom: "60px" }}>
-                                    <span className="canvas-tile-icon text-secondary">
-                                        <PiNotePencilLight />
-                                    </span>
+                  <span className="canvas-tile-icon text-secondary">
+                    <PiNotePencilLight />
+                  </span>
 
-                                    <h5 className="wd-dashboard-course-title course-title mt-2 mb-1">
-                                        {c.name}
-                                    </h5>
-                                    <div className="text-muted small">
-                                        {c.number}
-                                    </div>
-                                    <div className="text-muted small">
-                                        {c.term} · {c.semester}
-                                    </div>
+                                    <h5 className="wd-dashboard-course-title course-title mt-2 mb-1">{c.name}</h5>
+                                    <div className="text-muted small">{c.number}</div>
+                                    <div className="text-muted small">{c.term || "Full Term"} · {c.semester || ""}</div>
 
-                                    {/* Absolutely positioned button container */}
-                                    <div style={{
-                                        position: 'absolute',
-                                        bottom: '12px',
-                                        left: '20px',
-                                        right: '20px',
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center'
-                                    }}>
-                                        {/* Faculty View */}
-                                        {currentUser?.role === "FACULTY" && (
+                                    {/* fixed button bar */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            bottom: "12px",
+                                            left: "20px",
+                                            right: "20px",
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        {/* faculty */}
+                                        {isFaculty && (
                                             <>
                                                 <div>
                                                     <Button
                                                         id="wd-edit-course-click"
-                                                        onClick={(event) => {
-                                                            event.preventDefault();
-                                                            event.stopPropagation();
-                                                            handleSetCourse(c);
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            handleSetCourse(c); // loads into the top form
+                                                            window.scrollTo({ top: 0, behavior: "smooth" });
                                                         }}
                                                         className="btn btn-warning btn-sm me-1"
-                                                        style={{ position: 'relative', zIndex: 2 }}
+                                                        style={{ position: "relative", zIndex: 2 }}
                                                     >
                                                         Edit
                                                     </Button>
                                                     <Button
-                                                        onClick={(event) => {
-                                                            event.preventDefault();
-                                                            event.stopPropagation();
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
                                                             handleDeleteCourse(c._id);
                                                         }}
                                                         className="btn btn-danger btn-sm"
                                                         id="wd-delete-course-click"
-                                                        style={{ position: 'relative', zIndex: 2 }}
+                                                        style={{ position: "relative", zIndex: 2 }}
                                                     >
                                                         Delete
                                                     </Button>
@@ -193,28 +231,27 @@ export default function Dashboard() {
                                                 <Link
                                                     href={`/Courses/${c._id}/Home`}
                                                     className="btn btn-primary btn-sm"
-                                                    style={{ position: 'relative', zIndex: 2 }}
+                                                    style={{ position: "relative", zIndex: 2 }}
                                                 >
                                                     Go
                                                 </Link>
                                             </>
                                         )}
 
-                                        {/* Non-Faculty View */}
-                                        {currentUser?.role !== "FACULTY" && (
+                                        {/* students */}
+                                        {!isFaculty && (
                                             <>
-                                                {/* Left side - Unenroll button or Enroll button */}
                                                 <div>
                                                     {enrolled && showAllCourses ? (
                                                         <Button
                                                             variant="danger"
                                                             size="sm"
-                                                            onClick={(event) => {
-                                                                event.preventDefault();
-                                                                event.stopPropagation();
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
                                                                 handleUnenroll(c._id);
                                                             }}
-                                                            style={{ position: 'relative', zIndex: 2 }}
+                                                            style={{ position: "relative", zIndex: 2 }}
                                                         >
                                                             Unenroll
                                                         </Button>
@@ -222,40 +259,38 @@ export default function Dashboard() {
                                                         <Button
                                                             variant="success"
                                                             size="sm"
-                                                            onClick={(event) => {
-                                                                event.preventDefault();
-                                                                event.stopPropagation();
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
                                                                 handleEnroll(c._id);
                                                             }}
-                                                            style={{ position: 'relative', zIndex: 2 }}
+                                                            style={{ position: "relative", zIndex: 2 }}
                                                         >
                                                             Enroll
                                                         </Button>
                                                     ) : (
-                                                        <div style={{ width: '60px' }}></div>
+                                                        <div style={{ width: "60px" }} />
                                                     )}
                                                 </div>
 
-                                                {/* Right side - Go button for enrolled courses */}
                                                 <div>
                                                     {enrolled ? (
                                                         <Link
                                                             href={`/Courses/${c._id}/Home`}
                                                             className="btn btn-primary btn-sm"
-                                                            style={{ position: 'relative', zIndex: 2 }}
+                                                            style={{ position: "relative", zIndex: 2 }}
                                                         >
                                                             Go
                                                         </Link>
                                                     ) : (
-                                                        <div style={{ width: '40px' }}></div>
+                                                        <div style={{ width: "40px" }} />
                                                     )}
                                                 </div>
                                             </>
                                         )}
                                     </div>
 
-                                    {/* Stretched link only for enrolled users or faculty - lower z-index */}
-                                    {(enrolled || currentUser?.role === "FACULTY") && (
+                                    {(enrolled || isFaculty) && (
                                         <Link
                                             href={`/Courses/${c._id}/Home`}
                                             className="stretched-link"
