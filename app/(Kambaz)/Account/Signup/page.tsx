@@ -9,7 +9,8 @@ export default function Signup() {
     const [user, setUser] = useState({
         username: "",
         password: "",
-        verifyPassword: ""
+        verifyPassword: "",
+        role: "STUDENT", // default role
     });
     const router = useRouter();
 
@@ -24,7 +25,7 @@ export default function Signup() {
             return;
         }
 
-        // In a real app, you'd save the user to the database here
+        // In a real app, you'd save the user (including role) to the database here
         // For now, just redirect to signin
         router.push("/Account/Signin");
     };
@@ -56,6 +57,19 @@ export default function Signup() {
                 value={user.verifyPassword}
                 onChange={(e) => setUser({ ...user, verifyPassword: e.target.value })}
             />
+
+            {/* Role selector (same style as Profile) */}
+            <Form.Select
+                value={user.role}
+                id="wd-su-role"
+                className="mb-3"
+                onChange={(e) => setUser({ ...user, role: e.target.value })}
+            >
+                <option value="USER">User</option>
+                <option value="ADMIN">Admin</option>
+                <option value="FACULTY">Faculty</option>
+                <option value="STUDENT">Student</option>
+            </Form.Select>
 
             <Button
                 onClick={signup}
