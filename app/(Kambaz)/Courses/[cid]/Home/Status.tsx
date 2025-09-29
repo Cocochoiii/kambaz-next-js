@@ -8,7 +8,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { BiImport } from "react-icons/bi";
 import { LiaFileImportSolid } from "react-icons/lia";
 import { FaHouse, FaBullhorn, FaChartLine, FaBell } from "react-icons/fa6";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 export default function CourseStatus() {
     const { cid } = useParams<{ cid: string }>();
@@ -24,12 +24,18 @@ export default function CourseStatus() {
     const { courses } = useSelector((state: any) => state.coursesReducer);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
 
-    const isFaculty = currentUser?.role === "FACULTY";
+    const role = (currentUser?.role ?? "").toString().toUpperCase();
+    const isFaculty = role === "FACULTY";
+
+    // Hide the entire panel for non-faculty (safety if mounted anywhere)
+    if (!isFaculty) return null;
 
     // Toggle publish status
     const handlePublishToggle = () => {
         setIsPublished(!isPublished);
-        setShowSuccessAlert(isPublished ? "Course unpublished successfully" : "Course published successfully");
+        setShowSuccessAlert(
+            isPublished ? "Course unpublished successfully" : "Course published successfully"
+        );
         setTimeout(() => setShowSuccessAlert(""), 3000);
     };
 
@@ -84,50 +90,47 @@ export default function CourseStatus() {
                     </Alert>
                 )}
 
-                {isFaculty && (
-                    <div className="d-flex mb-3">
-                        <div className="w-50 pe-1">
-                            <Button
-                                variant={isPublished ? "secondary" : "success"}
-                                className="w-100 text-nowrap"
-                                onClick={handlePublishToggle}
-                            >
-                                {isPublished ? (
-                                    <>
-                                        <MdDoNotDisturbAlt className="me-2 fs-5" /> Unpublish
-                                    </>
-                                ) : (
-                                    <>
-                                        <FaCheckCircle className="me-2 fs-5" /> Publish
-                                    </>
-                                )}
-                            </Button>
-                        </div>
-                        <div className="w-50">
-                            <Button
-                                variant={isPublished ? "success" : "secondary"}
-                                className="w-100"
-                                onClick={handlePublishToggle}
-                            >
-                                {isPublished ? (
-                                    <>
-                                        <FaCheckCircle className="me-2 fs-5" /> Published
-                                    </>
-                                ) : (
-                                    <>
-                                        <MdDoNotDisturbAlt className="me-2 fs-5" /> Unpublished
-                                    </>
-                                )}
-                            </Button>
-                        </div>
+                <div className="d-flex mb-3">
+                    <div className="w-50 pe-1">
+                        <Button
+                            variant={isPublished ? "secondary" : "success"}
+                            className="w-100 text-nowrap"
+                            onClick={handlePublishToggle}
+                        >
+                            {isPublished ? (
+                                <>
+                                    <MdDoNotDisturbAlt className="me-2 fs-5" /> Unpublish
+                                </>
+                            ) : (
+                                <>
+                                    <FaCheckCircle className="me-2 fs-5" /> Publish
+                                </>
+                            )}
+                        </Button>
                     </div>
-                )}
+                    <div className="w-50">
+                        <Button
+                            variant={isPublished ? "success" : "secondary"}
+                            className="w-100"
+                            onClick={handlePublishToggle}
+                        >
+                            {isPublished ? (
+                                <>
+                                    <FaCheckCircle className="me-2 fs-5" /> Published
+                                </>
+                            ) : (
+                                <>
+                                    <MdDoNotDisturbAlt className="me-2 fs-5" /> Unpublished
+                                </>
+                            )}
+                        </Button>
+                    </div>
+                </div>
 
                 <Button
                     variant="secondary"
                     className="w-100 mt-1 text-start"
                     onClick={() => setShowImportModal(true)}
-                    disabled={!isFaculty}
                 >
                     <BiImport className="me-2 fs-5" /> Import Existing Content
                 </Button>
@@ -136,7 +139,6 @@ export default function CourseStatus() {
                     variant="secondary"
                     className="w-100 mt-1 text-start"
                     onClick={() => setShowImportModal(true)}
-                    disabled={!isFaculty}
                 >
                     <LiaFileImportSolid className="me-2 fs-5" /> Import from Commons
                 </Button>
@@ -145,7 +147,6 @@ export default function CourseStatus() {
                     variant="secondary"
                     className="w-100 mt-1 text-start"
                     onClick={() => setShowHomePageModal(true)}
-                    disabled={!isFaculty}
                 >
                     <FaHouse className="me-2 fs-5" /> Choose Home Page
                 </Button>
@@ -162,7 +163,6 @@ export default function CourseStatus() {
                     variant="secondary"
                     className="w-100 mt-1 text-start"
                     onClick={() => setShowAnnouncementModal(true)}
-                    disabled={!isFaculty}
                 >
                     <FaBullhorn className="me-2 fs-5" /> New Announcement
                 </Button>
@@ -195,11 +195,13 @@ export default function CourseStatus() {
                             <Form.Label>Select Source Course</Form.Label>
                             <Form.Select>
                                 <option>Select a course...</option>
-                                {courses.filter((c: any) => c._id !== cid).map((course: any) => (
-                                    <option key={course._id} value={course._id}>
-                                        {course.name}
-                                    </option>
-                                ))}
+                                {courses
+                                    .filter((c: any) => c._id !== cid)
+                                    .map((course: any) => (
+                                        <option key={course._id} value={course._id}>
+                                            {course.name}
+                                        </option>
+                                    ))}
                             </Form.Select>
                         </Form.Group>
                         <Form.Group>
@@ -223,7 +225,10 @@ export default function CourseStatus() {
             </Modal>
 
             {/* New Announcement Modal */}
-            <Modal show={showAnnouncementModal} onHide={() => setShowAnnouncementModal(false)}>
+            <Modal
+                show={showAnnouncementModal}
+                onHide={() => setShowAnnouncementModal(false)}
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>New Announcement</Modal.Title>
                 </Modal.Header>
@@ -234,7 +239,9 @@ export default function CourseStatus() {
                             <Form.Control
                                 type="text"
                                 value={announcement.title}
-                                onChange={(e) => setAnnouncement({...announcement, title: e.target.value})}
+                                onChange={(e) =>
+                                    setAnnouncement({ ...announcement, title: e.target.value })
+                                }
                                 placeholder="Enter announcement title"
                             />
                         </Form.Group>
@@ -244,14 +251,19 @@ export default function CourseStatus() {
                                 as="textarea"
                                 rows={4}
                                 value={announcement.content}
-                                onChange={(e) => setAnnouncement({...announcement, content: e.target.value})}
+                                onChange={(e) =>
+                                    setAnnouncement({ ...announcement, content: e.target.value })
+                                }
                                 placeholder="Enter announcement message"
                             />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowAnnouncementModal(false)}>
+                    <Button
+                        variant="secondary"
+                        onClick={() => setShowAnnouncementModal(false)}
+                    >
                         Cancel
                     </Button>
                     <Button variant="primary" onClick={handleCreateAnnouncement}>
@@ -261,7 +273,10 @@ export default function CourseStatus() {
             </Modal>
 
             {/* Choose Home Page Modal */}
-            <Modal show={showHomePageModal} onHide={() => setShowHomePageModal(false)}>
+            <Modal
+                show={showHomePageModal}
+                onHide={() => setShowHomePageModal(false)}
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>Choose Home Page</Modal.Title>
                 </Modal.Header>
@@ -305,7 +320,10 @@ export default function CourseStatus() {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowHomePageModal(false)}>
+                    <Button
+                        variant="secondary"
+                        onClick={() => setShowHomePageModal(false)}
+                    >
                         Cancel
                     </Button>
                     <Button variant="primary" onClick={handleChangeHomePage}>

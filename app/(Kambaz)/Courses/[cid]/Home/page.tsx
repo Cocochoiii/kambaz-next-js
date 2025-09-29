@@ -4,10 +4,9 @@ import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import ListGroup from "react-bootstrap/ListGroup";
 import { BsGripVertical } from "react-icons/bs";
-import { Form, Button } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import ModuleControlButtons from "../Modules/ModuleControlButtons";
 import LessonControlButtons from "../Modules/LessonControlButtons";
-import GreenCheckmark from "../Modules/GreenCheckmark";
 import PublishAllMenu from "../Modules/PublishAllMenu";
 import ModuleEditor from "../Modules/ModuleEditor";
 import Status from "./Status";
@@ -23,47 +22,31 @@ export default function HomePage() {
 
     const course = courses.find((c: any) => c._id === cid);
 
-    // Module name state for the editor
     const [moduleName, setModuleName] = useState("");
     const [showModuleEditor, setShowModuleEditor] = useState(false);
 
-    // Get all modules for this course, but only show first 2 on Home
     const allModules = modules.filter((m: any) => m.course === cid);
     const displayModules = allModules.slice(0, 2);
 
-    // Collapse state management
-    const [collapsed, setCollapsed] = useState<boolean[]>(
-        () => displayModules.map(() => false)
-    );
+    const [collapsed, setCollapsed] = useState<boolean[]>(() => displayModules.map(() => false));
     const allCollapsed = collapsed.every(Boolean);
     const toggleAll = () => setCollapsed(collapsed.map(() => !allCollapsed));
     const toggleOne = (i: number) =>
-        setCollapsed(prev => prev.map((c, idx) => (idx === i ? !c : c)));
+        setCollapsed((prev) => prev.map((c, idx) => (idx === i ? !c : c)));
 
-    // Module management functions
     const handleAddModule = () => {
         dispatch(addModule({ name: moduleName, course: cid }));
         setModuleName("");
         setShowModuleEditor(false);
     };
+    const handleDeleteModule = (moduleId: string) => dispatch(deleteModule(moduleId));
+    const handleEditModule   = (moduleId: string) => dispatch(editModule(moduleId));
+    const handleUpdateModule = (module: any)    => dispatch(updateModule(module));
 
-    const handleDeleteModule = (moduleId: string) => {
-        dispatch(deleteModule(moduleId));
-    };
+    if (!course) return <div>Course not found</div>;
 
-    const handleEditModule = (moduleId: string) => {
-        dispatch(editModule(moduleId));
-    };
-
-    const handleUpdateModule = (module: any) => {
-        dispatch(updateModule(module));
-    };
-
-    if (!course) {
-        return <div>Course not found</div>;
-    }
-
-    const isFaculty = currentUser?.role === "FACULTY";
+    const role = (currentUser?.role ?? "").toString().toUpperCase();
+    const isFaculty = role === "FACULTY";
 
     return (
         <div id="wd-courses-home">
@@ -71,40 +54,34 @@ export default function HomePage() {
             <p className="text-muted mt-1">{course.description}</p>
 
             <div className="d-flex gap-4">
-                {/* Main content column */}
+                {/* Main column */}
                 <div className="flex-fill">
-                    {/* Toolbar matching Modules */}
                     <div className="wd-toolbar btn-toolbar gap-2 my-2">
-                        <button
-                            className="btn btn-secondary"
-                            id="wd-home-collapse-all"
-                            onClick={toggleAll}
-                        >
+                        <button className="btn btn-secondary" id="wd-home-collapse-all" onClick={toggleAll}>
                             {allCollapsed ? "Expand All" : "Collapse All"}
                         </button>
 
-                        <button className="btn btn-secondary" id="wd-home-view-progress">
-                            View Progress
-                        </button>
-
-                        <PublishAllMenu idPrefix="wd-home" label="Publish All" />
-
+                        {/* Faculty-only controls */}
                         {isFaculty && (
-                            <button
-                                className="btn btn-danger"
-                                id="wd-home-new-module"
-                                onClick={() => setShowModuleEditor(true)}
-                            >
-                                + Module
-                            </button>
+                            <>
+                                <button className="btn btn-secondary" id="wd-home-view-progress">
+                                    View Progress
+                                </button>
+                                <PublishAllMenu idPrefix="wd-home" label="Publish All" />
+                                <button
+                                    className="btn btn-danger"
+                                    id="wd-home-new-module"
+                                    onClick={() => setShowModuleEditor(true)}
+                                >
+                                    + Module
+                                </button>
+                            </>
                         )}
                     </div>
 
-                    {/* Modules preview (first 2 modules) */}
                     {displayModules.map((module: any, i: number) => (
                         <ListGroup className="rounded-0 mb-4" key={module._id}>
                             <ListGroup.Item className="p-0 border-gray">
-                                {/* Clickable header */}
                                 <button
                                     className="w-100 text-start border-0 p-0"
                                     onClick={() => toggleOne(i)}
@@ -114,17 +91,13 @@ export default function HomePage() {
                                     <div className="p-3 bg-secondary">
                                         <BsGripVertical className="me-2 wd-grip" />
                                         {!module.editing && module.name}
-                                        {module.editing && (
+                                        {module.editing && isFaculty && (
                                             <Form.Control
                                                 className="w-50 d-inline-block"
                                                 onClick={(e) => e.stopPropagation()}
-                                                onChange={(e) =>
-                                                    handleUpdateModule({ ...module, name: e.target.value })
-                                                }
+                                                onChange={(e) => handleUpdateModule({ ...module, name: e.target.value })}
                                                 onKeyDown={(e) => {
-                                                    if (e.key === "Enter") {
-                                                        handleUpdateModule({ ...module, editing: false });
-                                                    }
+                                                    if (e.key === "Enter") handleUpdateModule({ ...module, editing: false });
                                                 }}
                                                 defaultValue={module.name}
                                             />
@@ -139,15 +112,15 @@ export default function HomePage() {
                                     </div>
                                 </button>
 
-                                {/* Panel */}
                                 <div id={`wd-home-module-panel-${i}`} hidden={collapsed[i]}>
                                     <ListGroup className="wd-lessons rounded-0">
+                                        {/* Learning Objectives row */}
                                         <ListGroup.Item className="wd-lesson p-3 ps-1">
                                             <div className="d-flex align-items-center">
                                                 <BsGripVertical className="me-2 wd-grip" />
-                                                <GreenCheckmark />
                                                 <span className="wd-title ms-2">LEARNING OBJECTIVES</span>
-                                                <LessonControlButtons />
+                                                {/* Faculty-only lesson controls (with checkmark inside) */}
+                                                {isFaculty && <LessonControlButtons />}
                                             </div>
                                             <ul className="mt-2 mb-0">
                                                 {module.lessons && module.lessons.map((lesson: any) => (
@@ -162,13 +135,14 @@ export default function HomePage() {
                     ))}
                 </div>
 
-                {/* Right status column - hidden on smaller screens */}
-                <div id="wd-course-status-col" className="d-none d-xl-block" style={{ width: 340 }}>
-                    <Status />
-                </div>
+                {/* Right status column — FACULTY ONLY */}
+                {isFaculty && (
+                    <div id="wd-course-status-col" className="d-none d-xl-block" style={{ width: 340 }}>
+                        <Status />
+                    </div>
+                )}
             </div>
 
-            {/* Module Editor Dialog */}
             <ModuleEditor
                 show={showModuleEditor}
                 handleClose={() => setShowModuleEditor(false)}
