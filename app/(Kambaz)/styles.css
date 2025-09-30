@@ -78,6 +78,22 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
 #wd-dashboard-title{ font-size: var(--wd-font-h1); font-weight:700; }
 #wd-dashboard-published{ letter-spacing:.2px; }
 
+/* Dashboard card icon buttons - hover effects */
+.dashboard-icon-btn {
+  color: #6c757d;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.dashboard-icon-btn:hover,
+.dashboard-icon-btn:focus {
+  color: #dc3545 !important;
+}
+
+.dashboard-icon-btn:active {
+  color: #dc3545 !important;
+}
+
 /* Card look close to Canvas */
 .wd-course-card{
   border-radius: .75rem;
@@ -93,7 +109,7 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
   pointer-events:none;
 }
 .wd-card-title{
-  font-size: 1rem;           /* ~16px */
+  font-size: 1rem;
   font-weight: 700;
   line-height: 1.2;
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
@@ -103,28 +119,13 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* Keep the “Go” button fixed at bottom-right of card */
-.card .btn-go{ position:absolute; right:12px; bottom:12px; z-index:2; }
-
-/* Slightly lighter hover than default (already have .hover-lift) */
+/* Slightly lighter hover than default */
 .wd-course-card:hover{ box-shadow: 0 10px 28px rgba(0,0,0,.10); }
 
 /* tighten gutters on very wide screens so more cards fit like Canvas */
 @media (min-width: 1600px){
   #wd-dashboard .row.g-4{ --bs-gutter-x:1.25rem; --bs-gutter-y:1.25rem; }
 }
-
-.canvas-tile-icon {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
-  font-size: 20px;
-  line-height: 1;
-  opacity: .85;
-}
-
-.card .card-body { padding-bottom: 3rem; }
-.card .btn-go { position: absolute; right: 12px; bottom: 12px; z-index: 2; }
 
 /* Account screens – Canvas-like spacing */
 #wd-account h1 { font-size: 24px; font-weight: 600; }
@@ -154,7 +155,7 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
 /* Body: 6 weeks x 7 cols */
 .wd-cal-body {
   grid-template-columns: repeat(7, 1fr);
-  grid-auto-rows: 140px;          /* day-cell height */
+  grid-auto-rows: 140px;
   border: 1px solid #e5e7eb;
   background: #fff;
 }
@@ -167,7 +168,7 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
   border-top: 1px solid #e5e7eb;
   overflow: hidden;
 }
-.wd-cal-cell:nth-child(7n) { border-right: none; } /* last column */
+.wd-cal-cell:nth-child(7n) { border-right: none; }
 
 /* Day number */
 .wd-cal-date {
@@ -219,3 +220,10 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
 /* Link polish */
 #wd-calendar .btn-link { color: #2563eb; text-decoration: none; }
 #wd-calendar .btn-link:hover { text-decoration: underline; }
+
+/* List group active state for course navigation */
+.list-group.wd > .list-group-item.active {
+  color: black;
+  background-color: white;
+  border-left: 3px solid black !important;
+}

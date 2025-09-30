@@ -3,11 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { PiNotePencilLight } from "react-icons/pi";
 import { Form, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { addCourse, deleteCourse, updateCourse, setCourse } from "../Courses/reducer";
 import { enrollUser, unenrollUser } from "../Database/reducer";
+import {
+    FaBullhorn,
+    FaRegEdit,
+    FaRegCommentDots,
+    FaRegFolder
+} from "react-icons/fa";
 
 export default function Dashboard() {
     const dispatch = useDispatch();
@@ -42,7 +47,7 @@ export default function Dashboard() {
         dispatch(unenrollUser({ userId: currentUser._id, courseId }));
     };
 
-    // helper to render image path safely whether you store "file.jpg" or "/images/file.jpg"
+    // helper to render image path safely
     const resolveImg = (img?: string) =>
         !img ? "/images/course1.jpg" : img.startsWith("/") ? img : `/images/${img}`;
 
@@ -51,7 +56,7 @@ export default function Dashboard() {
             <h1 id="wd-dashboard-title" className="mb-0">Dashboard</h1>
             <hr />
 
-            {/* FACULTY: inline editor form that Edit button populates */}
+            {/* FACULTY: inline editor form */}
             {isFaculty && (
                 <>
                     <h5 className="mb-3">
@@ -160,13 +165,13 @@ export default function Dashboard() {
             </div>
             <hr />
 
-            {/* grid */}
+            {/* Course cards grid */}
             <div id="wd-dashboard-courses" className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
                 {displayedCourses.map((c: any) => {
                     const enrolled = isEnrolled(c._id);
                     return (
                         <div className="col wd-dashboard-course" key={c._id} style={{ maxWidth: "300px" }}>
-                            <div className="card h-100 shadow-sm border-0 hover-lift position-relative">
+                            <div className="card h-100 shadow-sm border-0 hover-lift d-flex flex-column">
                                 <div className="ratio ratio-16x9">
                                     <Image
                                         src={resolveImg(c.image)}
@@ -177,20 +182,16 @@ export default function Dashboard() {
                                     />
                                 </div>
 
-                                <div className="card-body position-relative" style={{ paddingBottom: "60px" }}>
-                  <span className="canvas-tile-icon text-secondary">
-                    <PiNotePencilLight />
-                  </span>
-
+                                <div className="card-body flex-grow-1 d-flex flex-column position-relative pb-5">
                                     <h5 className="wd-dashboard-course-title course-title mt-2 mb-1">{c.name}</h5>
                                     <div className="text-muted small">{c.number}</div>
                                     <div className="text-muted small">{c.term || "Full Term"} · {c.semester || ""}</div>
 
-                                    {/* fixed button bar */}
+                                    {/* Button bar for faculty/students */}
                                     <div
                                         style={{
                                             position: "absolute",
-                                            bottom: "12px",
+                                            bottom: "10px",
                                             left: "20px",
                                             right: "20px",
                                             display: "flex",
@@ -198,7 +199,7 @@ export default function Dashboard() {
                                             alignItems: "center",
                                         }}
                                     >
-                                        {/* faculty */}
+                                        {/* Faculty controls */}
                                         {isFaculty && (
                                             <>
                                                 <div>
@@ -207,7 +208,7 @@ export default function Dashboard() {
                                                         onClick={(e) => {
                                                             e.preventDefault();
                                                             e.stopPropagation();
-                                                            handleSetCourse(c); // loads into the top form
+                                                            handleSetCourse(c);
                                                             window.scrollTo({ top: 0, behavior: "smooth" });
                                                         }}
                                                         className="btn btn-warning btn-sm me-1"
@@ -238,7 +239,7 @@ export default function Dashboard() {
                                             </>
                                         )}
 
-                                        {/* students */}
+                                        {/* Student controls */}
                                         {!isFaculty && (
                                             <>
                                                 <div>
@@ -298,6 +299,34 @@ export default function Dashboard() {
                                             style={{ zIndex: 1 }}
                                         />
                                     )}
+                                </div>
+
+                                {/* Icon buttons at bottom */}
+                                <div className="d-flex justify-content-around align-items-center py-2 px-3 border-top mt-auto">
+                                    <Link
+                                        href={`/Courses/${c._id}/Announcements`}
+                                        className="btn p-0 border-0 bg-transparent dashboard-icon-btn"
+                                    >
+                                        <FaBullhorn size={18} />
+                                    </Link>
+                                    <Link
+                                        href={`/Courses/${c._id}/Quizzes`}
+                                        className="btn p-0 border-0 bg-transparent dashboard-icon-btn"
+                                    >
+                                        <FaRegEdit size={18} />
+                                    </Link>
+                                    <Link
+                                        href={`/Courses/${c._id}/Zoom`}
+                                        className="btn p-0 border-0 bg-transparent dashboard-icon-btn"
+                                    >
+                                        <FaRegCommentDots size={18} />
+                                    </Link>
+                                    <Link
+                                        href={`/Courses/${c._id}/Assignments`}
+                                        className="btn p-0 border-0 bg-transparent dashboard-icon-btn"
+                                    >
+                                        <FaRegFolder size={18} />
+                                    </Link>
                                 </div>
                             </div>
                         </div>

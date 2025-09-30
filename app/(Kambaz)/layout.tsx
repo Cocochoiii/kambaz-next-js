@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import store from "./store";
 import ProtectedRoute from "./Account/ProtectedRoute";
 import { usePathname } from "next/navigation";
+import "./styles.css";
 
 function KambazContent({ children }: { children: ReactNode }) {
     const pathname = usePathname();

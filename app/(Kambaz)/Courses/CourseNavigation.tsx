@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 export default function CourseNavigation({ cid }: { cid: string }) {
     const pathname = usePathname();
 
-    const links = ["Home", "Modules", "Piazza", "Zoom", "Assignments", "Quizzes", "Grades", "People"];
+    const links = ["Home", "Modules", "Announcements", "Piazza", "Zoom", "Assignments", "Quizzes", "Grades", "People"];
 
     const isActive = (section: string) => {
         const currentPath = pathname.split('/').pop();
