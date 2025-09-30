@@ -227,3 +227,271 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
   background-color: white;
   border-left: 3px solid black !important;
 }
+
+/* Canvas-Style Grades Page */
+
+#wd-grades {
+  background-color: #fff;
+  padding: 20px;
+  min-height: calc(100vh - 100px);
+  font-family: "Lato Extended", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#wd-grades h2 {
+  color: #2D3B45;
+  font-weight: 300;
+  font-size: 2rem;
+}
+
+/* Canvas Filter Bar */
+#wd-grades .bg-light {
+  background-color: #F5F5F5 !important;
+  border: 1px solid #C7CDD1;
+}
+
+#wd-grades .form-label {
+  color: #2D3B45;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+#wd-grades .form-select {
+  border: 1px solid #C7CDD1;
+  border-radius: 4px;
+  font-size: 14px;
+  padding: 8px 12px;
+  background-color: white;
+}
+
+#wd-grades .form-select:focus {
+  border-color: #0374B5;
+  box-shadow: 0 0 0 3px rgba(3, 116, 181, 0.1);
+}
+
+/* Canvas Buttons */
+#wd-grades .btn {
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 8px 14px;
+  transition: all 0.2s ease;
+}
+
+#wd-grades .btn-danger {
+  background-color: #D01A19;
+  border-color: #D01A19;
+  color: white;
+}
+
+#wd-grades .btn-danger:hover {
+  background-color: #B71C1C;
+  border-color: #B71C1C;
+}
+
+#wd-grades .btn-success {
+  background-color: #00AC18;
+  border-color: #00AC18;
+}
+
+#wd-grades .btn-success:hover {
+  background-color: #008a13;
+  border-color: #008a13;
+}
+
+#wd-grades .btn-primary {
+  background-color: #0374B5;
+  border-color: #0374B5;
+}
+
+#wd-grades .btn-primary:hover {
+  background-color: #0061a0;
+  border-color: #0061a0;
+}
+
+#wd-grades .btn-outline-secondary {
+  background-color: white;
+  border: 1px solid #C7CDD1;
+  color: #2D3B45;
+}
+
+#wd-grades .btn-outline-secondary:hover {
+  background-color: #F5F5F5;
+  border-color: #8B969E;
+  color: #2D3B45;
+}
+
+/* Canvas Table Styles */
+#wd-grades .table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+#wd-grades .table thead {
+  background-color: #F5F5F5;
+  border-bottom: 2px solid #C7CDD1;
+}
+
+#wd-grades .table th {
+  font-weight: 600;
+  color: #2D3B45;
+  font-size: 14px;
+  padding: 10px 8px;
+  border-bottom: 2px solid #C7CDD1;
+}
+
+#wd-grades .table td {
+  padding: 10px 8px;
+  font-size: 14px;
+  vertical-align: middle;
+  border-bottom: 1px solid #E1E3E5;
+}
+
+#wd-grades .table tbody tr:hover {
+  background-color: #F8F8F8;
+}
+
+/* Canvas Links */
+#wd-grades a.text-primary {
+  color: #0374B5 !important;
+  font-weight: 600;
+}
+
+#wd-grades a.text-primary:hover {
+  color: #0061a0 !important;
+  text-decoration: underline;
+}
+
+/* Progress Bars */
+#wd-grades .progress {
+  background-color: #E9ECEF;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#wd-grades .progress-bar {
+  background-color: #0374B5;
+  transition: width 0.3s ease;
+}
+
+/* Grade Status Dot */
+#wd-grades .bg-primary.rounded-circle {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+/* Grade Summary Box */
+#wd-grades .border.rounded {
+  border: 1px solid #C7CDD1 !important;
+  border-radius: 4px !important;
+}
+
+#wd-grades .border.rounded h4 {
+  color: #2D3B45;
+  font-weight: 600;
+}
+
+#wd-grades .border.rounded h6 {
+  color: #2D3B45;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Faculty Grade Table */
+#wd-grades .table-bordered {
+  border: 1px solid #C7CDD1;
+}
+
+#wd-grades .table-bordered th,
+#wd-grades .table-bordered td {
+  border: 1px solid #E1E3E5;
+}
+
+#wd-grades .grade-cell:hover {
+  background-color: #E8F4FD;
+  cursor: pointer;
+}
+
+#wd-grades .sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Canvas Colors for Scores */
+#wd-grades .text-success {
+  color: #00AC18 !important;
+}
+
+#wd-grades .text-warning {
+  color: #FC5E13 !important;
+}
+
+#wd-grades .text-danger {
+  color: #D01A19 !important;
+}
+
+#wd-grades .text-muted {
+  color: #6C757D !important;
+}
+
+/* Canvas Style Score Display */
+#wd-grades strong {
+  font-weight: 600;
+  color: #2D3B45;
+}
+
+/* Three Dots Menu */
+#wd-grades .BsThreeDots {
+  cursor: pointer;
+}
+
+#wd-grades .BsThreeDots:hover {
+  color: #0374B5 !important;
+}
+
+/* What-If Scores Button */
+#wd-grades .btn-outline-secondary.text-start {
+  text-align: left !important;
+  font-size: 14px;
+  padding: 10px 12px;
+}
+
+/* Grade Weights Table */
+#wd-grades .table-sm {
+  font-size: 13px;
+}
+
+#wd-grades .table-sm th {
+  font-weight: 600;
+  color: #2D3B45;
+  padding: 6px 8px;
+  border-bottom: 1px solid #C7CDD1;
+}
+
+#wd-grades .table-sm td {
+  padding: 6px 8px;
+  color: #2D3B45;
+}
+
+/* Total Row Styling */
+#wd-grades h4 {
+  color: #2D3B45;
+  font-weight: 400;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #wd-grades .table {
+    font-size: 12px;
+  }
+
+  #wd-grades .btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  #wd-grades h2 {
+    font-size: 1.5rem;
+  }
+}
