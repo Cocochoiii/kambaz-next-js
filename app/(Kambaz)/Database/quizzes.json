@@ -1,0 +1,512 @@
+[
+  {
+    "_id": "Q5610-01",
+    "course": "5610",
+    "title": "Learning Activity: HTML & Semantic Markup",
+    "status": "Closed",
+    "dueDate": "Jan 15 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5610-02",
+    "course": "5610",
+    "title": "Learning Activity: CSS Flexbox & Grid",
+    "status": "Closed",
+    "dueDate": "Jan 22 at 11:59pm",
+    "points": 12,
+    "questions": 10
+  },
+  {
+    "_id": "Q5610-03",
+    "course": "5610",
+    "title": "Learning Activity: JavaScript DOM Manipulation",
+    "status": "Closed",
+    "dueDate": "Jan 29 at 11:59pm",
+    "points": 11,
+    "questions": 10
+  },
+  {
+    "_id": "Q5610-04",
+    "course": "5610",
+    "title": "Learning Activity: React Components & Props",
+    "status": "Closed",
+    "dueDate": "Feb 5 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5610-05",
+    "course": "5610",
+    "title": "Learning Activity: State Management & Hooks",
+    "status": "Closed",
+    "dueDate": "Feb 12 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5610-06",
+    "course": "5610",
+    "title": "Learning Activity: REST APIs & Fetch",
+    "status": "Open",
+    "dueDate": "Feb 19 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5610-07",
+    "course": "5610",
+    "title": "Midterm Exam",
+    "status": "Closed",
+    "dueDate": "Feb 26 at 9:30pm",
+    "points": 67,
+    "questions": 0
+  },
+  {
+    "_id": "Q5610-08",
+    "course": "5610",
+    "title": "Learning Activity: MongoDB & NoSQL",
+    "status": "Open",
+    "dueDate": "Mar 5 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+
+  {
+    "_id": "Q5520-01",
+    "course": "5520",
+    "title": "Learning Activity: Mobile UI Basics",
+    "status": "Closed",
+    "dueDate": "Jan 12 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5520-02",
+    "course": "5520",
+    "title": "Learning Activity: Navigation & Routing",
+    "status": "Closed",
+    "dueDate": "Jan 19 at 11:59pm",
+    "points": 12,
+    "questions": 10
+  },
+  {
+    "_id": "Q5520-03",
+    "course": "5520",
+    "title": "Learning Activity: State Management",
+    "status": "Closed",
+    "dueDate": "Jan 26 at 11:59pm",
+    "points": 11,
+    "questions": 10
+  },
+  {
+    "_id": "Q5520-04",
+    "course": "5520",
+    "title": "Learning Activity: Networking & API Integration",
+    "status": "Closed",
+    "dueDate": "Feb 2 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5520-05",
+    "course": "5520",
+    "title": "Learning Activity: Local Storage & Persistence",
+    "status": "Closed",
+    "dueDate": "Feb 9 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5520-06",
+    "course": "5520",
+    "title": "Learning Activity: Device APIs & Sensors",
+    "status": "Open",
+    "dueDate": "Feb 16 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5520-07",
+    "course": "5520",
+    "title": "Learning Activity: Push Notifications",
+    "status": "Open",
+    "dueDate": "Feb 23 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5520-08",
+    "course": "5520",
+    "title": "Final Project Presentation",
+    "status": "Open",
+    "dueDate": "Mar 2 at 11:59pm",
+    "points": 50,
+    "questions": 0
+  },
+
+  {
+    "_id": "Q5004-01",
+    "course": "5004",
+    "title": "Learning Activity: Classes & Objects",
+    "status": "Closed",
+    "dueDate": "Jan 14 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5004-02",
+    "course": "5004",
+    "title": "Learning Activity: Inheritance & Polymorphism",
+    "status": "Closed",
+    "dueDate": "Jan 21 at 11:59pm",
+    "points": 12,
+    "questions": 10
+  },
+  {
+    "_id": "Q5004-03",
+    "course": "5004",
+    "title": "Learning Activity: SOLID Principles",
+    "status": "Closed",
+    "dueDate": "Jan 28 at 11:59pm",
+    "points": 11,
+    "questions": 10
+  },
+  {
+    "_id": "Q5004-04",
+    "course": "5004",
+    "title": "Learning Activity: Design Patterns - Creational",
+    "status": "Closed",
+    "dueDate": "Feb 4 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5004-05",
+    "course": "5004",
+    "title": "Learning Activity: Design Patterns - Structural",
+    "status": "Closed",
+    "dueDate": "Feb 11 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5004-06",
+    "course": "5004",
+    "title": "Learning Activity: Design Patterns - Behavioral",
+    "status": "Open",
+    "dueDate": "Feb 18 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5004-07",
+    "course": "5004",
+    "title": "Learning Activity: UML Diagrams",
+    "status": "Open",
+    "dueDate": "Feb 25 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5004-08",
+    "course": "5004",
+    "title": "Midterm Exam",
+    "status": "Closed",
+    "dueDate": "Mar 4 at 9:30pm",
+    "points": 75,
+    "questions": 0
+  },
+
+  {
+    "_id": "Q5200-01",
+    "course": "5200",
+    "title": "Learning Activity: Relational Model & SQL Basics",
+    "status": "Closed",
+    "dueDate": "Jan 13 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5200-02",
+    "course": "5200",
+    "title": "Learning Activity: Joins & Subqueries",
+    "status": "Closed",
+    "dueDate": "Jan 20 at 11:59pm",
+    "points": 12,
+    "questions": 10
+  },
+  {
+    "_id": "Q5200-03",
+    "course": "5200",
+    "title": "Learning Activity: Normalization & ER Diagrams",
+    "status": "Closed",
+    "dueDate": "Jan 27 at 11:59pm",
+    "points": 11,
+    "questions": 10
+  },
+  {
+    "_id": "Q5200-04",
+    "course": "5200",
+    "title": "Learning Activity: Indexes & Query Optimization",
+    "status": "Closed",
+    "dueDate": "Feb 3 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5200-05",
+    "course": "5200",
+    "title": "Learning Activity: Transactions & ACID",
+    "status": "Closed",
+    "dueDate": "Feb 10 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5200-06",
+    "course": "5200",
+    "title": "Learning Activity: Stored Procedures & Triggers",
+    "status": "Open",
+    "dueDate": "Feb 17 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5200-07",
+    "course": "5200",
+    "title": "Learning Activity: NoSQL & MongoDB",
+    "status": "Open",
+    "dueDate": "Feb 24 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5200-08",
+    "course": "5200",
+    "title": "Database Design Project",
+    "status": "Open",
+    "dueDate": "Mar 3 at 11:59pm",
+    "points": 60,
+    "questions": 0
+  },
+
+  {
+    "_id": "Q5800-01",
+    "course": "5800",
+    "title": "Learning Activity: Big O Notation & Analysis",
+    "status": "Closed",
+    "dueDate": "Jan 16 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5800-02",
+    "course": "5800",
+    "title": "Learning Activity: Sorting Algorithms",
+    "status": "Closed",
+    "dueDate": "Jan 23 at 11:59pm",
+    "points": 12,
+    "questions": 10
+  },
+  {
+    "_id": "Q5800-03",
+    "course": "5800",
+    "title": "Learning Activity: Trees & Heaps",
+    "status": "Closed",
+    "dueDate": "Jan 30 at 11:59pm",
+    "points": 11,
+    "questions": 10
+  },
+  {
+    "_id": "Q5800-04",
+    "course": "5800",
+    "title": "Learning Activity: Graphs & Traversals",
+    "status": "Closed",
+    "dueDate": "Feb 6 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5800-05",
+    "course": "5800",
+    "title": "Learning Activity: Dynamic Programming",
+    "status": "Closed",
+    "dueDate": "Feb 13 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5800-06",
+    "course": "5800",
+    "title": "Learning Activity: Greedy Algorithms",
+    "status": "Open",
+    "dueDate": "Feb 20 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5800-07",
+    "course": "5800",
+    "title": "Learning Activity: Divide & Conquer",
+    "status": "Open",
+    "dueDate": "Feb 27 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5800-08",
+    "course": "5800",
+    "title": "Midterm Exam",
+    "status": "Closed",
+    "dueDate": "Mar 6 at 9:30pm",
+    "points": 80,
+    "questions": 0
+  },
+
+  {
+    "_id": "Q6620-01",
+    "course": "6620",
+    "title": "Learning Activity: Cloud Computing Basics",
+    "status": "Closed",
+    "dueDate": "Jan 11 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6620-02",
+    "course": "6620",
+    "title": "Learning Activity: Virtualization & Containers",
+    "status": "Closed",
+    "dueDate": "Jan 18 at 11:59pm",
+    "points": 12,
+    "questions": 10
+  },
+  {
+    "_id": "Q6620-03",
+    "course": "6620",
+    "title": "Learning Activity: Docker & Kubernetes",
+    "status": "Closed",
+    "dueDate": "Jan 25 at 11:59pm",
+    "points": 11,
+    "questions": 10
+  },
+  {
+    "_id": "Q6620-04",
+    "course": "6620",
+    "title": "Learning Activity: AWS Services",
+    "status": "Closed",
+    "dueDate": "Feb 1 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6620-05",
+    "course": "6620",
+    "title": "Learning Activity: Serverless Architecture",
+    "status": "Closed",
+    "dueDate": "Feb 8 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6620-06",
+    "course": "6620",
+    "title": "Learning Activity: Cloud Security",
+    "status": "Open",
+    "dueDate": "Feb 15 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6620-07",
+    "course": "6620",
+    "title": "Learning Activity: CI/CD Pipelines",
+    "status": "Open",
+    "dueDate": "Feb 22 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6620-08",
+    "course": "6620",
+    "title": "Cloud Architecture Project",
+    "status": "Open",
+    "dueDate": "Mar 1 at 11:59pm",
+    "points": 70,
+    "questions": 0
+  },
+
+  {
+    "_id": "Q6510-01",
+    "course": "6510",
+    "title": "Learning Activity: Agile Methodologies",
+    "status": "Closed",
+    "dueDate": "Jan 17 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6510-02",
+    "course": "6510",
+    "title": "Learning Activity: Software Architecture",
+    "status": "Closed",
+    "dueDate": "Jan 24 at 11:59pm",
+    "points": 12,
+    "questions": 10
+  },
+  {
+    "_id": "Q6510-03",
+    "course": "6510",
+    "title": "Learning Activity: Microservices",
+    "status": "Closed",
+    "dueDate": "Jan 31 at 11:59pm",
+    "points": 11,
+    "questions": 10
+  },
+  {
+    "_id": "Q6510-04",
+    "course": "6510",
+    "title": "Learning Activity: Testing Strategies",
+    "status": "Closed",
+    "dueDate": "Feb 7 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6510-05",
+    "course": "6510",
+    "title": "Learning Activity: Code Quality & Reviews",
+    "status": "Closed",
+    "dueDate": "Feb 14 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6510-06",
+    "course": "6510",
+    "title": "Learning Activity: DevOps Practices",
+    "status": "Open",
+    "dueDate": "Feb 21 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6510-07",
+    "course": "6510",
+    "title": "Learning Activity: Performance Optimization",
+    "status": "Open",
+    "dueDate": "Feb 28 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6510-08",
+    "course": "6510",
+    "title": "Team Project Presentation",
+    "status": "Open",
+    "dueDate": "Mar 7 at 11:59pm",
+    "points": 65,
+    "questions": 0
+  }
+]
