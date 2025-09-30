@@ -126,6 +126,22 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
 .card .card-body { padding-bottom: 3rem; }
 .card .btn-go { position: absolute; right: 12px; bottom: 12px; z-index: 2; }
 
+/* Dashboard card icon buttons - hover effects */
+.dashboard-icon-btn {
+  color: #6c757d;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.dashboard-icon-btn:hover,
+.dashboard-icon-btn:focus {
+  color: #dc3545 !important;
+}
+
+.dashboard-icon-btn:active {
+  color: #dc3545 !important;
+}
+
 /* Account screens – Canvas-like spacing */
 #wd-account h1 { font-size: 24px; font-weight: 600; }
 #wd-signin-screen h2,
