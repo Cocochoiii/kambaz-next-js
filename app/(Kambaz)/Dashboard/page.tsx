@@ -1,6 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { PiNotePencilLight } from "react-icons/pi";
+import {
+    FaBullhorn,
+    FaRegEdit,
+    FaRegCommentDots,
+    FaRegFolder
+} from "react-icons/fa";
 
 const courses = [
     { id: "5610", title: "CS5610 Web Development", tag: "Full Stack Web", img: "course1.jpg" },
@@ -15,48 +20,59 @@ const courses = [
 export default function Dashboard() {
     return (
         <div id="wd-dashboard" className="container-fluid">
-            <div className="d-flex align-items-end justify-content-between mb-2">
-                <h1 className="mb-0">Dashboard</h1>
-            </div>
-            <p className="text-muted mb-4">Published Courses ({courses.length})</p>
+            <h1 id="wd-dashboard-title" className="display-4 mb-0">Dashboard</h1>
+            <hr className="mb-4" />
+            <h2 id="wd-dashboard-published" className="mb-4">Published Courses ({courses.length})</h2>
 
-            {/* four */}
-            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            <div id="wd-dashboard-courses" className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
                 {courses.map((c) => (
-                    <div className="col" key={c.id}>
-                        <div className="card h-100 shadow-sm border-0 hover-lift position-relative">
-                            {/* ratio */}
-                            <div className="ratio ratio-16x9">
-                                <Image
-                                    src={`/images/${c.img}`}
-                                    alt={c.title}
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, 25vw"
-                                    style={{ objectFit: "cover" }}
-                                />
-                            </div>
+                    <div className="col wd-dashboard-course" key={c.id} style={{ width: "300px" }}>
+                        <div className="card h-100 shadow-sm border-0 d-flex flex-column">
+                            <Link href={`/Courses/${c.id}/Home`} className="wd-dashboard-course-link text-decoration-none text-dark flex-grow-1 d-flex flex-column">
+                                <div className="ratio ratio-16x9">
+                                    <Image
+                                        src={`/images/${c.img}`}
+                                        alt={c.title}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, 25vw"
+                                        style={{ objectFit: "cover" }}
+                                    />
+                                </div>
 
-                            <div className="card-body">
-                                {/* Icon */}
-                                <span className="canvas-tile-icon text-secondary" title="Course card icon">
-                  <PiNotePencilLight />
-                </span>
+                                <div className="card-body d-flex flex-column flex-grow-1 position-relative pb-5">
+                                    <h5 className="wd-dashboard-course-title course-title line-clamp-2 mt-2 mb-1">
+                                        {c.title}
+                                    </h5>
+                                    <div className="wd-dashboard-course-description text-muted small line-clamp-2">
+                                        {c.tag}
+                                    </div>
 
-                                <h5 className="course-title line-clamp-2 mt-2 mb-1">{c.title}</h5>
-                                <div className="text-muted small line-clamp-2">{c.tag}</div>
-
-                                {/* Click the whole cards */}
-                                <Link
-                                    href={`/Courses/${c.id}/Home`}
-                                    className="stretched-link"
-                                    aria-label={`Open ${c.title}`}
-                                />
-                            </div>
-
-                            {/*Go */}
-                            <Link href={`/Courses/${c.id}/Home`} className="btn btn-primary btn-sm btn-go">
-                                Go
+                                    {/* Go button positioned at bottom right */}
+                                    <Link
+                                        href={`/Courses/${c.id}/Home`}
+                                        className="btn btn-primary btn-sm position-absolute"
+                                        style={{ bottom: '10px', right: '30px' }}
+                                    >
+                                        Go
+                                    </Link>
+                                </div>
                             </Link>
+
+                            {/* Four icon buttons - always at bottom */}
+                            <div className="d-flex justify-content-around align-items-center py-2 px-3 border-top mt-auto">
+                                <button className="btn p-0 border-0 bg-transparent dashboard-icon-btn">
+                                    <FaBullhorn size={18} />
+                                </button>
+                                <button className="btn p-0 border-0 bg-transparent dashboard-icon-btn">
+                                    <FaRegEdit size={18} />
+                                </button>
+                                <button className="btn p-0 border-0 bg-transparent dashboard-icon-btn">
+                                    <FaRegCommentDots size={18} />
+                                </button>
+                                <button className="btn p-0 border-0 bg-transparent dashboard-icon-btn">
+                                    <FaRegFolder size={18} />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}
