@@ -1,0 +1,261 @@
+/* Account Pages - Clean Minimal Style */
+
+/* Container for signin/signup pages */
+
+
+/* White box containing the form */
+.account-box {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 420px;
+}
+
+.account-box-signup {
+    max-width: 480px;
+}
+
+/* Title styling */
+.account-title {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #2D3B45;
+    letter-spacing: -0.5px;
+}
+
+/* Form container */
+.account-form {
+    width: 100%;
+}
+
+/* Floating label group */
+.form-floating-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+/* Input fields with floating labels */
+.account-input {
+    width: 100%;
+    padding: 12px 0 8px 0;
+    font-size: 16px;
+    color: #2D3B45;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #e0e0e0;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.account-input:focus {
+    border-bottom-color: #0374B5;
+}
+
+/* Floating label */
+.account-label {
+    position: absolute;
+    top: 12px;
+    left: 0;
+    font-size: 16px;
+    color: #9e9e9e;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Move label up when input is focused or has value */
+.account-input:focus ~ .account-label,
+.account-input:not(:placeholder-shown) ~ .account-label,
+.account-input:not([value=""]) ~ .account-label,
+.account-select ~ .account-label {
+    top: -8px;
+    font-size: 12px;
+    color: #0374B5;
+}
+
+/* Select dropdown styling */
+.account-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0 center;
+    background-size: 16px 12px;
+    padding-right: 24px;
+}
+
+/* Primary button (Sign In / Sign Up) */
+.account-btn-primary {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #D01A19 0%, #b51614 100%);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.account-btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(208, 26, 25, 0.3);
+    background: linear-gradient(135deg, #b51614 0%, #9e1311 100%);
+}
+
+.account-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Secondary button (Sign Out) */
+.account-btn-secondary {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2D3B45;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.account-btn-secondary:hover {
+    background: #f5f5f5;
+    border-color: #c7cdd1;
+}
+
+/* Link container */
+.account-link-container {
+    text-align: center;
+    margin-top: 25px;
+}
+
+/* Link styling */
+.account-link {
+    color: #0374B5;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.account-link:hover {
+    color: #025a8f;
+    text-decoration: underline;
+}
+
+/* Error message */
+.account-error {
+    background: #fff5f5;
+    border-left: 3px solid #D01A19;
+    color: #D01A19;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Profile page specific styles */
+.account-form-container {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 30px 0;
+}
+
+.account-header {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2D3B45;
+    margin-bottom: 30px;
+}
+
+/* Date input specific styling */
+input[type="date"].account-input {
+    cursor: pointer;
+}
+
+input[type="date"].account-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+input[type="date"].account-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .account-box {
+        padding: 40px 30px;
+    }
+
+    .account-title {
+        font-size: 24px;
+    }
+
+    .account-header {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-box {
+        padding: 35px 25px;
+        border-radius: 8px;
+    }
+
+    .account-input,
+    .account-label {
+        font-size: 14px;
+    }
+
+    .account-btn-primary,
+    .account-btn-secondary {
+        font-size: 14px;
+        padding: 12px;
+    }
+}
+
+/* Animation for form appearance */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.account-box {
+    animation: slideUp 0.4s ease-out;
+}
+
+/* Focus styles for better accessibility */
+.account-input:focus {
+    outline: none;
+    border-bottom-color: #0374B5;
+    box-shadow: 0 2px 0 0 #0374B5;
+}
+
+/* Ensure form controls don't have Bootstrap default styles interfering */
+.account-form .form-control,
+.account-form .form-select {
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.account-form .form-control:focus,
+.account-form .form-select:focus {
+    box-shadow: none;
+    border-color: transparent;
+}

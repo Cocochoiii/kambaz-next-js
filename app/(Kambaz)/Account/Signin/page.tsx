@@ -8,14 +8,20 @@ import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 
 const axiosWithCredentials = axios.create({ withCredentials: true });
-const API = "/api"; // ✅
+const API = "/api";
 
 export default function Signin() {
     const [credentials, setCredentials] = useState<any>({});
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
     const dispatch = useDispatch();
     const router = useRouter();
 
-    const signin = async () => {
+    const signin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+
         try {
             const { data } = await axiosWithCredentials.post(
                 `${API}/users/signin`,
@@ -25,35 +31,71 @@ export default function Signin() {
             router.push("/Dashboard");
         } catch (err: any) {
             console.error(err);
-            alert(err.response?.data?.message || "Invalid username or password");
+            setError(err.response?.data?.message || "Invalid username or password");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div id="wd-signin-screen" className="mx-auto" style={{ maxWidth: 420 }}>
-            <h1>Sign in</h1>
-            <Form.Control
-                value={credentials.username || ""}
-                onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                className="mb-2"
-                placeholder="username"
-                id="wd-username"
-                autoFocus
-            />
-            <Form.Control
-                value={credentials.password || ""}
-                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                className="mb-2"
-                placeholder="password"
-                type="password"
-                id="wd-password"
-            />
-            <Button onClick={signin} id="wd-signin-btn" className="w-100 btn-primary">
-                Sign in
-            </Button>
-            <Link id="wd-signup-link" href="/Account/Signup">
-                Sign up
-            </Link>
+        <div id="wd-signin-screen" className="account-container">
+            <div className="account-box">
+                <h1 className="account-title">Northeastern University</h1>
+
+                <form onSubmit={signin} className="account-form">
+                    <div className="form-floating-group">
+                        <input
+                            value={credentials.username || ""}
+                            onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                            className="account-input"
+                            placeholder=" "
+                            id="wd-username"
+                            type="text"
+                            required
+                            autoFocus
+                        />
+                        <label className="account-label" htmlFor="wd-username">
+                            myNortheastern Username
+                        </label>
+                    </div>
+
+                    <div className="form-floating-group">
+                        <input
+                            value={credentials.password || ""}
+                            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                            className="account-input"
+                            placeholder=" "
+                            type="password"
+                            id="wd-password"
+                            required
+                        />
+                        <label className="account-label" htmlFor="wd-password">
+                            myNortheastern Password
+                        </label>
+                    </div>
+
+                    {error && (
+                        <div className="account-error">
+                            {error}
+                        </div>
+                    )}
+
+                    <Button
+                        type="submit"
+                        id="wd-signin-btn"
+                        className="account-btn-primary"
+                        disabled={loading}
+                    >
+                        {loading ? "Signing in..." : "Log In"}
+                    </Button>
+
+                    <div className="account-link-container">
+                        <Link id="wd-signup-link" href="/Account/Signup" className="account-link">
+                            Don't have an account? Sign up
+                        </Link>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }

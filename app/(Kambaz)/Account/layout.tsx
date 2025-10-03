@@ -6,6 +6,7 @@ import AccountNavigation from "./Navigation";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "./reducer";
+import "./account-styles.css";
 
 const axiosWithCredentials = axios.create({ withCredentials: true });
 const API = "/api"; // ✅ always relative (goes through Next proxy)
