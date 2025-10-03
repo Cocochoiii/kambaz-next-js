@@ -1,8 +1,5 @@
-// app/(Kambaz)/Courses/[cid]/Grades/reducer.ts
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// Define interfaces
 export interface Grade {
     _id: string;
     student: string;
@@ -11,7 +8,7 @@ export interface Grade {
     score: number | null;
     submitted: string | null;
     released: boolean;
-    type: string;
+    type: string; // e.g. "assignment" | "quiz" | "exam"
 }
 
 export interface GradeCategory {
@@ -41,185 +38,134 @@ export interface GradeStatistics {
         standardDeviation: number;
         min: number;
         max: number;
-        quartiles: {
-            Q1: number;
-            Q2: number;
-            Q3: number;
-        };
+        quartiles: { Q1: number; Q2: number; Q3: number };
     };
     gradeDistribution: Record<string, number>;
     categoryAverages: Record<string, number>;
-    trends: {
-        improving: number;
-        stable: number;
-        declining: number;
-    };
+    trends: { improving: number; stable: number; declining: number };
 }
 
-interface GradesState {
+type GradesState = {
     grades: Grade[];
     gradeCategories: CourseGradeConfig[];
     gradeStatistics: GradeStatistics[];
-}
-
-// Import data - use dynamic imports to avoid circular dependencies
-const getInitialData = () => {
-    try {
-        const db = require("@/app/Database");
-        return {
-            grades: db.grades || [],
-            gradeCategories: db.gradeCategories || [],
-            gradeStatistics: db.gradeStatistics || []
-        };
-    } catch {
-        return {
-            grades: [],
-            gradeCategories: [],
-            gradeStatistics: []
-        };
-    }
 };
 
-const initialData = getInitialData();
-
 const initialState: GradesState = {
-    grades: initialData.grades as Grade[],
-    gradeCategories: initialData.gradeCategories as CourseGradeConfig[],
-    gradeStatistics: initialData.gradeStatistics as GradeStatistics[]
+    grades: [],
+    gradeCategories: [],
+    gradeStatistics: [],
 };
 
 const gradesSlice = createSlice({
     name: "grades",
     initialState,
     reducers: {
-        // Set initial grades data
         setGrades: (state, action: PayloadAction<Grade[]>) => {
             state.grades = action.payload;
         },
 
-        // Update a single grade score
-        updateGrade: (state, action: PayloadAction<{
-            studentId: string;
-            assignmentId: string;
-            courseId: string;
-            score: number;
-            submitted: string;
-        }>) => {
+        updateGrade: (
+            state,
+            action: PayloadAction<{
+                studentId: string;
+                assignmentId: string;
+                courseId: string;
+                score: number;
+                submitted: string;
+            }>
+        ) => {
             const { studentId, assignmentId, courseId, score, submitted } = action.payload;
-
-            const existingGradeIndex = state.grades.findIndex(g =>
-                g.student === studentId &&
-                g.assignment === assignmentId &&
-                g.course === courseId
+            const idx = state.grades.findIndex(
+                (g) =>
+                    g.student === studentId && g.assignment === assignmentId && g.course === courseId
             );
-
-            if (existingGradeIndex !== -1) {
-                state.grades[existingGradeIndex].score = score;
-                state.grades[existingGradeIndex].submitted = submitted;
+            if (idx !== -1) {
+                state.grades[idx].score = score;
+                state.grades[idx].submitted = submitted;
             } else {
                 const newGrade: Grade = {
-                    _id: `G${Date.now()}`,
+                    _id: `G${Date.now()}${Math.random().toString(36).slice(2, 8)}`,
                     student: studentId,
                     assignment: assignmentId,
                     course: courseId,
-                    score: score,
-                    submitted: submitted,
+                    score,
+                    submitted,
                     released: false,
-                    type: "assignment"
+                    type: "assignment",
                 };
                 state.grades.push(newGrade);
             }
         },
 
-        // Release all grades for a course
         releaseGrades: (state, action: PayloadAction<string>) => {
             const courseId = action.payload;
-            state.grades = state.grades.map(grade => {
-                if (grade.course === courseId) {
-                    return { ...grade, released: true };
-                }
-                return grade;
-            });
+            state.grades = state.grades.map((g) =>
+                g.course === courseId ? { ...g, released: true } : g
+            );
         },
 
-        // Toggle grade release status for a single grade
         toggleGradeRelease: (state, action: PayloadAction<string>) => {
-            const gradeIndex = state.grades.findIndex(g => g._id === action.payload);
-            if (gradeIndex !== -1) {
-                state.grades[gradeIndex].released = !state.grades[gradeIndex].released;
-            }
+            const idx = state.grades.findIndex((g) => g._id === action.payload);
+            if (idx !== -1) state.grades[idx].released = !state.grades[idx].released;
         },
 
-        // Add a new grade
         addGrade: (state, action: PayloadAction<Grade>) => {
             state.grades.push(action.payload);
         },
 
-        // Delete a grade
         deleteGrade: (state, action: PayloadAction<string>) => {
-            state.grades = state.grades.filter(g => g._id !== action.payload);
+            state.grades = state.grades.filter((g) => g._id !== action.payload);
         },
 
-        // Update grade submission status
-        updateGradeStatus: (state, action: PayloadAction<{
-            studentId: string;
-            assignmentId: string;
-            courseId: string;
-            submitted: string | null;
-        }>) => {
+        updateGradeStatus: (
+            state,
+            action: PayloadAction<{
+                studentId: string;
+                assignmentId: string;
+                courseId: string;
+                submitted: string | null;
+            }>
+        ) => {
             const { studentId, assignmentId, courseId, submitted } = action.payload;
-            const gradeIndex = state.grades.findIndex(g =>
-                g.student === studentId &&
-                g.assignment === assignmentId &&
-                g.course === courseId
+            const idx = state.grades.findIndex(
+                (g) =>
+                    g.student === studentId && g.assignment === assignmentId && g.course === courseId
             );
-
-            if (gradeIndex !== -1) {
-                state.grades[gradeIndex].submitted = submitted;
-            }
+            if (idx !== -1) state.grades[idx].submitted = submitted;
         },
 
-        // Set grade categories
         setGradeCategories: (state, action: PayloadAction<CourseGradeConfig[]>) => {
             state.gradeCategories = action.payload;
         },
 
-        // Update category weights for a course
         updateCategoryWeights: (
             state,
             action: PayloadAction<{ course: string; categories: GradeCategory[] }>
         ) => {
-            const configIndex = state.gradeCategories.findIndex(
-                config => config.course === action.payload.course
+            const i = state.gradeCategories.findIndex(
+                (c) => c.course === action.payload.course
             );
-            if (configIndex !== -1) {
-                state.gradeCategories[configIndex].categories = action.payload.categories;
-            }
+            if (i !== -1) state.gradeCategories[i].categories = action.payload.categories;
         },
 
-        // Set grade statistics
         setGradeStatistics: (state, action: PayloadAction<GradeStatistics[]>) => {
             state.gradeStatistics = action.payload;
         },
 
-        // Batch update multiple grades
         updateMultipleGrades: (state, action: PayloadAction<Grade[]>) => {
-            action.payload.forEach(updatedGrade => {
-                const index = state.grades.findIndex(g => g._id === updatedGrade._id);
-                if (index !== -1) {
-                    state.grades[index] = updatedGrade;
-                }
+            action.payload.forEach((u) => {
+                const i = state.grades.findIndex((g) => g._id === u._id);
+                if (i !== -1) state.grades[i] = u;
             });
         },
 
-        // Reset grades to initial state
         resetGrades: (state) => {
-            const data = getInitialData();
-            state.grades = data.grades as Grade[];
-            state.gradeCategories = data.gradeCategories as CourseGradeConfig[];
-            state.gradeStatistics = data.gradeStatistics as GradeStatistics[];
-        }
-    }
+            state.grades = [];
+            state.gradeCategories = [];
+            state.gradeStatistics = [];
+        },
+    },
 });
 
 export const {
@@ -234,7 +180,7 @@ export const {
     updateCategoryWeights,
     setGradeStatistics,
     updateMultipleGrades,
-    resetGrades
+    resetGrades,
 } = gradesSlice.actions;
 
 export default gradesSlice.reducer;
