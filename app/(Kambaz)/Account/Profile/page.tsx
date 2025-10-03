@@ -1,10 +1,13 @@
 "use client";
-
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
 import { Form, Button } from "react-bootstrap";
+import axios from "axios";
+
+const axiosWithCredentials = axios.create({ withCredentials: true });
+const API = "/api"; // ✅
 
 export default function Profile() {
     const [profile, setProfile] = useState<any>({});
@@ -12,31 +15,40 @@ export default function Profile() {
     const router = useRouter();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
 
-    const fetchProfile = () => {
+    useEffect(() => {
         if (!currentUser) {
             router.push("/Account/Signin");
             return;
         }
         setProfile(currentUser);
+    }, [currentUser, router]);
+
+    const updateProfile = async () => {
+        try {
+            const { data } = await axiosWithCredentials.put(
+                `${API}/users/${profile._id}`,
+                profile
+            );
+            dispatch(setCurrentUser(data));
+            alert("Profile updated successfully!");
+        } catch (err) {
+            console.error(err);
+            alert("Error updating profile");
+        }
     };
 
-    const updateProfile = () => {
-        // Update the currentUser in Redux with the edited profile
-        dispatch(setCurrentUser(profile));
-        // ➜ After saving, go to Dashboard so the UI reflects the role immediately
-        router.push("/Dashboard");
+    const signout = async () => {
+        try {
+            await axiosWithCredentials.post(`${API}/users/signout`);
+            dispatch(setCurrentUser(null));
+            router.push("/Account/Signin");
+        } catch (err) {
+            console.error(err);
+            dispatch(setCurrentUser(null));
+            router.push("/Account/Signin");
+        }
     };
 
-    const signout = () => {
-        dispatch(setCurrentUser(null));
-        router.push("/Account/Signin");
-    };
-
-    useEffect(() => {
-        fetchProfile();
-    }, [currentUser]);
-
-    // If no profile data yet, show loading or redirect
     if (!profile || !profile.username) {
         return <div>Loading...</div>;
     }
@@ -101,32 +113,19 @@ export default function Profile() {
                     value={profile.role || "USER"}
                     id="wd-role"
                     className="mb-3"
-                    onChange={(e) => {
-                        const updatedProfile = { ...profile, role: e.target.value };
-                        setProfile(updatedProfile);
-                        // Immediately update Redux when role changes
-                        dispatch(setCurrentUser(updatedProfile));
-                    }}
+                    onChange={(e) => setProfile({ ...profile, role: e.target.value })}
                 >
-                    <option value="USER">User</option>
-                    <option value="ADMIN">Admin</option>
-                    <option value="FACULTY">Faculty</option>
                     <option value="STUDENT">Student</option>
+                    <option value="FACULTY">Faculty</option>
+                    <option value="ADMIN">Admin</option>
+                    <option value="USER">User</option>
                 </Form.Select>
 
-                <Button
-                    onClick={updateProfile}
-                    className="w-100 btn-primary mb-2"
-                    id="wd-update-profile-btn"
-                >
+                <Button onClick={updateProfile} className="w-100 btn-primary mb-2" id="wd-update-profile-btn">
                     Update Profile
                 </Button>
 
-                <Button
-                    onClick={signout}
-                    className="w-100 btn-danger"
-                    id="wd-signout-btn"
-                >
+                <Button onClick={signout} className="w-100 btn-danger" id="wd-signout-btn">
                     Sign out
                 </Button>
             </Form>

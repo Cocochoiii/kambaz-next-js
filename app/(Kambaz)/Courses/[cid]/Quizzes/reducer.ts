@@ -1,44 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { quizzes } from "../../../Database";
-import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-    quizzes: quizzes,
+    quizzes: [] as any[],
 };
 
-const quizzesSlice = createSlice({
+const slice = createSlice({
     name: "quizzes",
     initialState,
     reducers: {
-        addQuiz: (state, { payload: quiz }) => {
-            const newQuiz: any = {
-                _id: uuidv4(),
-                title: quiz.title,
-                course: quiz.course,
-                status: quiz.status || "Open",
-                dueDate: quiz.dueDate,
-                points: quiz.points || 0,
-                questions: quiz.questions || 0,
-                timeLimit: quiz.timeLimit || 20,
-                attempts: quiz.attempts || 1,
-                description: quiz.description || "",
-                availableFrom: quiz.availableFrom,
-                availableUntil: quiz.availableUntil,
-            };
-            state.quizzes = [...state.quizzes, newQuiz] as any;
+        setQuizzes: (state, { payload }) => {
+            state.quizzes = payload;
         },
-        deleteQuiz: (state, { payload: quizId }) => {
-            state.quizzes = state.quizzes.filter(
-                (q: any) => q._id !== quizId
-            );
+        addQuizLocal: (state, { payload }) => {
+            state.quizzes.push(payload);
         },
-        updateQuiz: (state, { payload: quiz }) => {
-            state.quizzes = state.quizzes.map((q: any) =>
-                q._id === quiz._id ? quiz : q
-            ) as any;
+        updateQuizLocal: (state, { payload }) => {
+            state.quizzes = state.quizzes.map((q) => (q._id === payload._id ? payload : q));
+        },
+        deleteQuizLocal: (state, { payload: id }) => {
+            state.quizzes = state.quizzes.filter((q) => q._id !== id);
         },
     },
 });
 
-export const { addQuiz, deleteQuiz, updateQuiz } = quizzesSlice.actions;
-export default quizzesSlice.reducer;
+export const { setQuizzes, addQuizLocal, updateQuizLocal, deleteQuizLocal } = slice.actions;
+export default slice.reducer;

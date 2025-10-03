@@ -32,9 +32,18 @@
     "**/*.ts",
     "**/*.tsx",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src", "src/vite-env.d.ts"
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+
+  "types": ["vite/client"],
+  "jsx": "react-jsx",
+  "strict": true,
+  "skipLibCheck": true,
+
+
 }
+
