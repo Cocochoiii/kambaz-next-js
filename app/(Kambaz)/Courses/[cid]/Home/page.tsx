@@ -12,6 +12,7 @@ import ModuleEditor from "../Modules/ModuleEditor";
 import Status from "./Status";
 import { useSelector, useDispatch } from "react-redux";
 import { addModule, deleteModule, updateModule, editModule } from "../Modules/reducer";
+import "./home.css";
 
 export default function HomePage() {
     const { cid } = useParams<{ cid: string }>();

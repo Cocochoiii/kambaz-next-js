@@ -10,6 +10,7 @@ import ModuleControlButtons from "./ModuleControlButtons";
 import ModulesControls from "./ModulesControls";
 import { useSelector, useDispatch } from "react-redux";
 import { addModule, deleteModule, updateModule, editModule } from "./reducer";
+import "./modules.css";
 
 export default function ModulesPage() {
     const { cid } = useParams<{ cid: string }>();

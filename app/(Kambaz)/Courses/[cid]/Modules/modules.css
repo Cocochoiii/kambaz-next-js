@@ -1,0 +1,52 @@
+/* ===== Modules-only styles ===== */
+
+/* Toolbar sizing to match your global look */
+#wd-modules-toolbar .btn {
+    font-size: .92rem;
+    padding: .45rem .7rem;
+    border-radius: .4rem;
+}
+
+/* Make Publish All green (including dropdown toggle) */
+#wd-modules-toolbar .btn-primary,
+#wd-modules-toolbar .dropdown-toggle.btn-primary {
+    background-color: #157347 !important;
+    border-color: #157347 !important;
+    color: #fff !important;
+}
+#wd-modules-toolbar .btn-primary:hover,
+#wd-modules-toolbar .dropdown-toggle.btn-primary:hover {
+    background-color: #157347 !important;
+    border-color: #157347 !important;
+}
+
+/* Ensure + Module stays red (Canvas-like red you’ve been using) */
+#wd-modules-toolbar .btn-danger {
+    background-color: #c8102e !important;
+    border-color: #c8102e !important;
+    color: #fff !important;
+}
+#wd-modules-toolbar .btn-danger:hover {
+    background-color: #a60d24 !important;
+    border-color: #a60d24 !important;
+}
+
+/* Module & lesson rows (scoped here so you can tweak independently) */
+.wd-module .wd-title { font-size: 15.5px; font-weight: 600; }
+.wd-lesson {
+    border-left: 3px solid #198754 !important;
+    min-height: 44px;
+    padding: .8rem .5rem !important;
+}
+.wd-lesson .wd-title { font-weight: 600; }
+
+/* Icon sizing helpers */
+.wd-grip { font-size: 1.15rem; vertical-align: -2px; }
+.wd-icon-md { font-size: 1.15rem; }
+
+/* The gray header strip you use on module rows */
+.bg-secondary { --bs-secondary-rgb: 199,205,209; }
+
+/* Keep list borders tidy like your global style */
+.list-group-item { --bs-list-group-border-color: #b8b8b8; }
+.border-gray { border: 1px solid #b8b8b8 !important; }
