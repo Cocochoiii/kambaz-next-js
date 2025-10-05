@@ -8,6 +8,7 @@ import announcementsReducer from "./Courses/[cid]/Announcements/reducer";
 import quizzesReducer from "./Courses/[cid]/Quizzes/reducer";
 import gradesReducer from "./Courses/[cid]/Grades/reducer";
 import zoomReducer from "./Courses/[cid]/Zoom/reducer";
+import pazzaReducer from "./Courses/[cid]/Piazza/pazzaReducer";
 
 
 const store = configureStore({
@@ -21,6 +22,7 @@ const store = configureStore({
         quizzesReducer,
         gradesReducer,
         zoomReducer,
+        pazza: pazzaReducer
     },
 });
 

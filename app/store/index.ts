@@ -5,6 +5,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import accountReducer from "../(Kambaz)/Account/reducer";
 import modulesReducer from "../(Kambaz)/Courses/[cid]/Modules/reducer";
 import assignmentsReducer from "../(Kambaz)/Courses/[cid]/Assignments/reducer";
+import pazzaReducer from "../(Kambaz)/Courses/[cid]/Piazza/pazzaReducer";
 
 // Lab 4 reducers
 import helloReducer from "../Labs/Lab4/ReduxExamples/HelloRedux/helloReducer";
@@ -22,6 +23,7 @@ const store = configureStore({
         counterReducer,
         addReducer,
         todosReducer,
+        pazzaReducer,
     },
 });
 
