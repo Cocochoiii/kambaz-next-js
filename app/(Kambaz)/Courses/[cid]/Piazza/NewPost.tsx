@@ -27,7 +27,6 @@ export default function NewPost({ courseId, folders = [], onCancel, onSuccess }:
     const [details, setDetails] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-    // Get course enrollments for individual posting
     const courseEnrollments = enrollments.filter((e: any) => e.course === courseId);
 
     const handleFolderToggle = (folderName: string) => {
@@ -49,22 +48,11 @@ export default function NewPost({ courseId, folders = [], onCancel, onSuccess }:
     const handleSubmit = async () => {
         const newErrors: { [key: string]: string } = {};
 
-        // Validate required fields
-        if (!summary.trim()) {
-            newErrors.summary = "Summary is required";
-        }
-        if (summary.length > 100) {
-            newErrors.summary = "Summary must be 100 characters or less";
-        }
-        if (!details.trim() || details === "<p><br></p>") {
-            newErrors.details = "Details are required";
-        }
-        if (selectedFolders.length === 0) {
-            newErrors.folders = "At least one folder must be selected";
-        }
-        if (postTo === "individual" && visibleTo.length === 0) {
-            newErrors.visibleTo = "At least one recipient must be selected";
-        }
+        if (!summary.trim()) newErrors.summary = "Summary is required";
+        if (summary.length > 100) newErrors.summary = "Summary must be 100 characters or less";
+        if (!details.trim() || details === "<p><br></p>") newErrors.details = "Details are required";
+        if (selectedFolders.length === 0) newErrors.folders = "At least one folder must be selected";
+        if (postTo === "individual" && visibleTo.length === 0) newErrors.visibleTo = "At least one recipient must be selected";
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
@@ -99,7 +87,6 @@ export default function NewPost({ courseId, folders = [], onCancel, onSuccess }:
         ]
     };
 
-    // Ensure folders is an array
     const foldersArray = Array.isArray(folders) ? folders : [];
 
     return (

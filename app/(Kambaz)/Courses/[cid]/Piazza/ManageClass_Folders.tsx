@@ -1,167 +1,293 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "next/navigation";
-import { Row, Col, Card, Form, Button, ListGroup, Alert, Badge } from "react-bootstrap";
+import {
+    Row,
+    Col,
+    Card,
+    Form,
+    Button,
+    ListGroup,
+    Alert,
+    Badge,
+} from "react-bootstrap";
 import { FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
-import { addFolder, updateFolder, deleteFolder } from "./pazzaReducer";
+import {
+    addFolder,
+    updateFolder,
+    deleteFolder,
+    fetchFolders,
+} from "./pazzaReducer";
+
+/**
+ * Manage Folders Screen (MFS)
+ * - Title: "Configure Class Folders"
+ * - Default folders shown/seeded if empty (once per course)
+ * - Add one folder at a time
+ * - Edit flow: Edit -> (Save | Cancel)
+ * - Delete: single + bulk delete selected
+ * - Immediate refresh/persist after each operation
+ * - No subfolders / no disable / no numbered suffix (not required)
+ */
+const DEFAULTS = [
+    "hw1",
+    "hw2",
+    "hw3",
+    "hw4",
+    "hw5",
+    "hw6",
+    "project",
+    "exam",
+    "logistics",
+    "other",
+    "office_hours",
+];
 
 const ManageFoldersScreen: React.FC = () => {
     const params = useParams();
     const cid = params?.cid as string;
+
     const dispatch = useDispatch<any>();
-    const courseData = useSelector((state: any) => state.pazza?.courseData?.[cid] || {});
+    const courseData = useSelector(
+        (s: any) => s.pazza?.courseData?.[cid] || {}
+    );
     const folders = courseData.folders || [];
+    const [didSeed, setDidSeed] = useState(false);
 
     const [newFolderName, setNewFolderName] = useState("");
     const [editingFolder, setEditingFolder] = useState<string | null>(null);
     const [editingName, setEditingName] = useState("");
-    const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
+    const [selected, setSelected] = useState<string[]>([]);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    const handleAddFolder = async () => {
-        if (!newFolderName.trim()) return setError("Folder name cannot be empty");
-        if (folders.some((f: any) => f.name.toLowerCase() === newFolderName.toLowerCase())) {
-            return setError("A folder with this name already exists");
+    // Load
+    useEffect(() => {
+        if (cid) dispatch(fetchFolders(cid));
+    }, [cid, dispatch]);
+
+    // Seed defaults ONCE if no folders exist for this course
+    useEffect(() => {
+        if (!cid || didSeed) return;
+        if (folders.length === 0) {
+            (async () => {
+                for (const name of DEFAULTS) {
+                    await dispatch(addFolder({ courseId: cid, name }));
+                }
+                await dispatch(fetchFolders(cid));
+                setDidSeed(true);
+            })();
+        }
+    }, [cid, folders.length, didSeed, dispatch]);
+
+    const existingNamesLower = useMemo(
+        () => new Set(folders.map((f: any) => (f.name || "").toLowerCase())),
+        [folders]
+    );
+
+    const handleAdd = async () => {
+        const name = newFolderName.trim();
+        if (!name) return setError("Folder name cannot be empty.");
+        if (existingNamesLower.has(name.toLowerCase())) {
+            return setError("A folder with this name already exists.");
         }
         try {
-            await dispatch(addFolder({ courseId: cid, name: newFolderName }));
+            await dispatch(addFolder({ courseId: cid, name }));
+            await dispatch(fetchFolders(cid));
             setNewFolderName("");
-            setSuccess("Folder added successfully!");
             setError("");
-            setTimeout(() => setSuccess(""), 3000);
+            setSuccess("Folder added.");
+            setTimeout(() => setSuccess(""), 1500);
         } catch {
-            setError("Failed to add folder. Please try again.");
+            setError("Failed to add folder.");
         }
     };
 
-    const handleEditStart = (folder: any) => {
-        setEditingFolder(folder._id);
-        setEditingName(folder.name);
+    const startEdit = (f: any) => {
+        setEditingFolder(f._id);
+        setEditingName(f.name);
     };
 
-    const handleEditSave = async () => {
-        if (!editingFolder || !editingName.trim()) return setError("Folder name cannot be empty");
+    const saveEdit = async () => {
+        const name = editingName.trim();
+        if (!editingFolder || !name) return setError("Folder name cannot be empty.");
         try {
-            await dispatch(updateFolder({ courseId: cid, folderId: editingFolder, name: editingName }));
+            await dispatch(
+                updateFolder({ courseId: cid, folderId: editingFolder, name })
+            );
+            await dispatch(fetchFolders(cid));
             setEditingFolder(null);
             setEditingName("");
-            setSuccess("Folder updated successfully!");
             setError("");
-            setTimeout(() => setSuccess(""), 3000);
+            setSuccess("Folder updated.");
+            setTimeout(() => setSuccess(""), 1500);
         } catch {
-            setError("Failed to update folder. Please try again.");
+            setError("Failed to update folder.");
         }
     };
 
-    const handleEditCancel = () => {
+    const cancelEdit = () => {
         setEditingFolder(null);
         setEditingName("");
     };
 
-    const handleDeleteFolder = async (folderId: string) => {
-        if (!confirm("Are you sure you want to delete this folder?")) return;
+    const toggleSelected = (id: string) =>
+        setSelected((prev) =>
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+        );
+
+    const removeOne = async (id: string) => {
+        const f = folders.find((x: any) => x._id === id);
+        if (!f) return;
+        if (f.isDefault) return setError("Default folders cannot be deleted.");
+        if (!confirm(`Delete folder "${f.name}"?`)) return;
         try {
-            await dispatch(deleteFolder({ courseId: cid, folderId }));
-            setSuccess("Folder deleted successfully!");
-            setError("");
-            setTimeout(() => setSuccess(""), 3000);
+            await dispatch(deleteFolder({ courseId: cid, folderId: id }));
+            await dispatch(fetchFolders(cid));
+            setSuccess("Folder deleted.");
+            setTimeout(() => setSuccess(""), 1500);
         } catch {
-            setError("Failed to delete folder. Please try again.");
+            setError("Failed to delete folder.");
         }
     };
 
-    const handleDeleteSelectedFolders = async () => {
-        if (selectedFolders.length === 0) return setError("Please select folders to delete");
-        if (!confirm(`Are you sure you want to delete ${selectedFolders.length} folder(s)?`)) return;
+    const removeSelected = async () => {
+        if (selected.length === 0)
+            return setError("Select folders to delete first.");
+        if (!confirm(`Delete ${selected.length} selected folder(s)?`)) return;
         try {
-            await Promise.all(selectedFolders.map((id) => dispatch(deleteFolder({ courseId: cid, folderId: id }))));
-            setSelectedFolders([]);
-            setSuccess("Folders deleted successfully!");
-            setError("");
-            setTimeout(() => setSuccess(""), 3000);
+            for (const id of selected) {
+                const f = folders.find((x: any) => x._id === id);
+                if (f && !f.isDefault) {
+                    await dispatch(deleteFolder({ courseId: cid, folderId: id }));
+                }
+            }
+            await dispatch(fetchFolders(cid));
+            setSelected([]);
+            setSuccess("Selected folders deleted.");
+            setTimeout(() => setSuccess(""), 1500);
         } catch {
-            setError("Failed to delete folders. Please try again.");
+            setError("Failed to delete selected folders.");
         }
-    };
-
-    const handleFolderSelect = (folderId: string) => {
-        setSelectedFolders((prev) => (prev.includes(folderId) ? prev.filter((id) => id !== folderId) : [...prev, folderId]));
     };
 
     return (
         <Row>
             <Col md={8}>
-                <Card>
-                    <Card.Header><h5 className="mb-0">Configure Class Folders</h5></Card.Header>
+                <Card className="shadow-sm">
+                    <Card.Header>
+                        <h5 className="mb-0">Configure Class Folders</h5>
+                    </Card.Header>
                     <Card.Body>
-                        <Alert variant="info" className="small">
-                            Folders help you keep your class organized. When someone adds a new post, they’ll be required to choose one or more folders.
-                        </Alert>
+                        {error && (
+                            <Alert variant="danger" dismissible onClose={() => setError("")}>
+                                {error}
+                            </Alert>
+                        )}
+                        {success && (
+                            <Alert
+                                variant="success"
+                                dismissible
+                                onClose={() => setSuccess("")}
+                            >
+                                {success}
+                            </Alert>
+                        )}
 
-                        {error && <Alert variant="danger" dismissible onClose={() => setError("")}>{error}</Alert>}
-                        {success && <Alert variant="success" dismissible onClose={() => setSuccess("")}>{success}</Alert>}
-
+                        {/* Add new folder */}
                         <div className="mb-3">
                             <h6>Create new folders:</h6>
-                            <p className="text-muted small">Add folders relevant to your class. “numbered” creates hw1–hw# (disabled here).</p>
+                            <p className="text-muted small mb-2">
+                                Add a folder relevant to your class. (Numbered sets &amp;
+                                subfolders are not required.)
+                            </p>
                             <Form.Group>
                                 <div className="d-flex gap-2">
                                     <Form.Control
                                         type="text"
-                                        placeholder="Add a folder..."
+                                        placeholder="Add a folder…"
                                         value={newFolderName}
                                         onChange={(e) => setNewFolderName(e.target.value)}
+                                        onKeyDown={(e) => e.key === "Enter" && handleAdd()}
                                     />
-                                    <Button onClick={handleAddFolder}>Add Folder</Button>
+                                    <Button onClick={handleAdd}>Add Folder</Button>
                                 </div>
                             </Form.Group>
                         </div>
 
-                        <div>
-                            <h6>Manage folders:</h6>
-                            <p className="text-muted small">
-                                Reorder, delete, edit names, or create subfolders (max two levels).
+                        {/* Manage list */}
+                        <div className="mb-2">
+                            <h6 className="mb-2">Manage folders:</h6>
+                            <p className="text-muted small mb-2">
+                                Select to delete, or click <strong>Edit</strong> to rename.
                             </p>
 
                             <ListGroup className="mb-3">
-                                {folders.map((folder: any) => (
-                                    <ListGroup.Item key={folder._id} className="d-flex justify-content-between align-items-center">
+                                {folders.map((f: any) => (
+                                    <ListGroup.Item
+                                        key={f._id}
+                                        className="d-flex justify-content-between align-items-center"
+                                    >
                                         <div className="d-flex align-items-center gap-2">
                                             <Form.Check
                                                 type="checkbox"
-                                                checked={selectedFolders.includes(folder._id)}
-                                                onChange={() => handleFolderSelect(folder._id)}
+                                                checked={selected.includes(f._id)}
+                                                disabled={f.isDefault}
+                                                onChange={() => toggleSelected(f._id)}
                                             />
-                                            {editingFolder === folder._id ? (
+                                            {editingFolder === f._id ? (
                                                 <>
                                                     <Form.Control
                                                         type="text"
                                                         value={editingName}
                                                         onChange={(e) => setEditingName(e.target.value)}
                                                         size="sm"
-                                                        style={{ width: 220 }}
+                                                        style={{ width: 240 }}
+                                                        onKeyDown={(e) => e.key === "Enter" && saveEdit()}
                                                     />
-                                                    <Button size="sm" variant="success" onClick={handleEditSave}><FaCheck /></Button>
-                                                    <Button size="sm" variant="secondary" onClick={handleEditCancel}><FaTimes /></Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="success"
+                                                        onClick={saveEdit}
+                                                        title="Save"
+                                                    >
+                                                        <FaCheck />
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="secondary"
+                                                        onClick={cancelEdit}
+                                                        title="Cancel"
+                                                    >
+                                                        <FaTimes />
+                                                    </Button>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <span>{folder.name}</span>
-                                                    {folder.isDefault && <Badge bg="secondary">Default</Badge>}
+                                                    <span>{f.name}</span>
+                                                    {f.isDefault && <Badge bg="secondary">Default</Badge>}
                                                 </>
                                             )}
                                         </div>
 
-                                        {editingFolder !== folder._id && (
-                                            <div>
-                                                <Button size="sm" variant="link" onClick={() => handleEditStart(folder)}>
+                                        {editingFolder !== f._id && (
+                                            <div className="d-flex align-items-center">
+                                                <Button
+                                                    size="sm"
+                                                    variant="link"
+                                                    onClick={() => startEdit(f)}
+                                                >
                                                     <FaEdit /> Edit
                                                 </Button>
-                                                {!folder.isDefault && (
-                                                    <Button size="sm" variant="link" className="text-danger" onClick={() => handleDeleteFolder(folder._id)}>
+                                                {!f.isDefault && (
+                                                    <Button
+                                                        size="sm"
+                                                        variant="link"
+                                                        className="text-danger"
+                                                        onClick={() => removeOne(f._id)}
+                                                    >
                                                         <FaTrash /> Delete
                                                     </Button>
                                                 )}
@@ -171,9 +297,9 @@ const ManageFoldersScreen: React.FC = () => {
                                 ))}
                             </ListGroup>
 
-                            {selectedFolders.length > 0 && (
-                                <Button variant="danger" onClick={handleDeleteSelectedFolders}>
-                                    Delete Selected Folders ({selectedFolders.length})
+                            {selected.length > 0 && (
+                                <Button variant="danger" onClick={removeSelected}>
+                                    Delete selected folders ({selected.length})
                                 </Button>
                             )}
                         </div>
@@ -181,11 +307,16 @@ const ManageFoldersScreen: React.FC = () => {
                 </Card>
             </Col>
 
+            {/* Optional right info card (blue box not required per spec) */}
             <Col md={4}>
-                <Card>
+                <Card className="shadow-sm">
                     <Card.Body>
-                        <h6 className="text-primary">Create folders to keep your class organized.</h6>
-                        <p className="small text-muted mb-0">Use folders to organize discussions by assignment, topic, logistics, and more.</p>
+                        <h6 className="text-primary">Organize your Q&amp;A</h6>
+                        <p className="small text-muted mb-0">
+                            Use folders like <em>hw1</em>, <em>exam</em>, or{" "}
+                            <em>office_hours</em> to make it easy for students to find the
+                            right place to post.
+                        </p>
                     </Card.Body>
                 </Card>
             </Col>

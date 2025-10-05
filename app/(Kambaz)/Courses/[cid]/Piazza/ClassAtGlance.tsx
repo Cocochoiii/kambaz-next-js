@@ -2,38 +2,44 @@
 
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Container, Card, Row, Col, ProgressBar, Alert } from "react-bootstrap";
+import { Card, Row, Col, ProgressBar } from "react-bootstrap";
 import {
     FaCheck,
     FaTimes,
-    FaQuestionCircle,
-    FaComments,
-    FaUserGraduate,
     FaClock,
     FaChartLine,
-    FaBook,
-    FaAndroid,
-    FaApple
+    FaUserGraduate,
+    FaChartBar,
+    FaUsers,
+    FaIdBadge,
 } from "react-icons/fa";
 import { fetchStats } from "./pazzaReducer";
 
-// Explicitly type the component
-const ClassAtGlance = ({ courseId, stats }: { courseId: string; stats?: any }) => {
+const ClassAtGlance = ({
+                           courseId,
+                           stats,
+                       }: {
+    courseId: string;
+    stats?: any;
+}) => {
     const dispatch = useDispatch<any>();
 
-    const enrollments = useSelector((state: any) => state.enrollmentsReducer?.enrollments || []);
-    const courses = useSelector((state: any) => state.coursesReducer?.courses || []);
+    const enrollments = useSelector(
+        (state: any) => state.enrollmentsReducer?.enrollments || []
+    );
+    const courses = useSelector(
+        (state: any) => state.coursesReducer?.courses || []
+    );
 
     const course = courses.find((c: any) => c._id === courseId);
     const courseEnrollments = enrollments.filter((e: any) => e.course === courseId);
-    const studentCount = courseEnrollments.filter((e: any) =>
-        e.user?.role === "STUDENT"
+    const studentCount = courseEnrollments.filter(
+        (e: any) => e.user?.role === "STUDENT"
     ).length;
     const instructorCount = courseEnrollments.filter((e: any) =>
-        ["FACULTY", "TA"].includes(e.user?.role)
+        ["FACULTY", "TA", "INSTRUCTOR"].includes(e.user?.role)
     ).length;
 
-    // Default stats if not provided
     const defaultStats = {
         unreadPosts: 0,
         unansweredQuestions: 0,
@@ -41,9 +47,8 @@ const ClassAtGlance = ({ courseId, stats }: { courseId: string; stats?: any }) =
         totalPosts: 0,
         instructorResponses: 0,
         studentResponses: 0,
-        totalContributions: 0
+        totalContributions: 0,
     };
-
     const statistics = stats || defaultStats;
 
     useEffect(() => {
@@ -52,101 +57,146 @@ const ClassAtGlance = ({ courseId, stats }: { courseId: string; stats?: any }) =
         }
     }, [courseId, dispatch, stats]);
 
-    const handleReload = () => {
-        dispatch(fetchStats(courseId));
-    };
-
-    const StatCard = ({ icon, value, label, color = "primary", description }: any) => (
-        <div className="stat-item">
-            <div className={`stat-icon bg-${color}`}>
-                {icon}
-            </div>
-            <div>
-                <div className="stat-text">{value}</div>
-                {description && <small className="text-muted">{description}</small>}
-            </div>
-        </div>
-    );
+    const attention = [
+        {
+            label: "unread posts",
+            value: statistics.unreadPosts,
+        },
+        {
+            label: "unanswered questions",
+            value: statistics.unansweredQuestions,
+        },
+        {
+            label: "unanswered followups",
+            value: statistics.unansweredFollowups,
+        },
+    ];
 
     return (
         <div className="class-glance">
-            <h2>Class at a Glance</h2>
-            <div className="glance-updated">
-                Updated just now. <a href="#" onClick={(e) => { e.preventDefault(); handleReload(); }}>Reload</a>
+            <div className="glance-header">
+                <h2>Class at a Glance</h2>
+                <div className="glance-updated">
+                    Updated just now.{" "}
+                    <a
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            dispatch(fetchStats(courseId));
+                        }}
+                    >
+                        Reload
+                    </a>
+                </div>
             </div>
 
-            <Row className="mb-4">
-                <Col md={4}>
-                    <div className="stats-grid">
-                        <StatCard
-                            icon={statistics.unreadPosts === 0 ? <FaCheck /> : <FaTimes />}
-                            value={statistics.unreadPosts === 0 ? "no unread posts" : `${statistics.unreadPosts} unread posts`}
-                            color={statistics.unreadPosts === 0 ? "success" : "warning"}
-                        />
-                        <StatCard
-                            icon={statistics.unansweredQuestions === 0 ? <FaCheck /> : <FaTimes />}
-                            value={statistics.unansweredQuestions === 0 ? "no unanswered questions" : `${statistics.unansweredQuestions} unanswered questions`}
-                            color={statistics.unansweredQuestions === 0 ? "success" : "warning"}
-                        />
-                        <StatCard
-                            icon={statistics.unansweredFollowups === 0 ? <FaCheck /> : <FaTimes />}
-                            value={statistics.unansweredFollowups === 0 ? "no unanswered followups" : `${statistics.unansweredFollowups} unanswered followups`}
-                            color={statistics.unansweredFollowups === 0 ? "success" : "warning"}
-                        />
-                    </div>
-                </Col>
-
-                <Col md={4}>
-                    <div className="stats-summary">
-                        <div className="summary-row">
-                            <span className="summary-label">license status</span>
-                            <span className="summary-value">active instructor license</span>
-                        </div>
-                        <div className="summary-row">
-                            <span className="summary-label">total posts</span>
-                            <span className="summary-value">{statistics.totalPosts}</span>
-                        </div>
-                        <div className="summary-row">
-                            <span className="summary-label">total contributions</span>
-                            <span className="summary-value">{statistics.totalContributions}</span>
-                        </div>
-                        <div className="summary-row">
-                            <span className="summary-label">instructors' responses</span>
-                            <span className="summary-value">{statistics.instructorResponses}</span>
-                        </div>
-                        <div className="summary-row">
-                            <span className="summary-label">students' responses</span>
-                            <span className="summary-value">{statistics.studentResponses}</span>
-                        </div>
-                    </div>
-                </Col>
-
-                <Col md={4}>
-                    <Card className="border-0 shadow-sm">
-                        <Card.Body>
-                            <div className="d-flex align-items-center mb-2">
-                                <FaClock className="text-primary me-2" size={20} />
-                                <div>
-                                    <div className="text-muted small">avg. response time</div>
-                                    <div className="h5 mb-0">8 hr</div>
+            {/* Attention banners (like Piazza “Needs Attention”) */}
+            <Row className="mb-3 attention-strip">
+                {attention.map((a, i) => (
+                    <Col md={4} key={i} className="mb-2">
+                        <div
+                            className={`attention-item ${
+                                a.value > 0 ? "warn" : "ok"
+                            } d-flex align-items-center`}
+                        >
+                            <div className="attention-icon">
+                                {a.value > 0 ? <FaTimes /> : <FaCheck />}
+                            </div>
+                            <div>
+                                <div className="attention-title">
+                                    {a.value > 0 ? "Needs Attention" : "All Set"}
+                                </div>
+                                <div className="attention-sub">
+                                    {a.value} {a.label}
                                 </div>
                             </div>
+                        </div>
+                    </Col>
+                ))}
+            </Row>
 
-                            <div className="d-flex align-items-center">
-                                <FaChartLine className="text-success me-2" size={20} />
-                                <div>
-                                    <div className="text-muted small">class participation</div>
-                                    <div className="h5 mb-0">
-                                        {Math.round((statistics.totalContributions / Math.max(studentCount, 1)) * 10) / 10} posts/student
-                                    </div>
-                                </div>
+            {/* Metric cards row */}
+            <Row className="metric-row">
+                <Col md={4} className="mb-3">
+                    <Card className="metric-card">
+                        <div className="metric-icon">
+                            <FaChartBar />
+                        </div>
+                        <div className="metric-meta">
+                            <div className="metric-label">Total Posts</div>
+                            <div className="metric-value">{statistics.totalPosts}</div>
+                        </div>
+                    </Card>
+                </Col>
+
+                <Col md={4} className="mb-3">
+                    <Card className="metric-card">
+                        <div className="metric-icon">
+                            <FaChartLine />
+                        </div>
+                        <div className="metric-meta">
+                            <div className="metric-label">Total Contributions</div>
+                            <div className="metric-value">{statistics.totalContributions}</div>
+                        </div>
+                    </Card>
+                </Col>
+
+                <Col md={4} className="mb-3">
+                    <Card className="metric-card">
+                        <div className="metric-icon">
+                            <FaUsers />
+                        </div>
+                        <div className="metric-meta">
+                            <div className="metric-label">Students Enrolled</div>
+                            <div className="metric-value">{studentCount}</div>
+                        </div>
+                    </Card>
+                </Col>
+
+                <Col md={4} className="mb-3">
+                    <Card className="metric-card">
+                        <div className="metric-icon">
+                            <FaIdBadge />
+                        </div>
+                        <div className="metric-meta">
+                            <div className="metric-label">License Status</div>
+                            <div className="metric-value small">active instructor license</div>
+                        </div>
+                    </Card>
+                </Col>
+
+                <Col md={4} className="mb-3">
+                    <Card className="metric-card">
+                        <div className="metric-icon">
+                            <FaClock />
+                        </div>
+                        <div className="metric-meta">
+                            <div className="metric-label">Instructor Engagement</div>
+                            <div className="metric-value">
+                                {statistics.instructorResponses}
                             </div>
-                        </Card.Body>
+                            <div className="metric-hint">instructor responses</div>
+                        </div>
+                    </Card>
+                </Col>
+
+                <Col md={4} className="mb-3">
+                    <Card className="metric-card">
+                        <div className="metric-icon">
+                            <FaUserGraduate />
+                        </div>
+                        <div className="metric-meta">
+                            <div className="metric-label">Student Participation</div>
+                            <div className="metric-value">
+                                {statistics.studentResponses}
+                            </div>
+                            <div className="metric-hint">student responses</div>
+                        </div>
                     </Card>
                 </Col>
             </Row>
 
-            {/* Student Enrollment Progress */}
+            {/* Enrollment Progress (kept, but restyled to match) */}
             <Card className="mb-4 border-0 shadow-sm">
                 <Card.Body>
                     <h5 className="d-flex align-items-center">
@@ -154,82 +204,28 @@ const ClassAtGlance = ({ courseId, stats }: { courseId: string; stats?: any }) =
                         Student Enrollment
                     </h5>
                     <div className="mb-2">
-                        <strong>{studentCount}</strong> enrolled out of <strong>100</strong> (estimated)
-                        {instructorCount > 0 && (
+                        <strong>{studentCount}</strong> enrolled
+                        {typeof instructorCount === "number" && (
                             <span className="text-muted ms-2">
-                                • {instructorCount} instructor{instructorCount > 1 ? 's' : ''}
-                            </span>
+                • {instructorCount} instructor
+                                {instructorCount > 1 ? "s" : ""}
+              </span>
                         )}
                     </div>
                     <ProgressBar
-                        now={(studentCount / 100) * 100}
+                        now={Math.min(100, (studentCount / 100) * 100)}
                         variant="success"
-                        style={{ height: "30px" }}
-                        label={`${Math.round((studentCount / 100) * 100)}%`}
+                        style={{ height: "28px" }}
+                        label={`${Math.round(Math.min(100, (studentCount / 100) * 100))}%`}
                     />
                 </Card.Body>
             </Card>
 
-            <Row>
-                {/* Mobile Apps */}
-                <Col md={6}>
-                    <Card className="mb-3 border-0 shadow-sm">
-                        <Card.Body className="text-center">
-                            <h6 className="mb-3">Download Pazza on Mobile</h6>
-                            <div className="d-flex justify-content-center gap-3">
-                                <a href="#" className="text-decoration-none">
-                                    <div className="d-flex align-items-center gap-2 px-3 py-2 bg-dark text-white rounded">
-                                        <FaApple size={20} />
-                                        <div className="text-start">
-                                            <div className="small">Download on the</div>
-                                            <div>App Store</div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="#" className="text-decoration-none">
-                                    <div className="d-flex align-items-center gap-2 px-3 py-2 bg-dark text-white rounded">
-                                        <FaAndroid size={20} />
-                                        <div className="text-start">
-                                            <div className="small">Get it on</div>
-                                            <div>Google Play</div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Col>
-
-                {/* AI Features Announcement */}
-                <Col md={6}>
-                    <Card className="mb-3 border-0 shadow-sm">
-                        <Card.Body>
-                            <h5 className="mb-3">
-                                <span className="badge bg-info me-2">New</span>
-                                AI-Powered Features
-                            </h5>
-                            <Alert variant="info" className="mb-2">
-                                <strong>Followup Summarization:</strong> Posts with 5+ followup comments now have a "Summarize" button for quick overview.
-                            </Alert>
-                            <Alert variant="info" className="mb-0">
-                                <strong>Folder Summarization:</strong> View AI-generated summaries of folder content for quick navigation.
-                            </Alert>
-                            <small className="text-muted">
-                                These features are optional and can be enabled in Q&A Settings.
-                            </small>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
-
-            {/* Course Information */}
+            {/* Course info footer (kept) */}
             {course && (
                 <Card className="border-0 shadow-sm">
                     <Card.Body>
-                        <h5 className="mb-3">
-                            <FaBook className="me-2" />
-                            Course Information
-                        </h5>
+                        <h5 className="mb-3">Course Information</h5>
                         <Row>
                             <Col sm={6}>
                                 <p className="mb-1">

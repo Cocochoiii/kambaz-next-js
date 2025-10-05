@@ -103,7 +103,6 @@ const NewPostScreen: React.FC<NewPostScreenProps> = ({ onSave, onCancel }) => {
         ],
     };
 
-    // Get display folders
     const displayFolders = folders.length > 0 ? folders : [
         { name: "hw1" }, { name: "hw2" }, { name: "hw3" },
         { name: "hw4" }, { name: "hw5" }, { name: "hw6" },

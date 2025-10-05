@@ -351,12 +351,12 @@ textarea.form-control-custom {
 }
 
 .btn-card-edit {
-    background: #ffc107;
+    background: rgba(33, 136, 56, 0.82);
     color: #212529;
 }
 
 .btn-card-edit:hover {
-    background: #e0a800;
+    background: rgba(33, 136, 56, 0.82);
 }
 
 .btn-card-delete {
@@ -373,7 +373,7 @@ textarea.form-control-custom {
 .btn-card-go,
 .btn-card-enroll {
     padding: 8px 20px;
-    background: #c8102e;
+    background: #346fbe;
     color: white;
     border: none;
     border-radius: 4px;
@@ -387,7 +387,7 @@ textarea.form-control-custom {
 
 .btn-card-go:hover,
 .btn-card-enroll:hover {
-    background: #c8102e;
+    background: #346fbe;
     color: white;
     text-decoration: none;
     transform: translateX(2px);

@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "next/navigation";
 import { Button, Form } from "react-bootstrap";
@@ -15,13 +14,12 @@ import {
     FaLock,
     FaStar
 } from "react-icons/fa";
-import { format, isToday, isYesterday, startOfWeek, endOfWeek, isSameWeek, isWithinInterval, subWeeks } from "date-fns";
+import { format, isToday, isYesterday, startOfWeek, endOfWeek, isWithinInterval, subWeeks } from "date-fns";
 import {
     fetchPostDetails,
     setSearchQuery,
     fetchPosts,
     toggleSidebar,
-    // ✅ add selectors from the same path
     selectCourseData,
     selectCurrentPost,
     selectSidebarVisible,
@@ -36,14 +34,14 @@ interface PostListItemProps {
 const PostListItem: React.FC<PostListItemProps> = ({ post, onSelect, isSelected }) => {
     const getPostIcon = () => {
         if (post.isPinned) return <FaThumbtack className="post-icon pinned" />;
-        return post.type === "note" ?
-            <FaStickyNote className="post-icon note" /> :
-            <FaQuestion className="post-icon question" />;
+        return post.type === "note"
+            ? <FaStickyNote className="post-icon note" />
+            : <FaQuestion className="post-icon question" />;
     };
 
     const getAuthorLabel = () => {
         const role = post.author?.role || post.authorRole;
-        if (role === "FACULTY" || role === "TA") {
+        if (role === "FACULTY" || role === "TA" || role === "INSTRUCTOR") {
             return <span className="author-role instructor">Instr</span>;
         }
         return <span className="author-role student">Student</span>;
@@ -65,10 +63,7 @@ const PostListItem: React.FC<PostListItemProps> = ({ post, onSelect, isSelected 
     };
 
     return (
-        <div
-            className={`post-item ${isSelected ? 'active' : ''}`}
-            onClick={onSelect}
-        >
+        <div className={`post-item ${isSelected ? "active" : ""}`} onClick={onSelect}>
             <div className="post-header">
                 {getPostIcon()}
                 <div className="post-title">{post.summary || post.title}</div>
@@ -80,13 +75,11 @@ const PostListItem: React.FC<PostListItemProps> = ({ post, onSelect, isSelected 
             <div className="post-meta">
                 {getAuthorLabel()}
                 <span className="post-preview">{getPreviewText()}</span>
-                <span className="post-time">
-                    {format(new Date(post.createdAt), "h:mm a")}
-                </span>
+                <span className="post-time">{format(new Date(post.createdAt), "h:mm a")}</span>
                 {post.isInstructorEndorsed && (
                     <span className="good-indicator">
-                        Good {post.type === "question" ? "question" : "note"}
-                    </span>
+            Good {post.type === "question" ? "question" : "note"}
+          </span>
                 )}
             </div>
         </div>
@@ -107,25 +100,21 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
     const dispatch = useDispatch<any>();
 
     const [localSearch, setLocalSearch] = useState("");
-    const [expandedSections, setExpandedSections] = useState<string[]>([
-        "pinned", "today", "yesterday", "lastWeek"
-    ]);
+    // ▼ start collapsed control change
+    const [expandedSections, setExpandedSections] = useState<string[]>([]);
+    const [expandedInitialized, setExpandedInitialized] = useState(false);
+    // ▲
 
-    // ✅ Pull course-scoped data from the slice
     const courseData = useSelector((state: any) => selectCourseData(state, cid));
     const posts = courseData?.posts || [];
 
-    // ✅ Keep the same variable names but source from selectors
     const currentPost = useSelector(selectCurrentPost);
     const sidebarVisible = useSelector(selectSidebarVisible);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         dispatch(setSearchQuery(localSearch));
-        dispatch(fetchPosts({
-            courseId: cid,
-            search: localSearch || undefined
-        }));
+        dispatch(fetchPosts({ courseId: cid, search: localSearch || undefined }));
     };
 
     const handleSelectPost = (postId: string) => {
@@ -134,9 +123,7 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
 
     const toggleSection = (section: string) => {
         setExpandedSections(prev =>
-            prev.includes(section)
-                ? prev.filter(s => s !== section)
-                : [...prev, section]
+            prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]
         );
     };
 
@@ -146,7 +133,7 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
             today: [],
             yesterday: [],
             lastWeek: [],
-            older: {}
+            older: {},
         };
 
         if (!Array.isArray(posts)) return groups;
@@ -170,9 +157,7 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
                 const weekStart = startOfWeek(postDate, { weekStartsOn: 1 });
                 const weekEnd = endOfWeek(postDate, { weekStartsOn: 1 });
                 const weekKey = `${format(weekStart, "M/d")} - ${format(weekEnd, "M/d")}`;
-                if (!groups.older[weekKey]) {
-                    groups.older[weekKey] = [];
-                }
+                if (!groups.older[weekKey]) groups.older[weekKey] = [];
                 groups.older[weekKey].push(post);
             }
         });
@@ -180,14 +165,23 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
         return groups;
     }, [posts]);
 
+    // ▼ NEW: expand ALL groups once when posts arrive so the list shows everything initially
+    useEffect(() => {
+        if (expandedInitialized) return;
+        const keys: string[] = ["pinned", "today", "yesterday", "lastWeek", ...Object.keys(groupedPosts.older)];
+        // Only set if there is at least one post or at least one group
+        if (posts.length > 0 || keys.length > 0) {
+            setExpandedSections(keys);
+            setExpandedInitialized(true);
+        }
+    }, [groupedPosts, posts.length, expandedInitialized]);
+    // ▲
+
     if (!sidebarVisible) {
         return (
             <div className="posts-sidebar collapsed">
                 <div className="sidebar-controls">
-                    <button
-                        className="toggle-sidebar"
-                        onClick={() => dispatch(toggleSidebar())}
-                    >
+                    <button className="toggle-sidebar" onClick={() => dispatch(toggleSidebar())}>
                         <FaChevronRight />
                     </button>
                 </div>
@@ -198,10 +192,7 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
     return (
         <div className="posts-sidebar">
             <div className="sidebar-controls">
-                <button
-                    className="toggle-sidebar"
-                    onClick={() => dispatch(toggleSidebar())}
-                >
+                <button className="toggle-sidebar" onClick={() => dispatch(toggleSidebar())}>
                     <FaChevronLeft />
                 </button>
                 <span>Unread</span>
@@ -229,20 +220,15 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
             </div>
 
             <div className="posts-list">
-                {/* Pinned Posts */}
+                {/* Pinned */}
                 {groupedPosts.pinned.length > 0 && (
                     <div className="post-group">
-                        <div
-                            className="group-header"
-                            onClick={() => toggleSection("pinned")}
-                        >
-                            <span className="group-title">
-                                <FaThumbtack style={{ marginRight: 6, fontSize: 11 }} />
-                                PINNED
-                            </span>
-                            <span className="group-count">
-                                {groupedPosts.pinned.length}
-                            </span>
+                        <div className="group-header" onClick={() => toggleSection("pinned")}>
+              <span className="group-title">
+                <FaThumbtack style={{ marginRight: 6, fontSize: 11 }} />
+                PINNED
+              </span>
+                            <span className="group-count">{groupedPosts.pinned.length}</span>
                         </div>
                         {expandedSections.includes("pinned") &&
                             groupedPosts.pinned.map((post: any) => (
@@ -252,22 +238,16 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
                                     onSelect={() => handleSelectPost(post._id)}
                                     isSelected={currentPost?._id === post._id}
                                 />
-                            ))
-                        }
+                            ))}
                     </div>
                 )}
 
-                {/* Today's Posts */}
+                {/* Today */}
                 {groupedPosts.today.length > 0 && (
                     <div className="post-group">
-                        <div
-                            className="group-header"
-                            onClick={() => toggleSection("today")}
-                        >
+                        <div className="group-header" onClick={() => toggleSection("today")}>
                             <span className="group-title">TODAY</span>
-                            <span className="group-count">
-                                {groupedPosts.today.length}
-                            </span>
+                            <span className="group-count">{groupedPosts.today.length}</span>
                         </div>
                         {expandedSections.includes("today") &&
                             groupedPosts.today.map((post: any) => (
@@ -277,22 +257,16 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
                                     onSelect={() => handleSelectPost(post._id)}
                                     isSelected={currentPost?._id === post._id}
                                 />
-                            ))
-                        }
+                            ))}
                     </div>
                 )}
 
-                {/* Yesterday's Posts */}
+                {/* Yesterday */}
                 {groupedPosts.yesterday.length > 0 && (
                     <div className="post-group">
-                        <div
-                            className="group-header"
-                            onClick={() => toggleSection("yesterday")}
-                        >
+                        <div className="group-header" onClick={() => toggleSection("yesterday")}>
                             <span className="group-title">YESTERDAY</span>
-                            <span className="group-count">
-                                {groupedPosts.yesterday.length}
-                            </span>
+                            <span className="group-count">{groupedPosts.yesterday.length}</span>
                         </div>
                         {expandedSections.includes("yesterday") &&
                             groupedPosts.yesterday.map((post: any) => (
@@ -302,22 +276,16 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
                                     onSelect={() => handleSelectPost(post._id)}
                                     isSelected={currentPost?._id === post._id}
                                 />
-                            ))
-                        }
+                            ))}
                     </div>
                 )}
 
-                {/* Last Week's Posts */}
+                {/* Last Week */}
                 {groupedPosts.lastWeek.length > 0 && (
                     <div className="post-group">
-                        <div
-                            className="group-header"
-                            onClick={() => toggleSection("lastWeek")}
-                        >
+                        <div className="group-header" onClick={() => toggleSection("lastWeek")}>
                             <span className="group-title">LAST WEEK</span>
-                            <span className="group-count">
-                                {groupedPosts.lastWeek.length}
-                            </span>
+                            <span className="group-count">{groupedPosts.lastWeek.length}</span>
                         </div>
                         {expandedSections.includes("lastWeek") &&
                             groupedPosts.lastWeek.map((post: any) => (
@@ -327,22 +295,16 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
                                     onSelect={() => handleSelectPost(post._id)}
                                     isSelected={currentPost?._id === post._id}
                                 />
-                            ))
-                        }
+                            ))}
                     </div>
                 )}
 
-                {/* Older Posts grouped by week */}
+                {/* Older groups */}
                 {Object.entries(groupedPosts.older).map(([weekKey, weekPosts]) => (
                     <div key={weekKey} className="post-group">
-                        <div
-                            className="group-header"
-                            onClick={() => toggleSection(weekKey)}
-                        >
+                        <div className="group-header" onClick={() => toggleSection(weekKey)}>
                             <span className="group-title">{weekKey}</span>
-                            <span className="group-count">
-                                {(weekPosts as any[]).length}
-                            </span>
+                            <span className="group-count">{(weekPosts as any[]).length}</span>
                         </div>
                         {expandedSections.includes(weekKey) &&
                             (weekPosts as any[]).map((post: any) => (
@@ -352,12 +314,11 @@ const ListOfPostsSidebar: React.FC<{ onNewPost: () => void }> = ({ onNewPost }) 
                                     onSelect={() => handleSelectPost(post._id)}
                                     isSelected={currentPost?._id === post._id}
                                 />
-                            ))
-                        }
+                            ))}
                     </div>
                 ))}
 
-                {/* Empty State */}
+                {/* Empty state */}
                 {posts.length === 0 && (
                     <div className="empty-state">
                         <div className="empty-state-icon">

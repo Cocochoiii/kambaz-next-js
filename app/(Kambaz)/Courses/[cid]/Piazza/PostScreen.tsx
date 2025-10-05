@@ -1,15 +1,10 @@
 "use client";
-
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "next/navigation";
-import { Container, Badge, Button, Dropdown, Form } from "react-bootstrap";
-import {
-    FaEye, FaEdit, FaTrash, FaEllipsisV, FaStar,
-    FaCheck, FaTimes, FaLock
-} from "react-icons/fa";
-import dynamic from "next/dynamic";
+import { Badge, Button, Dropdown } from "react-bootstrap";
 import { format } from "date-fns";
+import dynamic from "next/dynamic";
 import {
     createAnswer,
     createFollowup,
@@ -19,6 +14,7 @@ import {
     updateAnswer,
     deleteAnswer,
 } from "./pazzaReducer";
+import { FaEdit, FaTrash, FaEllipsisV, FaStar, FaLock, FaCheck, FaTimes } from "react-icons/fa";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
@@ -34,7 +30,6 @@ const PostScreen: React.FC = () => {
 
     const [showAnswerEditor, setShowAnswerEditor] = useState(false);
     const [answerContent, setAnswerContent] = useState("");
-    const [showFollowupEditor, setShowFollowupEditor] = useState(false);
     const [followupContent, setFollowupContent] = useState("");
     const [replyContent, setReplyContent] = useState<{ [key: string]: string }>({});
     const [showReplyEditor, setShowReplyEditor] = useState<{ [key: string]: boolean }>({});
@@ -45,410 +40,390 @@ const PostScreen: React.FC = () => {
 
     if (!currentPost) return null;
 
-    const isInstructor = ["FACULTY", "TA"].includes(currentUser?.role);
-    const isAuthor = currentUser?._id === currentPost.author?._id;
+    const isInstructor = ["FACULTY", "TA", "INSTRUCTOR"].includes(currentUser?.role);
+    const isAuthor = currentUser?._id === currentPost.author?._id || currentUser?._id === currentPost.authorId;
     const canEdit = isInstructor || isAuthor;
 
-    const studentAnswers = currentAnswers.filter((a: any) =>
-        !["FACULTY", "TA"].includes(a.authorRole || a.author?.role)
+    const studentAnswers = currentAnswers.filter(
+        (a: any) => !["FACULTY", "TA", "INSTRUCTOR"].includes(a.authorRole || a.author?.role)
     );
     const instructorAnswers = currentAnswers.filter((a: any) =>
-        ["FACULTY", "TA"].includes(a.authorRole || a.author?.role)
+        ["FACULTY", "TA", "INSTRUCTOR"].includes(a.authorRole || a.author?.role)
     );
 
-    const hasAnswered = currentAnswers.some((a: any) =>
-        a.authorId === currentUser?._id || a.author?._id === currentUser?._id
+    const hasAnswered = currentAnswers.some(
+        (a: any) => a.authorId === currentUser?._id || a.author?._id === currentUser?._id
     );
 
     const rootFollowups = currentFollowups.filter((f: any) => !f.parentId);
-    const getReplies = (parentId: string) =>
-        currentFollowups.filter((f: any) => f.parentId === parentId);
-
-    const handleSubmitAnswer = async () => {
-        if (!answerContent.trim() || answerContent === "<p><br></p>") return;
-        try {
-            await dispatch(createAnswer({
-                courseId,
-                postId: currentPost._id,
-                content: answerContent
-            }));
-            setAnswerContent("");
-            setShowAnswerEditor(false);
-        } catch (e) {
-            console.error("Error adding answer:", e);
-        }
-    };
-
-    const handleSubmitFollowup = async () => {
-        if (!followupContent.trim()) return;
-        try {
-            await dispatch(createFollowup({
-                courseId,
-                postId: currentPost._id,
-                content: followupContent
-            }));
-            setFollowupContent("");
-            setShowFollowupEditor(false);
-        } catch (e) {
-            console.error("Error adding followup:", e);
-        }
-    };
-
-    const handleSubmitReply = async (followupId: string) => {
-        const content = replyContent[followupId];
-        if (!content?.trim()) return;
-        try {
-            await dispatch(createFollowup({
-                courseId,
-                postId: currentPost._id,
-                content,
-                parentId: followupId
-            }));
-            setReplyContent({ ...replyContent, [followupId]: "" });
-            setShowReplyEditor({ ...showReplyEditor, [followupId]: false });
-        } catch (e) {
-            console.error("Error adding reply:", e);
-        }
-    };
-
-    const handleToggleResolved = async (followupId: string) => {
-        try {
-            await dispatch(toggleFollowupResolved({ courseId, followupId }));
-        } catch (e) {
-            console.error("Error updating followup status:", e);
-        }
-    };
+    const getReplies = (parentId: string) => currentFollowups.filter((f: any) => f.parentId === parentId);
 
     const quillModules = {
         toolbar: [
             ["bold", "italic", "underline"],
             [{ list: "ordered" }, { list: "bullet" }],
             ["link", "image"],
-            ["clean"]
-        ]
+            ["clean"],
+        ],
     };
 
     const getAuthorName = (item: any) => {
         if (item.authorName) return item.authorName;
-        if (item.author?.firstName && item.author?.lastName) {
-            return `${item.author.firstName} ${item.author.lastName}`;
-        }
+        if (item.author?.firstName && item.author?.lastName) return `${item.author.firstName} ${item.author.lastName}`;
         return "Unknown User";
     };
 
     return (
-        <div className="post-view-container">
-            {/* Post Header Bar */}
-            <div className="post-view-header">
-                <div className="post-header-left">
-                    <span className="post-type-badge">
-                        {currentPost.type === "question" ? "question" : "note"}
-                    </span>
-                    <span className="post-id">@{currentPost._id.substring(0, 3)}</span>
+        <div className="post-details">
+            {/* header bar */}
+            <div className="post-header-bar">
+                <h1>
+                    {currentPost.type === "question" ? "question" : "note"} @{currentPost._id?.substring(0, 3)}
                     {currentPost.hasInstructorAnswer && <FaStar className="starred" />}
-                    {currentPost.postTo === "individual" && <FaLock className="private" />}
-                </div>
-                <div className="post-header-right">
-                    <span className="view-count">
-                        {currentPost.views || 1} view{currentPost.views !== 1 ? "s" : ""}
-                    </span>
-                    {canEdit && (
-                        <Dropdown align="end">
-                            <Dropdown.Toggle variant="link" size="sm" className="actions-btn">
-                                Actions
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                <Dropdown.Item onClick={() => {
-                                    setEditingPost(true);
-                                    setEditedContent(currentPost.details);
-                                }}>
-                                    <FaEdit /> Edit
-                                </Dropdown.Item>
-                                <Dropdown.Item
-                                    onClick={() => {
-                                        if (confirm("Delete this post?")) {
-                                            dispatch(deletePost({ courseId, postId: currentPost._id }));
-                                        }
-                                    }}
-                                    className="text-danger"
-                                >
-                                    <FaTrash /> Delete
-                                </Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    )}
-                </div>
+                    {currentPost.postTo === "individual" && <FaLock style={{ marginLeft: 6 }} />}
+                </h1>
+                <span className="view-count">
+          {currentPost.views || 1} view{(currentPost.views || 1) !== 1 ? "s" : ""}
+        </span>
             </div>
 
-            {/* Post Content */}
-            <div className="post-content-area">
-                <h2 className="post-title">{currentPost.summary || currentPost.title}</h2>
-
-                <div className="post-metadata">
-                    <span className="post-author">
-                        {currentPost.author?.role === "FACULTY" || currentPost.author?.role === "TA" ?
-                            <Badge bg="warning" text="dark">Instr</Badge> :
-                            <Badge bg="info">Student</Badge>
-                        }
-                        {" "}{getAuthorName(currentPost)}
-                    </span>
-                    <span className="post-timestamp">
-                        {format(new Date(currentPost.createdAt), "MMM d 'at' h:mm a")}
-                    </span>
-                </div>
-
+            {/* main post content */}
+            <div className="post-content">
                 {editingPost ? (
-                    <div className="edit-post-area">
-                        <ReactQuill
-                            theme="snow"
-                            value={editedContent}
-                            onChange={setEditedContent}
-                            modules={quillModules}
-                            style={{ minHeight: "150px" }}
+                    <>
+                        <input
+                            type="text"
+                            value={currentPost.summary || currentPost.title}
+                            readOnly
+                            className="edit-title"
                         />
+                        <ReactQuill theme="snow" value={editedContent} onChange={setEditedContent} modules={quillModules} />
                         <div className="edit-actions">
-                            <Button
-                                size="sm"
+                            <button
+                                className="btn-save"
                                 onClick={async () => {
-                                    await dispatch(updatePost({
-                                        courseId,
-                                        postId: currentPost._id,
-                                        title: currentPost.summary,
-                                        details: editedContent
-                                    }));
+                                    await dispatch(
+                                        updatePost({
+                                            courseId,
+                                            postId: currentPost._id,
+                                            title: currentPost.summary || currentPost.title,
+                                            details: editedContent,
+                                        })
+                                    );
                                     setEditingPost(false);
-                                }}>
+                                }}
+                            >
                                 Save
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="secondary"
-                                onClick={() => setEditingPost(false)}>
+                            </button>
+                            <button className="btn-cancel" onClick={() => setEditingPost(false)}>
                                 Cancel
-                            </Button>
+                            </button>
                         </div>
-                    </div>
+                    </>
                 ) : (
-                    <div className="post-details"
-                         dangerouslySetInnerHTML={{ __html: currentPost.details }} />
-                )}
+                    <>
+                        <h2>{currentPost.summary || currentPost.title}</h2>
+                        <div className="post-meta">
+                            <span className="folder-tag">{(currentPost.folders || []).join(", ")}</span>
+                            <span className="author">
+                {["FACULTY", "TA", "INSTRUCTOR"].includes(currentPost.author?.role || currentPost.authorRole)
+                    ? "Instr"
+                    : "Student"}
+                                : {getAuthorName(currentPost)}
+              </span>
+                            <span className="timestamp">{format(new Date(currentPost.createdAt), "MMM d 'at' h:mm a")}</span>
 
-                {canEdit && !editingPost && (
-                    <button className="inline-edit-btn" onClick={() => {
-                        setEditingPost(true);
-                        setEditedContent(currentPost.details);
-                    }}>
-                        Edit
-                    </button>
+                            {canEdit && (
+                                <div className="post-actions">
+                                    <button className="btn-edit" onClick={() => { setEditingPost(true); setEditedContent(currentPost.details); }}>
+                                        <FaEdit /> Edit
+                                    </button>
+                                    <div className="dropdown">
+                                        <button className="btn-actions">
+                                            <FaEllipsisV /> Actions
+                                        </button>
+                                        <div className="dropdown-content">
+                                            <button onClick={() => { setEditingPost(true); setEditedContent(currentPost.details); }}>Edit</button>
+                                            <button
+                                                onClick={() => {
+                                                    if (confirm("Delete this post?")) {
+                                                        dispatch(deletePost({ courseId, postId: currentPost._id }));
+                                                    }
+                                                }}
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="post-body" dangerouslySetInnerHTML={{ __html: currentPost.details }} />
+                    </>
                 )}
             </div>
 
-            {/* Student Answers */}
+            {/* answers */}
             {currentPost.type === "question" && (
                 <>
-                    {/* Students' Answer Section */}
+                    {/* Students' Answers */}
                     {(studentAnswers.length > 0 || (!hasAnswered && !isInstructor)) && (
-                        <div className="answer-section student-answers">
-                            <h3>the students' answer</h3>
+                        <div className="answers-section">
+                            <h3>Students' Answer{studentAnswers.length > 1 ? "s" : ""}</h3>
+
                             {studentAnswers.map((answer: any) => (
-                                <div key={answer._id} className="answer-content">
-                                    <div className="answer-header">
-                                        <span className="answer-author">
-                                            {getAuthorName(answer)}
-                                        </span>
-                                        <span className="answer-time">
-                                            {format(new Date(answer.createdAt || answer.timestamp),
-                                                "MMM d 'at' h:mm a")}
-                                        </span>
-                                    </div>
-                                    <div className="answer-body"
-                                         dangerouslySetInnerHTML={{ __html: answer.content }} />
-                                    {answer.isGoodAnswer && (
-                                        <span className="good-answer-badge">good answer</span>
+                                <div key={answer._id} className="answer">
+                                    {editingAnswerId === answer._id ? (
+                                        <>
+                                            <ReactQuill
+                                                theme="snow"
+                                                value={editAnswerContent}
+                                                onChange={setEditAnswerContent}
+                                                modules={quillModules}
+                                            />
+                                            <div className="edit-actions">
+                                                <button
+                                                    className="btn-save"
+                                                    onClick={async () => {
+                                                        await dispatch(updateAnswer({ courseId, answerId: answer._id, content: editAnswerContent }));
+                                                        setEditingAnswerId(null);
+                                                        setEditAnswerContent("");
+                                                    }}
+                                                >
+                                                    Save
+                                                </button>
+                                                <button className="btn-cancel" onClick={() => setEditingAnswerId(null)}>
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="answer-meta">
+                                                <span className="author">{getAuthorName(answer)}</span>
+                                                <span className="timestamp">{format(new Date(answer.createdAt), "MMM d 'at' h:mm a")}</span>
+                                                {(currentUser?._id === answer.authorId || isInstructor) && (
+                                                    <div className="answer-actions">
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingAnswerId(answer._id);
+                                                                setEditAnswerContent(answer.content);
+                                                            }}
+                                                        >
+                                                            <FaEdit /> Edit
+                                                        </button>
+                                                        <button onClick={() => dispatch(deleteAnswer({ courseId, answerId: answer._id }))}>
+                                                            <FaTrash /> Delete
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="answer-body" dangerouslySetInnerHTML={{ __html: answer.content }} />
+                                            {answer.isGoodAnswer && <div className="good-answer">Good answer</div>}
+                                        </>
                                     )}
                                 </div>
                             ))}
 
                             {!hasAnswered && !isInstructor && (
-                                showAnswerEditor ? (
-                                    <div className="answer-editor">
-                                        <ReactQuill
-                                            theme="snow"
-                                            value={answerContent}
-                                            onChange={setAnswerContent}
-                                            placeholder="Type your answer here..."
-                                            modules={quillModules}
-                                            style={{ minHeight: "150px" }}
-                                        />
-                                        <div className="editor-actions">
-                                            <Button onClick={handleSubmitAnswer}>
-                                                Submit
-                                            </Button>
-                                            <Button
-                                                variant="secondary"
-                                                onClick={() => {
-                                                    setShowAnswerEditor(false);
-                                                    setAnswerContent("");
-                                                }}>
-                                                Cancel
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ) : (
+                                <div className="new-answer">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={answerContent}
+                                        onChange={setAnswerContent}
+                                        modules={quillModules}
+                                        placeholder="Type your answer here..."
+                                    />
                                     <button
-                                        className="add-answer-btn"
-                                        onClick={() => setShowAnswerEditor(true)}>
-                                        good answer 0
+                                        className="btn-submit"
+                                        onClick={async () => {
+                                            if (!answerContent.trim() || answerContent === "<p><br></p>") return;
+                                            await dispatch(createAnswer({ courseId, postId: currentPost._id, content: answerContent }));
+                                            setAnswerContent("");
+                                        }}
+                                    >
+                                        Submit Answer
                                     </button>
-                                )
+                                </div>
                             )}
                         </div>
                     )}
 
-                    {/* Instructors' Answer Section */}
+                    {/* Instructors' Answers */}
                     {(instructorAnswers.length > 0 || (!hasAnswered && isInstructor)) && (
-                        <div className="answer-section instructor-answers">
-                            <h3>the instructors' answer</h3>
+                        <div className="answers-section">
+                            <h3>Instructors' Answer{instructorAnswers.length > 1 ? "s" : ""}</h3>
+
                             {instructorAnswers.map((answer: any) => (
-                                <div key={answer._id} className="answer-content">
-                                    <div className="answer-header">
-                                        <Badge bg="warning" text="dark">Instr</Badge>
-                                        {" "}
-                                        <span className="answer-author">
-                                            {getAuthorName(answer)}
-                                        </span>
-                                        <span className="answer-time">
-                                            {format(new Date(answer.createdAt || answer.timestamp),
-                                                "MMM d 'at' h:mm a")}
-                                        </span>
-                                    </div>
-                                    <div className="answer-body"
-                                         dangerouslySetInnerHTML={{ __html: answer.content }} />
-                                    {answer.isGoodAnswer && (
-                                        <span className="good-answer-badge">good answer</span>
+                                <div key={answer._id} className="answer instructor-answer">
+                                    {editingAnswerId === answer._id ? (
+                                        <>
+                                            <ReactQuill
+                                                theme="snow"
+                                                value={editAnswerContent}
+                                                onChange={setEditAnswerContent}
+                                                modules={quillModules}
+                                            />
+                                            <div className="edit-actions">
+                                                <button
+                                                    className="btn-save"
+                                                    onClick={async () => {
+                                                        await dispatch(updateAnswer({ courseId, answerId: answer._id, content: editAnswerContent }));
+                                                        setEditingAnswerId(null);
+                                                        setEditAnswerContent("");
+                                                    }}
+                                                >
+                                                    Save
+                                                </button>
+                                                <button className="btn-cancel" onClick={() => setEditingAnswerId(null)}>
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="answer-meta">
+                                                <span className="author instructor">Instr: {getAuthorName(answer)}</span>
+                                                <span className="timestamp">{format(new Date(answer.createdAt), "MMM d 'at' h:mm a")}</span>
+                                                {isInstructor && (
+                                                    <div className="answer-actions">
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingAnswerId(answer._id);
+                                                                setEditAnswerContent(answer.content);
+                                                            }}
+                                                        >
+                                                            <FaEdit /> Edit
+                                                        </button>
+                                                        <button onClick={() => dispatch(deleteAnswer({ courseId, answerId: answer._id }))}>
+                                                            <FaTrash /> Delete
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="answer-body" dangerouslySetInnerHTML={{ __html: answer.content }} />
+                                            {answer.isGoodAnswer && <div className="good-answer">Good answer</div>}
+                                        </>
                                     )}
                                 </div>
                             ))}
 
                             {!hasAnswered && isInstructor && (
-                                showAnswerEditor ? (
-                                    <div className="answer-editor">
-                                        <ReactQuill
-                                            theme="snow"
-                                            value={answerContent}
-                                            onChange={setAnswerContent}
-                                            placeholder="Type your answer here..."
-                                            modules={quillModules}
-                                            style={{ minHeight: "150px" }}
-                                        />
-                                        <div className="editor-actions">
-                                            <Button variant="warning" onClick={handleSubmitAnswer}>
-                                                Submit
-                                            </Button>
-                                            <Button
-                                                variant="secondary"
-                                                onClick={() => {
-                                                    setShowAnswerEditor(false);
-                                                    setAnswerContent("");
-                                                }}>
-                                                Cancel
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ) : (
+                                <div className="new-answer">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={answerContent}
+                                        onChange={setAnswerContent}
+                                        modules={quillModules}
+                                        placeholder="Type your answer here..."
+                                    />
                                     <button
-                                        className="add-answer-btn"
-                                        onClick={() => setShowAnswerEditor(true)}>
-                                        good answer 0
+                                        className="btn-submit"
+                                        onClick={async () => {
+                                            if (!answerContent.trim() || answerContent === "<p><br></p>") return;
+                                            await dispatch(createAnswer({ courseId, postId: currentPost._id, content: answerContent }));
+                                            setAnswerContent("");
+                                        }}
+                                    >
+                                        Submit Answer
                                     </button>
-                                )
+                                </div>
                             )}
                         </div>
                     )}
                 </>
             )}
 
-            {/* Followup Discussions */}
+            {/* followups */}
             <div className="followup-section">
-                <h3>followup discussions for lingering questions and comments</h3>
+                <h3>Followup discussions for lingering questions and comments</h3>
 
                 {rootFollowups.map((followup: any) => (
                     <div key={followup._id} className="followup-thread">
                         <div className="followup-header">
                             <button
-                                className={`resolved-status ${followup.isResolved ? "resolved" : ""}`}
-                                onClick={() => handleToggleResolved(followup._id)}
+                                className={`resolved-btn ${followup.isResolved ? "resolved" : ""}`}
+                                onClick={() => dispatch(toggleFollowupResolved({ courseId, followupId: followup._id }))}
                             >
-                                {followup.isResolved ?
-                                    <><FaCheck /> Resolved</> :
-                                    <><FaTimes /> Unresolved</>
-                                }
+                                {followup.isResolved ? "✓ Resolved" : "Unresolved"}
                             </button>
-                            <span className="followup-author">
+                            <span className="author">
+                {["FACULTY", "TA", "INSTRUCTOR"].includes(followup.authorRole) ? "Instr" : "Student"}:{" "}
                                 {getAuthorName(followup)}
-                            </span>
-                            <span className="followup-time">
-                                Updated {format(new Date(followup.updatedAt || followup.createdAt),
-                                "MMM d 'at' h:mm a")}
-                            </span>
+              </span>
+                            <span className="timestamp">
+                Updated {format(new Date(followup.updatedAt || followup.createdAt), "MMM d 'at' h:mm a")}
+              </span>
                         </div>
+
                         <div className="followup-content">{followup.content}</div>
 
-                        {/* Replies */}
+                        {/* replies */}
                         {getReplies(followup._id).map((reply: any) => (
                             <div key={reply._id} className="followup-reply">
-                                <span className="reply-author">{getAuthorName(reply)}</span>
-                                <span className="reply-time">
-                                    {format(new Date(reply.createdAt), "h:mm a")}
-                                </span>
+                <span className="author">
+                  {["FACULTY", "TA", "INSTRUCTOR"].includes(reply.authorRole) ? "Instr" : "Student"}:{" "}
+                    {getAuthorName(reply)}
+                </span>
+                                <span className="timestamp">{format(new Date(reply.createdAt), "h:mm a")}</span>
                                 <div className="reply-content">{reply.content}</div>
                             </div>
                         ))}
 
-                        {/* Reply input */}
+                        {/* reply editor */}
                         {showReplyEditor[followup._id] ? (
                             <div className="reply-input">
                                 <input
                                     type="text"
                                     value={replyContent[followup._id] || ""}
-                                    onChange={(e) => setReplyContent({
-                                        ...replyContent,
-                                        [followup._id]: e.target.value
-                                    })}
-                                    placeholder="Reply to this discussion..."
+                                    onChange={(e) => setReplyContent({ ...replyContent, [followup._id]: e.target.value })}
+                                    placeholder="Reply to this followup discussion..."
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            const content = replyContent[followup._id];
+                                            if (!content?.trim()) return;
+                                            dispatch(createFollowup({ courseId, postId: currentPost._id, content, parentId: followup._id }));
+                                            setReplyContent({ ...replyContent, [followup._id]: "" });
+                                            setShowReplyEditor({ ...showReplyEditor, [followup._id]: false });
+                                        }
+                                    }}
                                 />
-                                <button onClick={() => handleSubmitReply(followup._id)}>
+                                <button
+                                    onClick={() => {
+                                        const content = replyContent[followup._id];
+                                        if (!content?.trim()) return;
+                                        dispatch(createFollowup({ courseId, postId: currentPost._id, content, parentId: followup._id }));
+                                        setReplyContent({ ...replyContent, [followup._id]: "" });
+                                        setShowReplyEditor({ ...showReplyEditor, [followup._id]: false });
+                                    }}
+                                >
                                     Reply
                                 </button>
-                                <button onClick={() => setShowReplyEditor({
-                                    ...showReplyEditor,
-                                    [followup._id]: false
-                                })}>
+                                <button onClick={() => setShowReplyEditor({ ...showReplyEditor, [followup._id]: false })}>
                                     Cancel
                                 </button>
                             </div>
                         ) : (
-                            <button
-                                className="reply-btn"
-                                onClick={() => setShowReplyEditor({
-                                    ...showReplyEditor,
-                                    [followup._id]: true
-                                })}>
-                                helpful 0
+                            <button className="reply-btn" onClick={() => setShowReplyEditor({ ...showReplyEditor, [followup._id]: true })}>
+                                Reply
                             </button>
                         )}
                     </div>
                 ))}
 
-                {/* New followup input */}
+                {/* new followup */}
                 <div className="new-followup">
                     <input
                         type="text"
                         placeholder="Start a new followup discussion"
                         value={followupContent}
                         onChange={(e) => setFollowupContent(e.target.value)}
-                        onKeyPress={(e) => {
-                            if (e.key === "Enter") handleSubmitFollowup();
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && followupContent.trim()) {
+                                dispatch(createFollowup({ courseId, postId: currentPost._id, content: followupContent }));
+                                setFollowupContent("");
+                            }
                         }}
                     />
                 </div>

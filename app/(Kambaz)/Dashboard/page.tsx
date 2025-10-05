@@ -384,9 +384,9 @@ export default function Dashboard() {
                                             <FaRegEdit />
                                         </Link>
                                         <Link
-                                            href={`/Courses/${c._id}/Zoom`}
+                                            href={`/Courses/${c._id}/Piazza`}
                                             className="card-link-icon"
-                                            title="Zoom"
+                                            title="Piazza"
                                         >
                                             <FaRegCommentDots />
                                         </Link>
