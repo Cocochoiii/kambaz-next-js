@@ -1,0 +1,73 @@
+/* ===== Calendar layout (独立出来) ===== */
+
+.wd-cal-head {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    background: #f8f9fa;
+    border: 1px solid #e5e7eb;
+    border-bottom: none;
+}
+
+.wd-cal-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    grid-auto-rows: 140px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+}
+
+/* Day cell */
+.wd-cal-cell {
+    position: relative;
+    padding: 6px 8px 8px 8px;
+    border-right: 1px solid #e5e7eb;
+    border-top: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+.wd-cal-cell:nth-child(7n) { border-right: none; }
+
+.wd-cal-faded { background: #fafafa; color: #9ca3af; }
+
+/* Day number */
+.wd-cal-date {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+}
+.wd-cal-today {
+    color: #111827;
+    background: #e0e7ff;
+    padding: 2px 6px;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+/* Event pill */
+.wd-cal-pill {
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: #f3f4f6;
+    white-space: nowrap;
+}
+
+/* Mini calendar */
+.wd-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+.wd-mini-date {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 6px;
+}
+.wd-mini-today { background: #e0e7ff; font-weight: 600; }
+
+/* Link polish (for +N more) */
+#wd-calendar .btn-link { color: #2563eb; text-decoration: none; }
+#wd-calendar .btn-link:hover { text-decoration: underline; }

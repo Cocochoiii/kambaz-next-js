@@ -1,0 +1,181 @@
+
+
+/* ---------- design tokens ---------- */
+#wd-assignments,
+#wd-assignments-editor {
+    --as-text: #2d3b45;
+    --as-muted: #6c757d;
+    --as-border: #e1e3e5;
+    --as-border-strong: #c7cdd1;
+    --as-surface: #ffffff;
+    --as-surface-alt: #f8f9fa;
+    --as-hover: #f8f9fa;
+    --as-green: #198754;
+    --as-danger: #d01a19;
+    --as-link: #0374b5;
+}
+
+/* =========================================================
+   LIST PAGE — #wd-assignments
+   ========================================================= */
+
+/* Toolbar (search + buttons) */
+#wd-assignments .d-flex.align-items-center.gap-2 > .form-control {
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid var(--as-border);
+    box-shadow: none;
+}
+
+#wd-assignments .btn {
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 8px 12px;
+}
+
+#wd-assignments #wd-add-assignment-group.btn-light,
+#wd-assignments .btn-light {
+    background: #fff;
+    border: 1px solid var(--as-border);
+}
+
+#wd-assignments #wd-add-assignment.btn-danger {
+    background: var(--as-danger);
+    border-color: var(--as-danger);
+    color: #fff;
+}
+
+/* Group card (ASSIGNMENTS wrapper) */
+#wd-assignments .border.rounded {
+    border: 1px solid var(--as-border) !important;
+    background: var(--as-surface);
+}
+
+/* Group header row */
+#wd-assignments .px-3.py-2 {
+    background: var(--as-surface-alt);
+    border-bottom: 1px solid var(--as-border);
+}
+
+#wd-assignments .badge.border {
+    border-color: var(--as-border-strong) !important;
+}
+
+/* Each assignment row */
+#wd-assignments #wd-assignment-list .list-group-item {
+    border-bottom: 1px solid var(--as-border);
+}
+
+#wd-assignments #wd-assignment-list .list-group-item:last-child {
+    border-bottom: 0;
+}
+
+#wd-assignments .wd-assignment-link {
+    color: var(--as-text);
+}
+
+#wd-assignments .wd-assignment-link:hover,
+#wd-assignments .wd-assignment-link:focus {
+    color: var(--as-link);
+    text-decoration: underline;
+}
+
+#wd-assignments .text-muted.small {
+    color: var(--as-muted) !important;
+}
+
+#wd-assignments .list-group-item:hover {
+    background: var(--as-hover);
+}
+
+/* Tiny controls at the right of each row */
+#wd-assignments .btn.btn-link.text-danger {
+    text-decoration: none;
+}
+#wd-assignments .btn.btn-link.text-danger:hover {
+    opacity: .85;
+}
+
+/* Icons alignment tweaks */
+#wd-assignments .fs-4.text-secondary,
+#wd-assignments .text-success.fs-5 {
+    line-height: 1;
+}
+
+/* =========================================================
+   EDITOR PAGE — #wd-assignments-editor
+   ========================================================= */
+
+#wd-assignments-editor {
+    color: var(--as-text);
+}
+
+#wd-assignments-editor .form-label {
+    font-size: 14px;
+    color: var(--as-text);
+}
+
+#wd-assignments-editor .form-control,
+#wd-assignments-editor .form-select {
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid var(--as-border);
+    box-shadow: none;
+}
+
+#wd-assignments-editor #wd-description {
+    min-height: 160px;
+}
+
+/* Property table on the left */
+#wd-assignments-editor table.table {
+    width: 100%;
+}
+
+#wd-assignments-editor table.table td {
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    vertical-align: middle;
+}
+
+#wd-assignments-editor table.table td.text-end {
+    color: var(--as-muted);
+    white-space: nowrap;
+}
+
+#wd-assignments-editor .form-check {
+    margin: .25rem 0;
+}
+
+/* Footer buttons */
+#wd-assignments-editor .btn {
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 8px 14px;
+}
+
+#wd-assignments-editor .btn-danger {
+    background: var(--as-danger);
+    border-color: var(--as-danger);
+}
+
+#wd-assignments-editor .btn-light {
+    background: #fff;
+    border: 1px solid var(--as-border);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 768px) {
+    #wd-assignments .d-flex.align-items-center.gap-2 {
+        gap: .5rem !important;
+    }
+    #wd-assignments .d-flex.align-items-center.gap-2 > .form-control {
+        max-width: 100% !important;
+    }
+
+    #wd-assignments-editor table.table td.text-end {
+        width: 34%;
+    }
+}

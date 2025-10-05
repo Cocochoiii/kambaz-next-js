@@ -1,0 +1,96 @@
+/* =========================
+   Settings page (scoped styles)
+   File: app/(Kambaz)/Settings/settings.css
+   ========================= */
+
+/* Page container */
+#wd-settings {
+    background: #fff;
+}
+
+/* Title */
+#wd-settings h1 {
+    font-weight: 600;
+    font-size: 1.6rem;
+    margin: 0 0 1rem 0;
+    color: #2D3B45;
+}
+
+/* Cards */
+#wd-settings .card {
+    border: 1px solid #E1E3E5;
+    border-radius: .5rem;
+}
+#wd-settings .card-title {
+    color: #2D3B45;
+    font-weight: 600;
+}
+
+/* Form labels & help text */
+#wd-settings .form-label {
+    color: #2D3B45;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+#wd-settings .form-text {
+    color: #6C757D;
+}
+
+/* Inputs & selects */
+#wd-settings .form-control,
+#wd-settings .form-select {
+    font-size: 14px;
+    border: 1px solid #C7CDD1;
+    border-radius: .375rem;
+    background-color: #fff;
+}
+#wd-settings .form-control:focus,
+#wd-settings .form-select:focus {
+    border-color: #0374B5;
+    box-shadow: 0 0 0 .25rem rgba(3, 116, 181, .12);
+}
+
+/* Switches */
+#wd-settings .form-check-input {
+    border-color: #C7CDD1;
+}
+#wd-settings .form-check-input:checked {
+    background-color: #0374B5;
+    border-color: #0374B5;
+}
+
+/* Buttons */
+#wd-settings .btn-primary {
+    background-color: #C8102E;   /* NU red */
+    border-color: #C8102E;
+    color: #fff;
+}
+#wd-settings .btn-primary:hover,
+#wd-settings .btn-primary:active {
+    background-color: #B40E29;
+    border-color: #B40E29;
+}
+#wd-settings .btn-primary:focus {
+    box-shadow: 0 0 0 .25rem rgba(200, 16, 46, .25);
+}
+
+#wd-settings .btn-outline-secondary {
+    background-color: #fff;
+    border: 1px solid #C7CDD1;
+    color: #2D3B45;
+}
+#wd-settings .btn-outline-secondary:hover {
+    background-color: #F5F5F5;
+    border-color: #8B969E;
+}
+
+/* Minor layout tweaks */
+#wd-settings .gap-2 > .btn { min-width: 88px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    #wd-settings h1 { font-size: 1.35rem; }
+    #wd-settings .card-title { font-size: 1rem; }
+    #wd-settings .btn { font-size: 13px; }
+}

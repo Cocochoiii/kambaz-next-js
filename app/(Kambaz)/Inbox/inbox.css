@@ -1,0 +1,85 @@
+/* =========================
+   Inbox page (scoped styles)
+   ========================= */
+
+#wd-inbox { background: #fff; }
+
+/* Header */
+#wd-inbox h2 {
+    font-weight: 600;
+    font-size: 1.6rem;
+    margin: 0;
+}
+
+/* Card header / toolbar */
+#wd-inbox .card-header { border-bottom: 1px solid #E1E3E5; }
+#wd-inbox .input-group .input-group-text { background: #fff; border-right: 0; }
+#wd-inbox .input-group .form-control { border-left: 0; }
+
+/* Dropdown filter */
+#wd-inbox .form-select { font-size: 14px; }
+
+/* Outline button */
+#wd-inbox .btn-outline-secondary {
+    background-color: #fff;
+    border: 1px solid #C7CDD1;
+    color: #2D3B45;
+}
+#wd-inbox .btn-outline-secondary:hover {
+    background-color: #F5F5F5;
+    border-color: #8B969E;
+}
+
+/* Primary buttons (header + modal Send) */
+#wd-inbox .btn-primary,
+.modal .btn-primary {
+    background-color: #C8102E !important;
+    border-color: #C8102E !important;
+    color: #fff;
+}
+#wd-inbox .btn-primary:hover,
+#wd-inbox .btn-primary:active,
+.modal .btn-primary:hover,
+.modal .btn-primary:active {
+    background-color: #B40E29 !important;
+    border-color: #B40E29 !important;
+}
+#wd-inbox .btn-primary:focus,
+.modal .btn-primary:focus {
+    box-shadow: 0 0 0 0.25rem rgba(200, 16, 46, 0.25) !important;
+}
+
+/* Message list */
+#wd-inbox .list-group-item { border-bottom: 1px solid #E1E3E5; }
+#wd-inbox .list-group-item:hover { background: #F8F8F8; }
+#wd-inbox .list-group-item strong { color: #2D3B45; font-weight: 700; }
+#wd-inbox .list-group-item .text-muted.small { color: #6C757D !important; }
+
+/* Badges */
+#wd-inbox .badge.bg-danger { font-weight: 600; }
+#wd-inbox .badge.bg-secondary {
+    background-color: #C7CDD1 !important;
+    color: #2D3B45 !important;
+    font-weight: 600;
+}
+
+/* Empty state */
+#wd-inbox .text-center.text-muted { color: #6C757D !important; }
+
+/* “Back to Dashboard” link button */
+#wd-inbox .btn.btn-outline-secondary.btn-sm {
+    padding: 0.3rem 0.55rem;
+    font-size: 12px;
+}
+
+/* Icons sizing tweak */
+#wd-inbox .fs-3 { line-height: 1; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    #wd-inbox h2 { font-size: 1.35rem; }
+    #wd-inbox .card-header .d-flex { gap: 0.5rem !important; flex-wrap: wrap; }
+    #wd-inbox .input-group { max-width: 100% !important; flex: 1 1 100%; }
+    #wd-inbox .form-select { max-width: 100% !important; flex: 1 1 100%; }
+    #wd-inbox .ms-auto.d-flex { width: 100%; justify-content: flex-end; }
+}

@@ -1,0 +1,138 @@
+/* =========================
+   Zoom page (scoped styles)
+   ========================= */
+
+#wd-zoom {
+    background: #fff;
+}
+
+/* Header */
+#wd-zoom h1 {
+    font-weight: 600;
+    font-size: 1.6rem;
+    margin: 0;
+}
+
+/* Top links */
+#wd-zoom a.text-primary {
+    color: #0374B5 !important;
+    font-weight: 600;
+    text-decoration: none;
+}
+#wd-zoom a.text-primary:hover {
+    color: #0061a0 !important;
+    text-decoration: underline;
+}
+
+/* Tabs */
+#wd-zoom .nav-tabs .nav-link {
+    font-size: 14px;
+    padding: 0.65rem 0.9rem;
+}
+#wd-zoom .nav-tabs .nav-link.active {
+    font-weight: 600;
+}
+
+/* Table (meetings & recordings) */
+#wd-zoom table.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 0;
+}
+#wd-zoom thead {
+    background-color: #F5F5F5;
+    border-bottom: 2px solid #C7CDD1;
+}
+#wd-zoom th {
+    font-weight: 600;
+    color: #2D3B45;
+    font-size: 14px;
+    padding: 10px 8px;
+    white-space: nowrap;
+}
+#wd-zoom td {
+    padding: 10px 8px;
+    font-size: 14px;
+    vertical-align: middle;
+    border-bottom: 1px solid #E1E3E5;
+    color: #2D3B45;
+}
+
+/* “No Data” placeholder */
+#wd-zoom .text-center.py-5 p.text-muted {
+    color: #6C757D !important;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Inline action links in tables */
+#wd-zoom .btn-link {
+    padding: 0;
+    font-size: 14px;
+}
+#wd-zoom .btn-link.text-danger {
+    color: #D01A19 !important;
+}
+#wd-zoom .btn-link.text-danger:hover {
+    color: #B71C1C !important;
+}
+
+/* Schedule modal elements */
+#wd-zoom .modal .form-label {
+    font-weight: 600;
+    color: #2D3B45;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+#wd-zoom .modal .form-control,
+#wd-zoom .modal .form-select {
+    font-size: 14px;
+}
+
+/* Personal Meeting Room card */
+#wd-zoom .card .card-title {
+    font-weight: 700;
+    color: #2D3B45;
+}
+#wd-zoom .card p {
+    margin-bottom: 0.35rem;
+}
+
+/* Checkbox above tables */
+#wd-zoom .form-check {
+    user-select: none;
+}
+#wd-zoom .form-check-label {
+    font-size: 14px;
+}
+
+/* Recordings empty state icon */
+#wd-zoom .text-muted.mb-3 {
+    color: #6C757D !important;
+}
+
+/* Buttons */
+#wd-zoom .btn-primary {
+    background-color: #0374B5;
+    border-color: #0374B5;
+}
+#wd-zoom .btn-primary:hover {
+    background-color: #0061a0;
+    border-color: #0061a0;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    #wd-zoom h1 {
+        font-size: 1.35rem;
+    }
+    #wd-zoom th,
+    #wd-zoom td {
+        font-size: 12px;
+        padding: 8px 6px;
+    }
+    #wd-zoom .nav-tabs .nav-link {
+        font-size: 13px;
+        padding: 0.55rem 0.7rem;
+    }
+}
