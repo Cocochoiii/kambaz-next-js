@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 import * as db from "../../../../Database";
+import "./people.css";
 
 export default function PeopleTable() {
     const { cid } = useParams<{ cid: string }>();

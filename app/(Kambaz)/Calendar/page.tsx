@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
 import { IoChevronBack, IoChevronForward, IoCalendarClearOutline } from "react-icons/io5";
+import "./calendar.css";
 
 /** ---------- helpers ---------- */
 type CalEvent = {

@@ -14,6 +14,7 @@ import {
 import { BsThreeDots } from "react-icons/bs";
 import GradeEditor from "./GradeEditor";
 import * as db from "../../../Database";
+import "./grades.css";
 
 export default function Grades() {
     const { cid } = useParams<{ cid: string }>();

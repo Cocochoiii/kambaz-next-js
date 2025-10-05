@@ -527,3 +527,33 @@ textarea.form-control-custom {
         font-size: 16px;
     }
 }
+
+/* ===== Student View overrides: NU Red for Enroll & Show Enrolled Only ===== */
+
+/* Enroll button (student view only) */
+.student-view .btn-card-enroll {
+    background: #C8102E;     /* fallback */
+    background: #C8102EFF;   /* 8-digit HEX when supported */
+    border: 1px solid #C8102E;
+    color: #fff;
+}
+
+.student-view .btn-card-enroll:hover,
+.student-view .btn-card-enroll:focus {
+    background: #A70E26;
+    border-color: #A70E26;
+    color: #fff;
+}
+
+/* Top-right toggle button (Show Enrolled Only / Browse All Courses) */
+.student-view .btn-toggle-courses {
+    border-color: #C8102E;
+    color: #C8102E;
+}
+
+.student-view .btn-toggle-courses:hover,
+.student-view .btn-toggle-courses:focus {
+    background: #C8102E;
+    color: #fff;
+    border-color: #C8102E;
+}

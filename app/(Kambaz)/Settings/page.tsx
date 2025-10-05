@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import "./settings.css";
 
 export default function SettingsPage() {
     // Local demo state (purely client-side placeholders)

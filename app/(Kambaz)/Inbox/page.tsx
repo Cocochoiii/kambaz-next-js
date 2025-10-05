@@ -1,9 +1,12 @@
+// app/(Kambaz)/Inbox/page.tsx
 "use client";
 
 import Link from "next/link";
 import { useState } from "react";
-import { Card, Button, Form, InputGroup, ListGroup, Badge } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { Card, Button, Form, InputGroup, ListGroup, Badge, Modal } from "react-bootstrap";
 import { BsInbox, BsSearch } from "react-icons/bs";
+import "./inbox.css";
 
 type Msg = {
     id: string;
@@ -16,49 +19,55 @@ type Msg = {
 };
 
 const MOCK: Msg[] = [
-    {
-        id: "1",
-        from: "Course Bot",
-        subject: "Welcome to your Inbox",
-        preview: "Welcome to Canvas.",
-        time: "now",
-        unread: true,
-    },
-    {
-        id: "2",
-        from: "CS5610 Staff",
-        subject: "Project 1 released",
-        preview: "Spec and starter code are available on Modules.",
-        time: "2h",
-        course: "5610",
-    },
-    {
-        id: "3",
-        from: "CS5200 TA",
-        subject: "Lab moved to Thursday",
-        preview: "Please check Zoom link in the course page.",
-        time: "yesterday",
-        course: "5200",
-    },
-    {
-        id: "4",
-        from: "CS5800 TA",
-        subject: "Midterm exam for next week",
-        preview: "Check the practice exam on module page.",
-        time: "yesterday",
-        course: "5800",
-    },
+    { id: "1", from: "Course Bot", subject: "Welcome to your Inbox", preview: "Welcome to Canvas.", time: "now", unread: true },
+    { id: "2", from: "CS5610 Staff", subject: "Project 1 released", preview: "Spec and starter code are available on Modules.", time: "2h", course: "5610" },
+    { id: "3", from: "CS5200 TA", subject: "Lab moved to Thursday", preview: "Please check Zoom link in the course page.", time: "yesterday", course: "5200" },
+    { id: "4", from: "CS5800 TA", subject: "Midterm exam for next week", preview: "Check the practice exam on module page.", time: "yesterday", course: "5800" },
 ];
 
 export default function InboxPage() {
     const [q, setQ] = useState("");
+    const [messages, setMessages] = useState<Msg[]>(MOCK);
 
-    const filtered = MOCK.filter(
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const isFaculty = (currentUser?.role ?? "").toString().toUpperCase() === "FACULTY";
+
+    const [showCompose, setShowCompose] = useState(false);
+    const [draft, setDraft] = useState<{ to: string; subject: string; body: string; course: string; }>(
+        { to: "", subject: "", body: "", course: "" }
+    );
+
+    const resetDraft = () => setDraft({ to: "", subject: "", body: "", course: "" });
+
+    const handleSend = () => {
+        // allow send if either field has content; fall back safely
+        if (!draft.subject.trim() && !draft.body.trim()) return;
+
+        const newMsg: Msg = {
+            id: String(Date.now()),
+            from: currentUser?.username || "Faculty",
+            subject: (draft.subject || "New message").trim(),
+            preview: (draft.body || "").trim().slice(0, 140) || " ",
+            time: "now",
+            unread: true,
+            course: draft.course || undefined,
+        };
+
+        setMessages(prev => [newMsg, ...prev]);
+        setShowCompose(false);
+        resetDraft();
+    };
+
+    const handleMarkAllRead = () => setMessages(prev => prev.map(m => ({ ...m, unread: false })));
+
+    const filtered = messages.filter(
         m =>
             m.subject.toLowerCase().includes(q.toLowerCase()) ||
             m.from.toLowerCase().includes(q.toLowerCase()) ||
             m.preview.toLowerCase().includes(q.toLowerCase())
     );
+
+    const canSend = draft.subject.trim().length > 0 || draft.body.trim().length > 0;
 
     return (
         <div id="wd-inbox" className="container-fluid py-4">
@@ -77,15 +86,14 @@ export default function InboxPage() {
                 <Card.Header className="bg-white">
                     <div className="d-flex gap-2 align-items-center">
                         <InputGroup style={{ maxWidth: 420 }}>
-                            <InputGroup.Text>
-                                <BsSearch />
-                            </InputGroup.Text>
+                            <InputGroup.Text><BsSearch /></InputGroup.Text>
                             <Form.Control
                                 placeholder="Search messages…"
                                 value={q}
                                 onChange={(e) => setQ(e.target.value)}
                             />
                         </InputGroup>
+
                         <Form.Select style={{ maxWidth: 200 }} defaultValue="">
                             <option value="">All courses</option>
                             <option value="5610">CS5610</option>
@@ -96,9 +104,16 @@ export default function InboxPage() {
                             <option value="6510">CS6510</option>
                             <option value="6620">CS6620</option>
                         </Form.Select>
+
                         <div className="ms-auto d-flex gap-2">
-                            <Button variant="primary">New Message</Button>
-                            <Button variant="outline-secondary">Mark all read</Button>
+                            {isFaculty && (
+                                <Button variant="primary" onClick={() => setShowCompose(true)}>
+                                    New Message
+                                </Button>
+                            )}
+                            <Button variant="outline-secondary" onClick={handleMarkAllRead}>
+                                Mark all read
+                            </Button>
                         </div>
                     </div>
                 </Card.Header>
@@ -106,16 +121,12 @@ export default function InboxPage() {
                 <ListGroup variant="flush">
                     {filtered.length === 0 && (
                         <ListGroup.Item className="py-5 text-center text-muted">
-                            No messages yet. This is a stub UI—hook it up to your data source when ready.
+                            No messages yet.
                         </ListGroup.Item>
                     )}
 
                     {filtered.map((m) => (
-                        <ListGroup.Item
-                            key={m.id}
-                            action
-                            className="d-flex flex-column gap-1"
-                        >
+                        <ListGroup.Item key={m.id} action className="d-flex flex-column gap-1">
                             <div className="d-flex align-items-center">
                                 <strong className="me-2">{m.subject}</strong>
                                 {m.unread && <Badge bg="danger" pill>new</Badge>}
@@ -130,6 +141,75 @@ export default function InboxPage() {
                     ))}
                 </ListGroup>
             </Card>
+
+            {/* Compose Modal */}
+            <Modal show={showCompose} onHide={() => setShowCompose(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>New Message</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="d-flex flex-direction-column gap-3">
+                        <Form.Group className="mb-3">
+                            <Form.Label>To</Form.Label>
+                            <Form.Control
+                                placeholder="e.g., All Students in Course"
+                                value={draft.to}
+                                onChange={(e) => setDraft({ ...draft, to: e.target.value })}
+                            />
+                            <div className="form-text"></div>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Course</Form.Label>
+                            <Form.Select
+                                value={draft.course}
+                                onChange={(e) => setDraft({ ...draft, course: e.target.value })}
+                            >
+                                <option value="">All courses</option>
+                                <option value="5610">CS5610</option>
+                                <option value="5520">CS5520</option>
+                                <option value="5200">CS5200</option>
+                                <option value="5004">CS5004</option>
+                                <option value="5800">CS5800</option>
+                                <option value="6510">CS6510</option>
+                                <option value="6620">CS6620</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Subject</Form.Label>
+                            <Form.Control
+                                value={draft.subject}
+                                onChange={(e) => setDraft({ ...draft, subject: e.target.value })}
+                                placeholder="Subject"
+                            />
+                        </Form.Group>
+
+                        <Form.Group>
+                            <Form.Label>Message</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={5}
+                                value={draft.body}
+                                onChange={(e) => setDraft({ ...draft, body: e.target.value })}
+                                placeholder="Write your message..."
+                            />
+                        </Form.Group>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="outline-secondary" onClick={() => setShowCompose(false)}>
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="primary"
+                        onClick={handleSend}
+                        disabled={!canSend}
+                    >
+                        Send
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }

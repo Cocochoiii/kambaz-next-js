@@ -11,6 +11,7 @@ import {
 } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteAssignment } from "./reducer";
+import "./assignments.css";
 
 export default function Assignments() {
     const { cid } = useParams<{ cid: string }>();

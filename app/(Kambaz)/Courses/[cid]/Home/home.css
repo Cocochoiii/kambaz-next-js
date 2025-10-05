@@ -1,0 +1,59 @@
+/* --- Home-only toolbar sizing (keeps your look) --- */
+#wd-courses-home .wd-toolbar .btn {
+    font-size: .92rem;
+    padding: .45rem .7rem;
+    border-radius: .4rem;
+}
+
+/* ===============================
+   Publish All  ➜  GREEN (success)
+   =============================== */
+#wd-courses-home .wd-toolbar #wd-home-view-progress + button,
+#wd-courses-home .wd-toolbar #wd-home-view-progress + .btn,
+#wd-courses-home .wd-toolbar #wd-home-view-progress + .dropdown > .btn,
+#wd-courses-home .wd-toolbar #wd-home-view-progress + .dropdown > .dropdown-toggle,
+#wd-courses-home .wd-toolbar #wd-home-view-progress + * .btn,
+#wd-courses-home .wd-toolbar #wd-home-view-progress + * .dropdown-toggle {
+    background-color: #198754 !important;  /* Bootstrap success */
+    border-color:     #198754 !important;
+    color: #fff !important;
+}
+#wd-courses-home .wd-toolbar #wd-home-view-progress + button:hover,
+#wd-courses-home .wd-toolbar #wd-home-view-progress + .btn:hover,
+#wd-courses-home .wd-toolbar #wd-home-view-progress + .dropdown > .btn:hover,
+#wd-courses-home .wd-toolbar #wd-home-view-progress + .dropdown > .dropdown-toggle:hover,
+#wd-courses-home .wd-toolbar #wd-home-view-progress + * .btn:hover,
+#wd-courses-home .wd-toolbar #wd-home-view-progress + * .dropdown-toggle:hover {
+    background-color: #157347 !important;
+    border-color:     #146c43 !important;
+}
+
+/* =========================
+   + Module  ➜  RED (danger)
+   ========================= */
+#wd-courses-home .wd-toolbar #wd-home-new-module {
+    background-color: #dc3545 !important;
+    border-color:     #dc3545 !important;
+    color: #fff !important;
+}
+#wd-courses-home .wd-toolbar #wd-home-new-module:hover {
+    background-color: #bb2d3b !important;
+    border-color:     #b02a37 !important;
+}
+
+/* ===================================================
+   Modal confirm button (Add Module)  ➜  RED (danger)
+   ---------------------------------------------------
+   React-Bootstrap Modals render in a portal, so we
+   can’t scope to #wd-courses-home reliably. We make
+   primary buttons inside modals red for consistency
+   with your red “+ Module” action.
+   =================================================== */
+.modal .modal-footer .btn.btn-primary {
+    background-color: #dc3545 !important;
+    border-color:     #dc3545 !important;
+}
+.modal .modal-footer .btn.btn-primary:hover {
+    background-color: #bb2d3b !important;
+    border-color:     #b02a37 !important;
+}

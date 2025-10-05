@@ -36,7 +36,6 @@ export default function Dashboard() {
     const displayedCourses =
         showAllCourses || isFaculty ? courses : courses.filter((c: any) => isEnrolled(c._id));
 
-    // course CRUD
     const handleAddCourse = () => {
         dispatch(addCourse());
         setShowEditor(false);
@@ -55,7 +54,6 @@ export default function Dashboard() {
 
     const handleSetCourse = (c: any) => dispatch(setCourse(c));
 
-    // enrollment
     const handleEnroll = (courseId: string) => {
         if (!currentUser) return;
         dispatch(enrollUser({ userId: currentUser._id, courseId }));
@@ -68,12 +66,14 @@ export default function Dashboard() {
         }
     };
 
-    // helper to resolve image path safely
     const resolveImg = (img?: string) =>
         !img ? "/images/course1.jpg" : img.startsWith("/") ? img : `/images/${img}`;
 
     return (
-        <div id="wd-dashboard" className="dashboard-container">
+        <div
+            id="wd-dashboard"
+            className={`dashboard-container ${!isFaculty ? "student-view" : ""}`}
+        >
             <div className="dashboard-header">
                 <h1 id="wd-dashboard-title">Dashboard</h1>
                 {isFaculty && (
@@ -88,17 +88,11 @@ export default function Dashboard() {
                 )}
             </div>
 
-            {/* FACULTY: Course Editor Panel */}
             {isFaculty && showEditor && (
                 <div className="course-editor-panel">
                     <div className="editor-header">
-                        <h5 className="editor-title">
-                            {course._id ? "Edit Course" : "Create New Course"}
-                        </h5>
-                        <button
-                            className="btn-close-editor"
-                            onClick={() => setShowEditor(false)}
-                        >
+                        <h5 className="editor-title">{course._id ? "Edit Course" : "Create New Course"}</h5>
+                        <button className="btn-close-editor" onClick={() => setShowEditor(false)}>
                             <FaTimes />
                         </button>
                     </div>
@@ -204,10 +198,7 @@ export default function Dashboard() {
                         </div>
 
                         <div className="editor-actions">
-                            <button
-                                className="btn-editor-cancel"
-                                onClick={() => setShowEditor(false)}
-                            >
+                            <button className="btn-editor-cancel" onClick={() => setShowEditor(false)}>
                                 Cancel
                             </button>
                             {course._id ? (
@@ -232,12 +223,9 @@ export default function Dashboard() {
                 </div>
             )}
 
-            {/* Courses Section Header */}
             <div className="courses-header">
                 <div>
-                    <h2 id="wd-dashboard-published" className="courses-title">
-                        Published Courses
-                    </h2>
+                    <h2 id="wd-dashboard-published" className="courses-title">Published Courses</h2>
                     <p className="courses-subtitle">
                         {displayedCourses.length} {displayedCourses.length === 1 ? "course" : "courses"}
                     </p>
@@ -253,14 +241,12 @@ export default function Dashboard() {
                 )}
             </div>
 
-            {/* Course Cards Grid */}
             <div id="wd-dashboard-courses" className="courses-grid">
                 {displayedCourses.map((c: any) => {
                     const enrolled = isEnrolled(c._id);
                     return (
                         <div className="course-card-wrapper" key={c._id}>
                             <div className="course-card">
-                                {/* Course Image */}
                                 <div className="course-card-image">
                                     <Image
                                         src={resolveImg(c.image)}
@@ -276,18 +262,12 @@ export default function Dashboard() {
                                     )}
                                 </div>
 
-                                {/* Course Info */}
                                 <div className="course-card-body">
                                     <h5 className="course-card-title">{c.name}</h5>
                                     <div className="course-card-number">{c.number}</div>
-                                    <div className="course-card-term">
-                                        {c.term || "Full Term"} · {c.semester || "2025"}
-                                    </div>
+                                    <div className="course-card-term">{c.term || "Full Term"} · {c.semester || "2025"}</div>
 
-
-                                    {/* Action Buttons */}
                                     <div className="course-card-actions">
-                                        {/* Faculty Actions */}
                                         {isFaculty ? (
                                             <>
                                                 <div className="action-buttons-left">
@@ -326,7 +306,6 @@ export default function Dashboard() {
                                             </>
                                         ) : (
                                             <>
-                                                {/* Student Actions */}
                                                 {enrolled ? (
                                                     <>
                                                         {showAllCourses && (
@@ -366,35 +345,18 @@ export default function Dashboard() {
                                     </div>
                                 </div>
 
-                                {/* Quick Links Bar */}
                                 {(enrolled || isFaculty) && (
                                     <div className="course-card-links">
-                                        <Link
-                                            href={`/Courses/${c._id}/Announcements`}
-                                            className="card-link-icon"
-                                            title="Announcements"
-                                        >
+                                        <Link href={`/Courses/${c._id}/Announcements`} className="card-link-icon" title="Announcements">
                                             <FaBullhorn />
                                         </Link>
-                                        <Link
-                                            href={`/Courses/${c._id}/Quizzes`}
-                                            className="card-link-icon"
-                                            title="Quizzes"
-                                        >
+                                        <Link href={`/Courses/${c._id}/Quizzes`} className="card-link-icon" title="Quizzes">
                                             <FaRegEdit />
                                         </Link>
-                                        <Link
-                                            href={`/Courses/${c._id}/Piazza`}
-                                            className="card-link-icon"
-                                            title="Piazza"
-                                        >
+                                        <Link href={`/Courses/${c._id}/Piazza`} className="card-link-icon" title="Piazza">
                                             <FaRegCommentDots />
                                         </Link>
-                                        <Link
-                                            href={`/Courses/${c._id}/Assignments`}
-                                            className="card-link-icon"
-                                            title="Assignments"
-                                        >
+                                        <Link href={`/Courses/${c._id}/Assignments`} className="card-link-icon" title="Assignments">
                                             <FaRegFolder />
                                         </Link>
                                     </div>
@@ -405,7 +367,6 @@ export default function Dashboard() {
                 })}
             </div>
 
-            {/* Empty State */}
             {displayedCourses.length === 0 && (
                 <div className="empty-state">
                     <div className="empty-state-icon">📚</div>

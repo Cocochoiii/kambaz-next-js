@@ -7,6 +7,7 @@ import { Tab, Tabs, Table, Button, Form, Modal, Row, Col, Alert } from "react-bo
 import { FaVideo, FaCalendarPlus, FaClock, FaUsers, FaRecordVinyl, FaLink } from "react-icons/fa";
 import { addMeeting, deleteMeeting, updateMeetingStatus } from "./reducer";
 import { format } from "date-fns";
+import "./zoom.css";
 
 export default function Zoom() {
     const { cid } = useParams();
