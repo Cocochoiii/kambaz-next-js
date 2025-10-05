@@ -1,559 +1,230 @@
-/* Dashboard Improved Styles */
+/* ============================================
+   Dashboard — Canvas-like polish (FINAL)
+   File: app/(Kambaz)/Dashboard/dashboard-styles.css
+   ============================================ */
 
-.dashboard-container {
-    padding: 20px;
-    max-width: 1400px;
-    margin: 0 auto;
+:root{
+    --wd-text:#2D3B45;
+    --wd-muted:#6C757D;
+    --wd-line:#E1E3E5;
+    --wd-soft:#F5F5F5;
+    --wd-card:#FFFFFF;
+    --wd-blue:#0374B5;
+    --wd-blue-d:#0061A0;
+    --wd-red:#C8102E;     /* NU primary */
+    --wd-red-d:#B40E29;
+    --wd-green:#28A745;
+    --wd-green-d:#218838;
+    --wd-shadow:0 8px 24px rgba(0,0,0,.10);
 }
 
-/* Dashboard Header */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #dee2e6;
+/* Page shell */
+.dashboard-container{
+    padding:20px;
+    max-width:1480px;
+    margin:0 auto;
+    background:#fff;
+    color:var(--wd-text);
 }
 
-#wd-dashboard-title {
-    font-size: 2rem;
-    font-weight: 300;
-    color: #2D3B45;
+/* Header */
+.dashboard-header{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--wd-line);
+}
+
+/* Bigger main title like Canvas */
+#wd-dashboard-title{
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--wd-text);
     margin: 0;
 }
 
-.btn-add-course {
-    background: linear-gradient(135deg, #c8102e 0%, #c8102e 100%);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
+/* New Course (NU red) */
+.btn-add-course{
+    background-color:var(--wd-red); border:1px solid var(--wd-red);
+    color:#fff; padding:.55rem .9rem; border-radius:.375rem;
+    font-weight:600; font-size:14px; display:inline-flex; gap:.4rem; align-items:center;
+    transition:transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.btn-add-course:hover{ background-color:var(--wd-red-d); border-color:var(--wd-red-d); transform:translateY(-1px); box-shadow:var(--wd-shadow); }
+.btn-add-course:focus{ outline:0; box-shadow:0 0 0 .25rem rgba(200,16,46,.25); }
+
+/* Inline editor panel */
+.course-editor-panel{ background:var(--wd-card); border:1px solid var(--wd-line); border-radius:.5rem; margin-bottom:24px; }
+.editor-header{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 18px; background:#FAFAFA; border-bottom:1px solid var(--wd-line);
+    border-radius:.5rem .5rem 0 0;
+}
+.editor-title{ margin:0; font-weight:600; color:var(--wd-text); }
+.btn-close-editor{
+    border:0; background:transparent; color:var(--wd-muted);
+    width:32px; height:32px; border-radius:6px; display:grid; place-items:center;
+}
+.btn-close-editor:hover{ color:var(--wd-red); background:#fff; }
+.editor-body{ padding:18px; }
+.form-group-custom{ margin-bottom:14px; }
+.form-group-custom label{ display:block; font-size:13px; font-weight:600; color:var(--wd-text); margin-bottom:4px; }
+.form-control-custom{
+    width:100%; padding:.55rem .65rem; font-size:14px; background:#fff;
+    border:1px solid #C7CDD1; border-radius:.375rem;
+}
+.form-control-custom:focus{ border-color:var(--wd-blue); box-shadow:0 0 0 .25rem rgba(3,116,181,.12); outline:0; }
+.editor-actions{ display:flex; gap:.6rem; justify-content:flex-end; margin-top:12px; padding-top:12px; border-top:1px solid var(--wd-line); }
+.btn-editor-cancel{
+    background:#fff; color:var(--wd-text); border:1px solid #C7CDD1;
+    border-radius:.375rem; padding:.55rem 1rem; font-weight:500;
+}
+.btn-editor-cancel:hover{ background:#F8F9FA; border-color:#ADB5BD; }
+.btn-editor-update, .btn-editor-add{
+    background:var(--wd-green); border:1px solid var(--wd-green);
+    color:#fff; padding:.55rem 1rem; border-radius:.375rem; font-weight:600;
+}
+.btn-editor-update:hover, .btn-editor-add:hover{ background:var(--wd-green-d); border-color:var(--wd-green-d); }
+
+/* Section header above grid */
+.courses-header{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:12px; }
+.courses-title{ font-size:18px; font-weight:600; margin:0; color:var(--wd-text); }
+.courses-subtitle{ margin:4px 0 0; color:var(--wd-muted); font-size:13px; }
+.btn-toggle-courses{
+    background:#fff; color:var(--wd-blue); border:1px solid var(--wd-blue);
+    border-radius:.375rem; padding:.5rem .85rem; font-weight:600; font-size:14px;
+}
+.btn-toggle-courses:hover{ background:var(--wd-blue); color:#fff; }
+
+/* =========================================================
+   GRID: fixed column widths so last row won't stretch wider;
+   every card gets the same width/height like Canvas.
+   ========================================================= */
+.courses-grid{
+    display:grid;
+    gap:18px;
+    grid-template-columns:repeat(4, 320px);  /* Desktop: 4 columns, fixed 320px */
+    justify-content:start;                   /* left align, no stretching */
 }
 
-.btn-add-course:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(3, 116, 181, 0.3);
+/* Breakpoints – change column count, not card size */
+@media (max-width:1400px){ .courses-grid{ grid-template-columns:repeat(3, 320px); } }
+@media (max-width:1040px){ .courses-grid{ grid-template-columns:repeat(2, 320px); } }
+@media (max-width:700px){
+    .courses-grid{ grid-template-columns:1fr; }
 }
 
-/* Course Editor Panel */
-.course-editor-panel {
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    animation: slideDown 0.3s ease-out;
+/* Wrapper fixed width to match grid cell; use flex so card fills height */
+.course-card-wrapper{
+    width:320px;
+    display:flex;
 }
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* =========================================================
+   CARD: unified height; action row pinned to bottom so that
+   Edit/Delete/Open (or Enroll) line up across the row.
+   ========================================================= */
+.course-card{
+    background:var(--wd-card); border:1px solid var(--wd-line);
+    border-radius:.75rem; overflow:hidden; display:flex; flex-direction:column;
+    width:100%; height:420px;                 /* << unified height */
+    transition:transform .12s ease, box-shadow .12s ease;
+}
+.course-card:hover{ transform:translateY(-2px); box-shadow:var(--wd-shadow); }
+
+/* Banner image area + gradient cap like Canvas */
+.course-card-image{ position:relative; height:160px; background:#DDE3E8; }
+.course-card-image::after{
+    content:""; position:absolute; inset:0 0 auto 0; height:56px;
+    background:linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,0));
+    pointer-events:none;
+}
+.enrolled-badge{
+    position:absolute; top:10px; right:10px;
+    background:rgba(40,167,69,.95); color:#fff; font-weight:700; font-size:12px;
+    border-radius:999px; padding:4px 10px; display:flex; align-items:center; gap:6px;
 }
 
-.editor-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid #dee2e6;
-    background: #f8f9fa;
-    border-radius: 8px 8px 0 0;
+/* Body */
+.course-card-body{
+    padding:14px; display:flex; flex-direction:column; gap:6px;
+    flex:1 1 auto; min-height:0;
 }
-
-.editor-title {
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: #2D3B45;
-    margin: 0;
+.course-card-title{
+    font-size:16px; font-weight:700; color:#1F2A33; line-height:1.25; margin:0;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
 }
+.course-card-number{ font-size:13px; font-weight:700; color:var(--wd-blue); }
+.course-card-term{ font-size:12.5px; color:var(--wd-muted); }
 
-.btn-close-editor {
-    background: transparent;
-    border: none;
-    color: #6c757d;
-    font-size: 20px;
-    cursor: pointer;
-    transition: color 0.2s;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* Actions pinned bottom & aligned across cards */
+.course-card-actions{
+    margin-top:auto; padding-top:10px; border-top:1px solid var(--wd-line);
+    display:flex; align-items:center; justify-content:space-between;
 }
+.action-buttons-left{ display:flex; gap:8px; }
 
-.btn-close-editor:hover {
-    color: #c8102e;
+/* Small pills (Edit/Delete) */
+.btn-card-edit, .btn-card-delete{
+    padding:.35rem .65rem; font-size:12.5px; border-radius:.35rem;
+    font-weight:700; border:1px solid transparent;
 }
+.btn-card-edit{ background:#F0FFF3; color:#155724; border-color:#B7E4C7; }
+.btn-card-edit:hover{ background:#E8F9EE; }
+.btn-card-delete{ background:#FFF5F5; color:var(--wd-red); border-color:#F1C2C8; }
+.btn-card-delete:hover{ background:#FDEBED; }
 
-.editor-body {
-    padding: 25px;
+/* Primary CTAs */
+.btn-card-go, .btn-card-enroll{
+    background:var(--wd-blue); border:1px solid var(--wd-blue);
+    color:#fff; padding:.45rem .85rem; border-radius:.4rem;
+    font-weight:700; font-size:13px; text-decoration:none; display:inline-block;
 }
+.btn-card-go:hover, .btn-card-enroll:hover{ background:var(--wd-blue-d); border-color:var(--wd-blue-d); color:#fff; }
 
-/* Form Controls */
-.form-group-custom {
-    margin-bottom: 20px;
+/* Unenroll (outline red) */
+.btn-card-unenroll{
+    background:#fff; color:var(--wd-red); border:1px solid var(--wd-red);
+    padding:.45rem .75rem; border-radius:.4rem; font-weight:700; font-size:13px;
 }
+.btn-card-unenroll:hover{ background:var(--wd-red); color:#fff; }
 
-.form-group-custom label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #495057;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+/* Quick links bar */
+.course-card-links{
+    display:flex; justify-content:space-around; align-items:center;
+    padding:10px; background:#FAFAFA; border-top:1px solid var(--wd-line);
 }
-
-.form-control-custom {
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 14px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    background: white;
+.card-link-icon{
+    color:#6C757D; font-size:18px; padding:8px; border-radius:.5rem;
+    transition:background .12s,color .12s, transform .12s;
 }
+.card-link-icon:hover{ color:var(--wd-red); transform:translateY(-1px); }
 
-.form-control-custom:focus {
-    outline: none;
-    border-color: #0374B5;
-    box-shadow: 0 0 0 3px rgba(3, 116, 181, 0.1);
+/* Empty state */
+.empty-state{
+    text-align:center; background:#FAFAFA; border:1px solid var(--wd-line);
+    border-radius:.75rem; padding:48px 16px; max-width:560px; margin:36px auto;
 }
+.empty-state h3{ margin:10px 0 6px; font-weight:600; }
+.empty-state p{ color:var(--wd-muted); }
 
-textarea.form-control-custom {
-    resize: vertical;
-    font-family: inherit;
+/* Student accents (Canvas-style) */
+.student-view .btn-card-enroll{ background:var(--wd-red); border-color:var(--wd-red); }
+.student-view .btn-card-enroll:hover{ background:var(--wd-red-d); border-color:var(--wd-red-d); }
+.student-view .btn-toggle-courses{ border-color:var(--wd-red); color:var(--wd-red); }
+.student-view .btn-toggle-courses:hover{ background:var(--wd-red); color:#fff; }
+
+/* Mobile tweaks */
+@media (max-width:768px){
+    .dashboard-header{ flex-direction:column; align-items:flex-start; gap:10px; }
+    .courses-header{ flex-direction:column; align-items:flex-start; gap:8px; }
+    .btn-toggle-courses{ width:100%; }
+    .course-card-actions{ flex-direction:column; gap:8px; align-items:stretch; }
+    .action-buttons-left{ width:100%; justify-content:space-between; }
+    .btn-card-go, .btn-card-enroll, .btn-card-unenroll{ width:100%; text-align:center; }
 }
-
-/* Editor Action Buttons */
-.editor-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 1px solid #dee2e6;
-}
-
-.btn-editor-cancel {
-    padding: 10px 24px;
-    background: white;
-    border: 1px solid #ced4da;
-    color: #495057;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-editor-cancel:hover {
-    background: #f8f9fa;
-    border-color: #adb5bd;
-}
-
-.btn-editor-update,
-.btn-editor-add {
-    padding: 10px 24px;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-editor-update:hover,
-.btn-editor-add:hover {
-    background: #218838;
-    transform: translateY(-1px);
-}
-
-/* Courses Section Header */
-.courses-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 25px;
-}
-
-.courses-title {
-    font-size: 1.5rem;
-    font-weight: 400;
-    color: #2D3B45;
-    margin: 0;
-}
-
-.courses-subtitle {
-    font-size: 14px;
-    color: #6c757d;
-    margin: 5px 0 0 0;
-}
-
-.btn-toggle-courses {
-    padding: 10px 20px;
-    background: white;
-    border: 2px solid #0374B5;
-    color: #0374B5;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-toggle-courses:hover {
-    background: #0374B5;
-    color: white;
-    transform: translateY(-1px);
-}
-
-/* Course Cards Grid */
-.courses-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
-    margin-bottom: 40px;
-}
-
-/* Course Card */
-.course-card-wrapper {
-    max-width: 320px;
-}
-
-.course-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.course-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-/* Course Card Image */
-.course-card-image {
-    position: relative;
-    width: 100%;
-    height: 160px;
-    overflow: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.course-card-image img {
-    object-fit: cover;
-}
-
-.enrolled-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(40, 167, 69, 0.95);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    backdrop-filter: blur(5px);
-}
-
-/* Course Card Body */
-.course-card-body {
-    padding: 20px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.course-card-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #2D3B45;
-    margin: 0 0 8px 0;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.course-card-number {
-    font-size: 14px;
-    font-weight: 600;
-    color: #0374B5;
-    margin-bottom: 4px;
-}
-
-.course-card-term {
-    font-size: 13px;
-    color: #6c757d;
-    margin-bottom: 12px;
-}
-
-.course-card-description {
-    font-size: 13px;
-    color: #495057;
-    line-height: 1.5;
-    margin: 8px 0 16px 0;
-    flex-grow: 1;
-}
-
-/* Course Card Actions */
-.course-card-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-    padding-top: 16px;
-    border-top: 1px solid #f0f0f0;
-}
-
-.action-buttons-left {
-    display: flex;
-    gap: 8px;
-}
-
-/* Card Buttons */
-.btn-card-edit,
-.btn-card-delete {
-    padding: 6px 14px;
-    font-size: 13px;
-    border-radius: 4px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-}
-
-.btn-card-edit {
-    background: rgba(33, 136, 56, 0.82);
-    color: #212529;
-}
-
-.btn-card-edit:hover {
-    background: rgba(33, 136, 56, 0.82);
-}
-
-.btn-card-delete {
-    background: white;
-    color: #c8102e;
-    border: 1px solid #c8102e;
-}
-
-.btn-card-delete:hover {
-    background: #c8102e;
-    color: white;
-}
-
-.btn-card-go,
-.btn-card-enroll {
-    padding: 8px 20px;
-    background: #346fbe;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s;
-    display: inline-block;
-}
-
-.btn-card-go:hover,
-.btn-card-enroll:hover {
-    background: #346fbe;
-    color: white;
-    text-decoration: none;
-    transform: translateX(2px);
-}
-
-.btn-card-unenroll {
-    padding: 8px 16px;
-    background: white;
-    color: #c8102e;
-    border: 1px solid #c8102e;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-right: 8px;
-}
-
-.btn-card-unenroll:hover {
-    background: #c8102e;
-    color: white;
-}
-
-/* Quick Links Bar */
-.course-card-links {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 12px;
-    background: #f8f9fa;
-    border-top: 1px solid #e9ecef;
-}
-
-.card-link-icon {
-    color: #6c757d;
-    font-size: 18px;
-    padding: 8px;
-    border-radius: 6px;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.card-link-icon:hover {
-    background: white;
-    color: #c8102e;
-    transform: scale(1.1);
-}
-
-/* Empty State */
-.empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    background: #f8f9fa;
-    border-radius: 12px;
-    margin: 40px auto;
-    max-width: 500px;
-}
-
-.empty-state-icon {
-    font-size: 48px;
-    margin-bottom: 20px;
-}
-
-.empty-state h3 {
-    font-size: 1.5rem;
-    font-weight: 400;
-    color: #2D3B45;
-    margin-bottom: 12px;
-}
-
-.empty-state p {
-    color: #6c757d;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .dashboard-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-
-    .courses-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-
-    .btn-toggle-courses {
-        width: 100%;
-    }
-
-    .courses-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .course-card-wrapper {
-        max-width: 100%;
-    }
-
-    .editor-body {
-        padding: 15px;
-    }
-
-    .course-card-actions {
-        flex-direction: column;
-        gap: 10px;
-        align-items: stretch;
-    }
-
-    .action-buttons-left {
-        justify-content: space-between;
-    }
-
-    .btn-card-go,
-    .btn-card-enroll,
-    .btn-card-unenroll {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-@media (max-width: 480px) {
-    #wd-dashboard-title {
-        font-size: 1.5rem;
-    }
-
-    .courses-title {
-        font-size: 1.25rem;
-    }
-
-    .course-card-title {
-        font-size: 16px;
-    }
-}
-
-/* ===== Student View overrides: NU Red for Enroll & Show Enrolled Only ===== */
-
-/* Enroll button (student view only) */
-.student-view .btn-card-enroll {
-    background: #C8102E;     /* fallback */
-    background: #C8102EFF;   /* 8-digit HEX when supported */
-    border: 1px solid #C8102E;
-    color: #fff;
-}
-
-.student-view .btn-card-enroll:hover,
-.student-view .btn-card-enroll:focus {
-    background: #A70E26;
-    border-color: #A70E26;
-    color: #fff;
-}
-
-/* Top-right toggle button (Show Enrolled Only / Browse All Courses) */
-.student-view .btn-toggle-courses {
-    border-color: #C8102E;
-    color: #C8102E;
-}
-
-.student-view .btn-toggle-courses:hover,
-.student-view .btn-toggle-courses:focus {
-    background: #C8102E;
-    color: #fff;
-    border-color: #C8102E;
+@media (max-width:480px){
+    #wd-dashboard-title{ font-size:20px; }
+    .courses-title{ font-size:16px; }
+    .course-card-title{ font-size:15px; }
 }
