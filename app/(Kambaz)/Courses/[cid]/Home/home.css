@@ -1,3 +1,22 @@
+/* ============================
+   Course Home (Canvas polish)
+   File: app/(Kambaz)/Courses/[cid]/Home/home.css
+   ============================ */
+
+:root{
+    --wd-text:#2D3B45;
+    --wd-muted:#6C757D;
+    --wd-line:#E1E3E5;
+    --wd-soft:#F5F5F5;
+    --wd-card:#FFFFFF;
+    --wd-green:#198754;
+    --wd-green-d:#157347;
+    --wd-red:#DC3545;
+    --wd-red-d:#BB2D3B;
+    --wd-blue:#0374B5;
+    --wd-blue-d:#0061A0;
+}
+
 /* --- Home-only toolbar sizing (keeps your look) --- */
 #wd-courses-home .wd-toolbar .btn {
     font-size: .92rem;
@@ -14,8 +33,8 @@
 #wd-courses-home .wd-toolbar #wd-home-view-progress + .dropdown > .dropdown-toggle,
 #wd-courses-home .wd-toolbar #wd-home-view-progress + * .btn,
 #wd-courses-home .wd-toolbar #wd-home-view-progress + * .dropdown-toggle {
-    background-color: #198754 !important;  /* Bootstrap success */
-    border-color:     #198754 !important;
+    background-color: var(--wd-green) !important;
+    border-color:     var(--wd-green) !important;
     color: #fff !important;
 }
 #wd-courses-home .wd-toolbar #wd-home-view-progress + button:hover,
@@ -24,36 +43,235 @@
 #wd-courses-home .wd-toolbar #wd-home-view-progress + .dropdown > .dropdown-toggle:hover,
 #wd-courses-home .wd-toolbar #wd-home-view-progress + * .btn:hover,
 #wd-courses-home .wd-toolbar #wd-home-view-progress + * .dropdown-toggle:hover {
-    background-color: #157347 !important;
-    border-color:     #146c43 !important;
+    background-color: var(--wd-green-d) !important;
+    border-color:     var(--wd-green-d) !important;
 }
 
 /* =========================
    + Module  ➜  RED (danger)
    ========================= */
 #wd-courses-home .wd-toolbar #wd-home-new-module {
-    background-color: #dc3545 !important;
-    border-color:     #dc3545 !important;
+    background-color: var(--wd-red) !important;
+    border-color:     var(--wd-red) !important;
     color: #fff !important;
 }
 #wd-courses-home .wd-toolbar #wd-home-new-module:hover {
-    background-color: #bb2d3b !important;
-    border-color:     #b02a37 !important;
+    background-color: var(--wd-red-d) !important;
+    border-color:     var(--wd-red-d) !important;
 }
 
 /* ===================================================
    Modal confirm button (Add Module)  ➜  RED (danger)
-   ---------------------------------------------------
-   React-Bootstrap Modals render in a portal, so we
-   can’t scope to #wd-courses-home reliably. We make
-   primary buttons inside modals red for consistency
-   with your red “+ Module” action.
    =================================================== */
 .modal .modal-footer .btn.btn-primary {
-    background-color: #dc3545 !important;
-    border-color:     #dc3545 !important;
+    background-color: var(--wd-red) !important;
+    border-color:     var(--wd-red) !important;
 }
 .modal .modal-footer .btn.btn-primary:hover {
-    background-color: #bb2d3b !important;
-    border-color:     #b02a37 !important;
+    background-color: var(--wd-red-d) !important;
+    border-color:     var(--wd-red-d) !important;
 }
+
+/* ============================
+   Title & description
+   ============================ */
+#wd-courses-home h1{
+    font-weight:700; font-size:1.6rem; margin:0;
+}
+#wd-courses-home p.text-muted{
+    margin:.25rem 0 1rem 0; color:var(--wd-muted)!important;
+}
+
+/* ============================
+   Sticky toolbar (Canvas-y)
+   ============================ */
+#wd-courses-home .wd-toolbar{
+    position: sticky; top: 64px; z-index: 5;
+    background:#fff; padding:.5rem; border:1px solid var(--wd-line);
+    border-radius:.5rem; box-shadow:0 2px 10px rgba(0,0,0,.03);
+}
+#wd-courses-home .wd-toolbar .btn{
+    font-weight:600; border-radius:.45rem;
+}
+#wd-home-view-progress{
+    background:#f8f9fa; color:var(--wd-text); border:1px solid var(--wd-line);
+}
+#wd-home-view-progress:hover{ background:#eef1f3; }
+
+/* ============================
+   Lists & containers
+   ============================ */
+#wd-courses-home .list-group{ border-radius:.6rem; overflow:hidden; }
+#wd-courses-home .border-gray{ border-color:var(--wd-line)!important; }
+
+/* ============================
+   Module header row (Canvas-y)
+   ============================ */
+#wd-courses-home .module-header{
+    background:#F7F9FA; border-bottom:1px solid var(--wd-line);
+    display:flex; align-items:center; gap:.5rem; padding:.9rem 1rem;
+}
+#wd-courses-home .module-header:hover{ background:#f2f5f7; }
+
+#wd-courses-home .wd-grip{
+    color:#9AA6AE; font-size:1.15rem; margin-right:.15rem;
+}
+#wd-courses-home .module-name{
+    font-weight:700; color:#1F2A33;
+}
+
+/* Caret chevron that rotates */
+#wd-courses-home .caret{
+    display:inline-block; width:10px; height:10px; margin-right:.35rem;
+    border-right:2px solid #6b7780; border-bottom:2px solid #6b7780;
+    transform: rotate(-45deg); transition: transform .12s ease-in-out;
+}
+#wd-courses-home .caret.open{ transform: rotate(45deg); }
+
+/* Inline edit field style */
+#wd-courses-home .module-header .form-control{
+    font-size:14px; max-width:420px; border:1px solid var(--wd-line);
+}
+
+/* ============================
+   Lessons area
+   ============================ */
+#wd-courses-home .wd-lessons .wd-lesson{
+    border-top:1px solid var(--wd-line);
+}
+#wd-courses-home .wd-title{
+    font-weight:600; font-size:.9rem; color:#1F2A33;
+}
+#wd-courses-home .wd-lesson ul{
+    padding-left:2rem; margin: .35rem 0 0 0;
+}
+#wd-courses-home .wd-lesson li{ margin: .2rem 0; }
+
+/* ============================
+   Right rail (Status)
+   ============================ */
+#wd-course-status-col #wd-course-status{
+    position:sticky; top:64px; background:#fff; border:1px solid var(--wd-line);
+    border-radius:.6rem; padding:1rem; box-shadow:0 6px 18px rgba(0,0,0,.06);
+}
+#wd-course-status h2{
+    font-weight:700; font-size:1.15rem; margin:0 0 .75rem 0; color:#1F2A33;
+}
+
+/* Buttons in rail look Canvas-like */
+#wd-course-status .btn{
+    border-radius:.5rem; text-align:left; font-weight:600;
+}
+#wd-course-status .btn .fs-5{ vertical-align:middle; }
+
+/* Focus rings for a11y */
+#wd-courses-home .btn:focus,
+#wd-courses-home .form-control:focus{
+    box-shadow:0 0 0 .2rem rgba(3,116,181,.18);
+    border-color:var(--wd-blue);
+}
+
+/* Responsive */
+@media (max-width: 992px){
+    #wd-course-status-col{ display:none!important; }
+    #wd-courses-home .wd-toolbar{ top:56px; }
+}
+@media (max-width: 768px){
+    #wd-courses-home h1{ font-size:1.3rem; }
+    #wd-courses-home .module-header{ padding:.75rem .75rem; }
+}
+
+/* ============================
+   Course Hero (banner image)
+   ============================ */
+#wd-courses-home .course-hero {
+    position: relative;
+    width: 100%;
+    /* pleasant cinematic aspect ratio */
+    aspect-ratio: 21 / 9;
+    border: 1px solid var(--wd-line);
+    border-radius: .75rem;
+    overflow: hidden;
+    background: #F5F7FA;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+    margin: .5rem 0 1rem 0;
+}
+
+#wd-courses-home .course-hero .hero-img {
+    object-fit: cover;
+}
+
+#wd-courses-home .course-hero .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,0) 40%, rgba(0,0,0,.25));
+    pointer-events: none;
+}
+
+#wd-courses-home .course-hero .hero-badge {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    font-size: .85rem;
+    background: rgba(255,255,255,.9);
+    color: #2D3B45;
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: 999px;
+    padding: .25rem .6rem;
+    font-weight: 700;
+    backdrop-filter: blur(4px);
+}
+/* ──────────────────────────────────────────────────────────────
+   Course hero (Canvas-like)
+   - Natural image height (no fixed or max height)
+   - Full width of content column
+   - Rounded corners + subtle overlay tag
+   ────────────────────────────────────────────────────────────── */
+.wd-course-hero {
+    border: 1px solid #E1E3E5;
+    border-radius: .75rem;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+}
+
+.wd-course-hero-img {
+    display: block;
+    width: 40%;
+    height: auto;           /* keep natural aspect ratio */
+}
+
+/* little pill tag similar to Canvas card badges */
+.wd-course-hero-tag {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    background: rgba(45,59,69,.92);
+    color: #fff;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+/* Small screens: keep margins comfortable */
+@media (max-width: 768px) {
+    .wd-course-hero-tag { font-size: 11px; left: 10px; bottom: 10px; }
+}
+
+/* Canvas-like progress cards in modal */
+#wd-courses-home .card .progress { background: #eef1f3; }
+#wd-courses-home .card .progress-bar { transition: width .25s ease; }
+/* Same toggle look on Home page */
+#wd-courses-home .wd-pub-toggle {
+    --wd-pub-green: #2ea043;
+    --wd-pub-gray: #6b7780;
+    display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;border-radius:999px;border:2px solid rgba(0,0,0,.08);
+    background:#fff;cursor:pointer;line-height:0;
+}
+#wd-courses-home .wd-pub-toggle svg { width:18px;height:18px; }
+#wd-courses-home .wd-pub-toggle.is-on svg { color:var(--wd-pub-green); }
+#wd-courses-home .wd-pub-toggle.is-off svg { color:var(--wd-pub-gray); }
+#wd-courses-home .wd-pub-toggle:hover { box-shadow:0 0 0 3px rgba(3,116,181,.18); }
+#wd-courses-home .wd-pub-toggle:disabled { opacity:.6; cursor:not-allowed; box-shadow:none; }

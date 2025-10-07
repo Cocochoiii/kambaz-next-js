@@ -1,4 +1,3 @@
-// app/(Kambaz)/Courses/[cid]/Home/client.ts
 import axios from "axios";
 import { HTTP_SERVER } from "@/app/env";
 
@@ -26,7 +25,7 @@ export interface Announcement {
     section?: string;
     authorId?: string;
     author?: string;
-    date: string;       // ISO
+    date: string; // ISO
     updatedAt?: string; // ISO
     pinned?: boolean;
 }
@@ -70,6 +69,33 @@ export const importCourseContent = async (
     const { data } = await http.post(`${cidPath(targetCid)}/import`, {
         fromCourseId,
         include,
+    });
+    return data;
+};
+
+/* ─────────────────────────────────────────────────────────
+   Course progress (student): module & assignment completion
+   GET /api/courses/:cid/progress?studentId=optional
+   Response shape below is what the modal expects.
+   ───────────────────────────────────────────────────────── */
+export interface CourseProgress {
+    overallPercent: number; // 0–100
+    modules: Array<{
+        _id: string;
+        title: string;
+        completed: number;
+        total: number;
+        percent: number; // 0–100
+        updatedAt?: string;
+    }>;
+}
+
+export const fetchCourseProgress = async (
+    cid: string,
+    studentId?: string
+): Promise<CourseProgress> => {
+    const { data } = await http.get(`${cidPath(cid)}/progress`, {
+        params: studentId ? { studentId } : undefined,
     });
     return data;
 };

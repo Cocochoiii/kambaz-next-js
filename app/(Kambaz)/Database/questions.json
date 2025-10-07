@@ -1,439 +1,58 @@
 [
-  {
-    "_id": "Q5610-1-Q1",
-    "quiz": "Q5610-1",
-    "title": "HTML Document Structure",
-    "points": 5,
-    "prompt": "An HTML <strong>label</strong> element can be associated with an HTML <strong>input</strong> element by setting their id attributes to the same value.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": false
-  },
-  {
-    "_id": "Q5610-1-Q2",
-    "quiz": "Q5610-1",
-    "title": "HTML Elements",
-    "points": 4,
-    "prompt": "Which of the following HTML elements is used to create a hyperlink?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "<link>", "correct": false },
-      { "_id": "c2", "text": "<a>", "correct": true },
-      { "_id": "c3", "text": "<href>", "correct": false },
-      { "_id": "c4", "text": "<url>", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q5610-1-Q3",
-    "quiz": "Q5610-1",
-    "title": "Semantic HTML",
-    "points": 5,
-    "prompt": "What is the correct HTML element for the largest heading?",
-    "type": "FILL_BLANK",
-    "correctAnswers": ["h1", "<h1>", "H1", "<H1>"]
-  },
-  {
-    "_id": "Q5610-1-Q4",
-    "quiz": "Q5610-1",
-    "title": "HTML Forms",
-    "points": 5,
-    "prompt": "Which input type is used to create a password field in HTML?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "type=\"text\"", "correct": false },
-      { "_id": "c2", "text": "type=\"password\"", "correct": true },
-      { "_id": "c3", "text": "type=\"secure\"", "correct": false },
-      { "_id": "c4", "text": "type=\"hidden\"", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q5610-1-Q5",
-    "quiz": "Q5610-1",
-    "title": "HTML5 Features",
-    "points": 5,
-    "prompt": "The HTML5 <strong>&lt;canvas&gt;</strong> element is used to draw graphics via JavaScript.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": true
-  },
-  {
-    "_id": "Q5610-1-Q6",
-    "quiz": "Q5610-1",
-    "title": "HTML Lists",
-    "points": 5,
-    "prompt": "What HTML tag is used to define an unordered list?",
-    "type": "FILL_BLANK",
-    "correctAnswers": ["ul", "<ul>", "UL", "<UL>"]
-  },
+  { "_id": "Q5610-1-1", "quiz": "Q5610-1", "title": "Most important heading tag", "type": "MC", "points": 1, "choices": ["<head>", "<h1>", "<header>", "<title>"], "answer": "<h1>", "explanation": "Headings use h1..h6; h1 is the highest level." },
+  { "_id": "Q5610-1-2", "quiz": "Q5610-1", "title": "Best tag for a nav area", "type": "MC", "points": 1, "choices": ["<menu>", "<navigation>", "<nav>", "<dir>"], "answer": "<nav>" },
+  { "_id": "Q5610-1-3", "quiz": "Q5610-1", "title": "Semantic HTML improves accessibility.", "type": "TF", "points": 1, "answer": "True" },
 
-  {
-    "_id": "Q5610-2-Q1",
-    "quiz": "Q5610-2",
-    "title": "CSS Selectors",
-    "points": 5,
-    "prompt": "Which CSS selector targets all paragraph elements with the class 'highlight'?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "p.highlight", "correct": true },
-      { "_id": "c2", "text": "#highlight p", "correct": false },
-      { "_id": "c3", "text": ".highlight > p", "correct": false },
-      { "_id": "c4", "text": "p #highlight", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q5610-2-Q2",
-    "quiz": "Q5610-2",
-    "title": "CSS Box Model",
-    "points": 6,
-    "prompt": "The CSS box model consists of content, padding, border, and margin.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": true
-  },
-  {
-    "_id": "Q5610-2-Q3",
-    "quiz": "Q5610-2",
-    "title": "Flexbox",
-    "points": 7,
-    "prompt": "Which CSS property is used to change the direction of flex items?",
-    "type": "FILL_BLANK",
-    "correctAnswers": ["flex-direction", "flexDirection"]
-  },
-  {
-    "_id": "Q5610-2-Q4",
-    "quiz": "Q5610-2",
-    "title": "CSS Grid",
-    "points": 7,
-    "prompt": "In CSS Grid, which property defines the columns of the grid?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "grid-columns", "correct": false },
-      { "_id": "c2", "text": "grid-template-columns", "correct": true },
-      { "_id": "c3", "text": "column-template", "correct": false },
-      { "_id": "c4", "text": "grid-col", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q5610-2-Q5",
-    "quiz": "Q5610-2",
-    "title": "CSS Positioning",
-    "points": 7,
-    "prompt": "The CSS property 'position: fixed' removes an element from the normal document flow.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": true
-  },
+  { "_id": "Q5610-2-1", "quiz": "Q5610-2", "title": "Create a 2-column layout", "type": "MC", "points": 1, "choices": ["position:absolute", "flexbox", "z-index", "filter"], "answer": "flexbox" },
+  { "_id": "Q5610-2-2", "quiz": "Q5610-2", "title": "Grid defines rows and columns explicitly.", "type": "TF", "points": 1, "answer": "True" },
+  { "_id": "Q5610-2-3", "quiz": "Q5610-2", "title": "CSS specificity order (lowest→highest)", "type": "MC", "points": 1, "choices": ["inline < id < class < element", "element < class < id < inline", "class < id < element < inline", "id < class < element < inline"], "answer": "element < class < id < inline" },
 
-  {
-    "_id": "Q5520-1-Q1",
-    "quiz": "Q5520-1",
-    "title": "React Native Components",
-    "points": 5,
-    "prompt": "Which component is used to display text in React Native?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "<Text>", "correct": true },
-      { "_id": "c2", "text": "<Label>", "correct": false },
-      { "_id": "c3", "text": "<Paragraph>", "correct": false },
-      { "_id": "c4", "text": "<String>", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q5520-1-Q2",
-    "quiz": "Q5520-1",
-    "title": "React Native Styling",
-    "points": 5,
-    "prompt": "React Native uses CSS for styling components.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": false
-  },
-  {
-    "_id": "Q5520-1-Q3",
-    "quiz": "Q5520-1",
-    "title": "React Native Views",
-    "points": 5,
-    "prompt": "What is the basic container component in React Native?",
-    "type": "FILL_BLANK",
-    "correctAnswers": ["View", "<View>", "view"]
-  },
-  {
-    "_id": "Q5520-1-Q4",
-    "quiz": "Q5520-1",
-    "title": "React Native Lists",
-    "points": 5,
-    "prompt": "Which component is optimized for displaying large lists in React Native?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "ScrollView", "correct": false },
-      { "_id": "c2", "text": "ListView", "correct": false },
-      { "_id": "c3", "text": "FlatList", "correct": true },
-      { "_id": "c4", "text": "MapView", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q5520-1-Q5",
-    "quiz": "Q5520-1",
-    "title": "React Native Platform",
-    "points": 5,
-    "prompt": "React Native can be used to build apps for both iOS and Android from a single codebase.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": true
-  },
+  { "_id": "Q5610-3-1", "quiz": "Q5610-3", "title": "const creates", "type": "MC", "points": 1, "choices": ["immutable binding", "immutable object", "block-scoped function", "global var"], "answer": "immutable binding" },
+  { "_id": "Q5610-3-2", "quiz": "Q5610-3", "title": "Arrow functions bind their own this", "type": "TF", "points": 1, "answer": "False", "explanation": "They capture lexical this; they don’t rebind." },
+  { "_id": "Q5610-3-3", "quiz": "Q5610-3", "title": "Spread operator copies array elements", "type": "TF", "points": 1, "answer": "True" },
 
-  {
-    "_id": "Q5004-1-Q1",
-    "quiz": "Q5004-1",
-    "title": "OOP Concepts",
-    "points": 4,
-    "prompt": "Which of the following is NOT a pillar of Object-Oriented Programming?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "Encapsulation", "correct": false },
-      { "_id": "c2", "text": "Compilation", "correct": true },
-      { "_id": "c3", "text": "Inheritance", "correct": false },
-      { "_id": "c4", "text": "Polymorphism", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q5004-1-Q2",
-    "quiz": "Q5004-1",
-    "title": "Java Classes",
-    "points": 4,
-    "prompt": "In Java, a class can extend multiple classes.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": false
-  },
-  {
-    "_id": "Q5004-1-Q3",
-    "quiz": "Q5004-1",
-    "title": "Access Modifiers",
-    "points": 4,
-    "prompt": "Which access modifier makes a member accessible only within the same package?",
-    "type": "FILL_BLANK",
-    "correctAnswers": ["default", "package-private", "package"]
-  },
-  {
-    "_id": "Q5004-1-Q4",
-    "quiz": "Q5004-1",
-    "title": "Interfaces",
-    "points": 4,
-    "prompt": "A Java class can implement multiple interfaces.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": true
-  },
-  {
-    "_id": "Q5004-1-Q5",
-    "quiz": "Q5004-1",
-    "title": "Abstract Classes",
-    "points": 4,
-    "prompt": "What keyword is used to declare an abstract class in Java?",
-    "type": "FILL_BLANK",
-    "correctAnswers": ["abstract", "ABSTRACT", "Abstract"]
-  },
+  { "_id": "Q5610-4-1", "quiz": "Q5610-4", "title": "React list key should be", "type": "MC", "points": 1, "choices": ["index always", "stable unique id", "random()", "component name"], "answer": "stable unique id" },
+  { "_id": "Q5610-4-2", "quiz": "Q5610-4", "title": "setState is async", "type": "TF", "points": 1, "answer": "True" },
+  { "_id": "Q5610-4-3", "quiz": "Q5610-4", "title": "Lift state up to", "type": "MC", "points": 1, "choices": ["nearest common ancestor", "root App", "any sibling", "context"], "answer": "nearest common ancestor" },
 
-  {
-    "_id": "Q5200-1-Q1",
-    "quiz": "Q5200-1",
-    "title": "SQL Basics",
-    "points": 5,
-    "prompt": "Which SQL statement is used to extract data from a database?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "GET", "correct": false },
-      { "_id": "c2", "text": "SELECT", "correct": true },
-      { "_id": "c3", "text": "EXTRACT", "correct": false },
-      { "_id": "c4", "text": "PULL", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q5200-1-Q2",
-    "quiz": "Q5200-1",
-    "title": "SQL Joins",
-    "points": 5,
-    "prompt": "An INNER JOIN returns all rows from both tables regardless of matching conditions.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": false
-  },
-  {
-    "_id": "Q5200-1-Q3",
-    "quiz": "Q5200-1",
-    "title": "SQL Commands",
-    "points": 5,
-    "prompt": "Which SQL keyword is used to sort the result set?",
-    "type": "FILL_BLANK",
-    "correctAnswers": ["ORDER BY", "order by", "ORDER", "ORDERBY"]
-  },
-  {
-    "_id": "Q5200-1-Q4",
-    "quiz": "Q5200-1",
-    "title": "SQL Aggregation",
-    "points": 5,
-    "prompt": "Which SQL function is used to count the number of rows?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "COUNT()", "correct": true },
-      { "_id": "c2", "text": "SUM()", "correct": false },
-      { "_id": "c3", "text": "TOTAL()", "correct": false },
-      { "_id": "c4", "text": "NUMBER()", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q5200-1-Q5",
-    "quiz": "Q5200-1",
-    "title": "SQL Tables",
-    "points": 5,
-    "prompt": "The PRIMARY KEY constraint uniquely identifies each record in a table.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": true
-  },
+  { "_id": "Q5610-5-1", "quiz": "Q5610-5", "title": "Dynamic segment in Next App Router", "type": "MC", "points": 1, "choices": ["[id]", "{id}", ":id", "((id))"], "answer": "[id]" },
+  { "_id": "Q5610-5-2", "quiz": "Q5610-5", "title": "Server components can access DB directly", "type": "TF", "points": 1, "answer": "True" },
+  { "_id": "Q5610-5-3", "quiz": "Q5610-5", "title": "Client components must declare", "type": "MC", "points": 1, "choices": ["\"use client\"", "\"client component\"", "\"browser true\"", "nothing"], "answer": "\"use client\"" },
 
-  {
-    "_id": "Q5800-1-Q1",
-    "quiz": "Q5800-1",
-    "title": "Big O Notation",
-    "points": 5,
-    "prompt": "What is the time complexity of accessing an element in an array by index?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "O(1)", "correct": true },
-      { "_id": "c2", "text": "O(n)", "correct": false },
-      { "_id": "c3", "text": "O(log n)", "correct": false },
-      { "_id": "c4", "text": "O(n²)", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q5800-1-Q2",
-    "quiz": "Q5800-1",
-    "title": "Algorithm Analysis",
-    "points": 5,
-    "prompt": "Binary search has a time complexity of O(n).",
-    "type": "TRUE_FALSE",
-    "correctAnswer": false
-  },
-  {
-    "_id": "Q5800-1-Q3",
-    "quiz": "Q5800-1",
-    "title": "Sorting Complexity",
-    "points": 5,
-    "prompt": "What is the average time complexity of QuickSort?",
-    "type": "FILL_BLANK",
-    "correctAnswers": ["O(n log n)", "O(nlogn)", "n log n", "nlogn"]
-  },
-  {
-    "_id": "Q5800-1-Q4",
-    "quiz": "Q5800-1",
-    "title": "Data Structures",
-    "points": 5,
-    "prompt": "A stack follows the LIFO (Last In First Out) principle.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": true
-  },
+  { "_id": "Q5610-6-1", "quiz": "Q5610-6", "title": "HTTP 201 means", "type": "MC", "points": 1, "choices": ["OK", "Created", "No Content", "Moved"], "answer": "Created" },
+  { "_id": "Q5610-6-2", "quiz": "Q5610-6", "title": "GET should have a body", "type": "TF", "points": 1, "answer": "False" },
+  { "_id": "Q5610-6-3", "quiz": "Q5610-6", "title": "PUT vs PATCH", "type": "MC", "points": 1, "choices": ["PUT partial; PATCH replace", "PUT replace; PATCH partial", "same", "neither"], "answer": "PUT replace; PATCH partial" },
 
-  {
-    "_id": "Q6620-1-Q1",
-    "quiz": "Q6620-1",
-    "title": "Cloud Services",
-    "points": 5,
-    "prompt": "Which AWS service is used for object storage?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "EC2", "correct": false },
-      { "_id": "c2", "text": "S3", "correct": true },
-      { "_id": "c3", "text": "RDS", "correct": false },
-      { "_id": "c4", "text": "Lambda", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q6620-1-Q2",
-    "quiz": "Q6620-1",
-    "title": "Cloud Models",
-    "points": 5,
-    "prompt": "IaaS stands for Infrastructure as a Service.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": true
-  },
-  {
-    "_id": "Q6620-1-Q3",
-    "quiz": "Q6620-1",
-    "title": "AWS Compute",
-    "points": 5,
-    "prompt": "What is the name of AWS's primary compute service?",
-    "type": "FILL_BLANK",
-    "correctAnswers": ["EC2", "Elastic Compute Cloud", "Amazon EC2"]
-  },
-  {
-    "_id": "Q6620-1-Q4",
-    "quiz": "Q6620-1",
-    "title": "Cloud Benefits",
-    "points": 5,
-    "prompt": "Which of the following is NOT a benefit of cloud computing?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "Scalability", "correct": false },
-      { "_id": "c2", "text": "Pay-as-you-go pricing", "correct": false },
-      { "_id": "c3", "text": "Increased capital expenditure", "correct": true },
-      { "_id": "c4", "text": "Global reach", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q6620-1-Q5",
-    "quiz": "Q6620-1",
-    "title": "Virtualization",
-    "points": 5,
-    "prompt": "Containers are lighter weight than virtual machines.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": true
-  },
+  { "_id": "Q5610-7-1", "quiz": "Q5610-7", "title": "Express middleware signature", "type": "MC", "points": 1, "choices": ["(req,res)", "(req,res,next)", "(res,req)", "(next)"], "answer": "(req,res,next)" },
+  { "_id": "Q5610-7-2", "quiz": "Q5610-7", "title": "Error-handling middleware has 4 args", "type": "TF", "points": 1, "answer": "True" },
+  { "_id": "Q5610-7-3", "quiz": "Q5610-7", "title": "Static files served by", "type": "MC", "points": 1, "choices": ["express.static()", "express.json()", "cors()", "morgan()"], "answer": "express.static()" },
 
-  {
-    "_id": "Q6510-1-Q1",
-    "quiz": "Q6510-1",
-    "title": "Agile Methodology",
-    "points": 4,
-    "prompt": "What is the typical duration of a Sprint in Scrum?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "1 week", "correct": false },
-      { "_id": "c2", "text": "2-4 weeks", "correct": true },
-      { "_id": "c3", "text": "2 months", "correct": false },
-      { "_id": "c4", "text": "6 months", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q6510-1-Q2",
-    "quiz": "Q6510-1",
-    "title": "Software Development",
-    "points": 4,
-    "prompt": "The Waterfall model is an iterative development methodology.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": false
-  },
-  {
-    "_id": "Q6510-1-Q3",
-    "quiz": "Q6510-1",
-    "title": "Version Control",
-    "points": 4,
-    "prompt": "What command is used to create a new branch in Git?",
-    "type": "FILL_BLANK",
-    "correctAnswers": ["git branch", "branch", "git checkout -b"]
-  },
-  {
-    "_id": "Q6510-1-Q4",
-    "quiz": "Q6510-1",
-    "title": "Scrum Roles",
-    "points": 4,
-    "prompt": "Who is responsible for maximizing the value of the product in Scrum?",
-    "type": "MULTIPLE_CHOICE",
-    "choices": [
-      { "_id": "c1", "text": "Scrum Master", "correct": false },
-      { "_id": "c2", "text": "Product Owner", "correct": true },
-      { "_id": "c3", "text": "Development Team", "correct": false },
-      { "_id": "c4", "text": "Stakeholders", "correct": false }
-    ]
-  },
-  {
-    "_id": "Q6510-1-Q5",
-    "quiz": "Q6510-1",
-    "title": "Testing",
-    "points": 4,
-    "prompt": "Unit testing focuses on testing individual components in isolation.",
-    "type": "TRUE_FALSE",
-    "correctAnswer": true
-  }
+  { "_id": "Q5610-8-1", "quiz": "Q5610-8", "title": "Mongoose model compiles from", "type": "MC", "points": 1, "choices": ["Collection", "Schema", "Document", "Cursor"], "answer": "Schema" },
+  { "_id": "Q5610-8-2", "quiz": "Q5610-8", "title": "ObjectId references enable population", "type": "TF", "points": 1, "answer": "True" },
+  { "_id": "Q5610-8-3", "quiz": "Q5610-8", "title": "Unique index guarantees global uniqueness", "type": "TF", "points": 1, "answer": "False", "explanation": "Per collection unless sharded with keys." },
+
+  { "_id": "Q5610-9-1", "quiz": "Q5610-9", "title": "CSR vs SSR trade-off", "type": "SA", "points": 2, "answer": "CSR shifts work to client; SSR improves TTFB/SEO; both can hydrate." },
+  { "_id": "Q5610-9-2", "quiz": "Q5610-9", "title": "Explain React reconciliation", "type": "SA", "points": 2, "answer": "Diffing virtual DOM by keys to minimize DOM updates." },
+  { "_id": "Q5610-9-3", "quiz": "Q5610-9", "title": "HTTP cache validators", "type": "MC", "points": 1, "choices": ["ETag/If-None-Match", "Cookie", "FormData", "Accept"], "answer": "ETag/If-None-Match" },
+
+  { "_id": "Q5610-10-1", "quiz": "Q5610-10", "title": "JWT best practice", "type": "MC", "points": 1, "choices": ["Store in localStorage", "Short expiry + HTTPS + cookies", "Embed password", "No signature"], "answer": "Short expiry + HTTPS + cookies" },
+  { "_id": "Q5610-10-2", "quiz": "Q5610-10", "title": "Zero-downtime deploy strategy", "type": "MC", "points": 1, "choices": ["Blue-green", "Big bang", "Fork", "FTP overwrite"], "answer": "Blue-green" },
+  { "_id": "Q5610-10-3", "quiz": "Q5610-10", "title": "Env vars should be committed", "type": "TF", "points": 1, "answer": "False" },
+
+  { "_id": "Q5520-1-1", "quiz": "Q5520-1", "title": "RN core primitive", "type": "MC", "points": 1, "choices": ["div", "View", "section", "frame"], "answer": "View" },
+  { "_id": "Q5520-1-2", "quiz": "Q5520-1", "title": "Style system", "type": "MC", "points": 1, "choices": ["CSS files", "Inline string", "StyleSheet objects", "LESS"], "answer": "StyleSheet objects" },
+  { "_id": "Q5520-1-3", "quiz": "Q5520-1", "title": "Hot reload speeds iteration", "type": "TF", "points": 1, "answer": "True" },
+
+  { "_id": "Q5520-2-1", "quiz": "Q5520-2", "title": "Pass params between screens", "type": "MC", "points": 1, "choices": ["Context only", "URL query", "navigation.navigate with params", "Global var"], "answer": "navigation.navigate with params" },
+  { "_id": "Q5520-2-2", "quiz": "Q5520-2", "title": "Redux stores UI state only", "type": "TF", "points": 1, "answer": "False" },
+  { "_id": "Q5520-2-3", "quiz": "Q5520-2", "title": "Deep link integrates with", "type": "MC", "points": 1, "choices": ["Linking", "Clipboard", "AsyncStorage", "Camera"], "answer": "Linking" },
+
+  { "_id": "Q5520-3-1", "quiz": "Q5520-3", "title": "Fetch returns a", "type": "MC", "points": 1, "choices": ["JSON", "Promise", "Stream only", "Request"], "answer": "Promise" },
+  { "_id": "Q5520-3-2", "quiz": "Q5520-3", "title": "UseEffect for API calls", "type": "TF", "points": 1, "answer": "True" },
+  { "_id": "Q5520-3-3", "quiz": "Q5520-3", "title": "Handle slow networks with", "type": "MC", "points": 1, "choices": ["Blocking UI", "Retries + timeout + indicators", "Infinite spinner", "Crash"], "answer": "Retries + timeout + indicators" },
+
+
+  { "_id": "Q6620-10-1", "quiz": "Q6620-10", "title": "IaC benefits", "type": "MC", "points": 1, "choices": ["Manual parity", "Repeatability & versioning", "Snowflakes", "Click-ops"], "answer": "Repeatability & versioning" },
+  { "_id": "Q6620-10-2", "quiz": "Q6620-10", "title": "SLO measures", "type": "MC", "points": 1, "choices": ["Business OKRs", "Service targets like latency", "CapEx", "Ticket count only"], "answer": "Service targets like latency" },
+  { "_id": "Q6620-10-3", "quiz": "Q6620-10", "title": "Secrets in repo are safe", "type": "TF", "points": 1, "answer": "False" }
 ]

@@ -1,16 +1,21 @@
 "use client";
 
 import { IoEllipsisVertical } from "react-icons/io5";
-import GreenCheckmark from "./GreenCheckmark";
+import CheckToggle from "./CheckToggle";
 
 /**
- * This component is **faculty-only** (parent controls visibility).
- * It keeps your original contents; just render it only for faculty.
+ * Faculty-only action cluster shown on lesson rows.
+ * Spacing matches the module header actions.
  */
 export default function LessonControlButtons() {
     return (
-        <div className="float-end">
-            <GreenCheckmark />
+        <div className="wd-actions float-end">
+            <CheckToggle
+                active={true}
+                title="Published"
+                onClick={(e) => e.stopPropagation()}
+                size={22}
+            />
             <IoEllipsisVertical className="fs-4" />
         </div>
     );

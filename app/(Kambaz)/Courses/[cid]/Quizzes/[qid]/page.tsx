@@ -18,11 +18,11 @@ export default function QuizDetailsPage() {
 
   const load = async () => {
     try {
-      const data = await client.getQuiz(qid);
+      const data = await client.getQuiz(qid!);
       setQuiz(data.quiz);
       setQuestions(data.questions);
       if (!isFaculty && currentUser) {
-        const att = await client.lastAttempt(qid);
+        const att = await client.lastAttempt(qid!);
         setLastAttempt(att);
       }
     } catch (err) {
@@ -34,22 +34,23 @@ export default function QuizDetailsPage() {
 
   if (!quiz) return <div className="container mt-4">Loading…</div>;
 
+  // ✅ allow taking ANY quiz (ignore `published`), but still respect attempt limits
   const attemptsAllowed = quiz.multipleAttempts ? quiz.allowedAttempts : 1;
   const attemptsUsed = lastAttempt?.attemptNumber ?? 0;
-  const canTake = quiz.published && attemptsUsed < attemptsAllowed;
+  const canTake = attemptsUsed < attemptsAllowed;
 
   const formatDate = (date: string | null) => {
     if (!date) return "—";
     const d = new Date(date);
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const month = monthNames[d.getMonth()];
     const day = d.getDate();
-    const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
+    const time = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }).toLowerCase();
     return `${month} ${day} at ${time}`;
   };
 
   return (
-      <div className="container-fluid px-4" style={{ maxWidth: '1000px' }}>
+      <div className="container-fluid px-4" style={{ maxWidth: "1000px" }}>
         {/* Header with actions */}
         <div className="d-flex justify-content-end gap-2 mb-3 mt-3">
           {isFaculty ? (
@@ -64,7 +65,7 @@ export default function QuizDetailsPage() {
                     className="btn btn-canvas-secondary"
                     onClick={() => router.push(`/Courses/${cid}/Quizzes/${qid}/edit`)}
                 >
-                  <FaEdit className="me-1" style={{ fontSize: '14px' }} /> Edit
+                  <FaEdit className="me-1" style={{ fontSize: "14px" }} /> Edit
                 </button>
               </>
           ) : (
@@ -73,8 +74,8 @@ export default function QuizDetailsPage() {
                   disabled={!canTake}
                   onClick={() => router.push(`/Courses/${cid}/Quizzes/${qid}/take`)}
                   style={{
-                    backgroundColor: canTake ? '#D01A19' : '#6c757d',
-                    opacity: canTake ? 1 : 0.6
+                    backgroundColor: canTake ? "#D01A19" : "#6c757d",
+                    opacity: canTake ? 1 : 0.6,
                   }}
               >
                 {canTake ? "Start Quiz" : "No more attempts"}
@@ -207,20 +208,21 @@ export default function QuizDetailsPage() {
                             const isCorrect =
                                 (q.type === "MULTIPLE_CHOICE" && q.choices?.find((c:any)=>c.correct)?._id === a.answer) ||
                                 (q.type === "TRUE_FALSE" && String(q.correctAnswer) === String(a.answer)) ||
-                                (q.type === "FILL_BLANK" && (q.correctAnswers||[]).map((s:string)=>s.trim().toLowerCase()).includes(String(a.answer||"").trim().toLowerCase()));
-
+                                (q.type === "FILL_BLANK" &&
+                                    (q.correctAnswers||[])
+                                        .map((s:string)=>s.trim().toLowerCase())
+                                        .includes(String(a.answer||"").trim().toLowerCase()));
                             return (
-                                <div key={i} className={`list-group-item quiz-review-item ${isCorrect ? 'correct' : 'incorrect'}`}>
+                                <div key={i} className={`list-group-item quiz-review-item ${isCorrect ? "correct" : "incorrect"}`}>
                                   <div className="d-flex justify-content-between align-items-start">
                                     <div className="flex-grow-1">
                                       <h6 className="mb-2">Question {i + 1}</h6>
                                       <div className="question-text" dangerouslySetInnerHTML={{ __html: q.prompt }} />
                                       <div className="mt-2">
-                                        <strong>Your answer:</strong> {
-                                        q.type === "MULTIPLE_CHOICE" ?
-                                            q.choices?.find((c: any) => c._id === a.answer)?.text || "No answer" :
-                                            String(a.answer || "No answer")
-                                      }
+                                        <strong>Your answer:</strong>{" "}
+                                        {q.type === "MULTIPLE_CHOICE"
+                                            ? q.choices?.find((c:any)=>c._id === a.answer)?.text || "No answer"
+                                            : String(a.answer || "No answer")}
                                       </div>
                                     </div>
                                     <div className="text-end">
@@ -228,10 +230,11 @@ export default function QuizDetailsPage() {
                                         <span className="badge bg-secondary">{q.points} pts</span>
                                       </div>
                                       <div>
-                                        {isCorrect ?
-                                            <span className="text-success">✓ Correct</span> :
+                                        {isCorrect ? (
+                                            <span className="text-success">✓ Correct</span>
+                                        ) : (
                                             <span className="text-danger">✗ Incorrect</span>
-                                        }
+                                        )}
                                       </div>
                                     </div>
                                   </div>

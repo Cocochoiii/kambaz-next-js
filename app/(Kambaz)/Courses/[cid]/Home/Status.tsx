@@ -27,10 +27,8 @@ export default function CourseStatus() {
     const role = (currentUser?.role ?? "").toString().toUpperCase();
     const isFaculty = role === "FACULTY";
 
-    // Hide the entire panel for non-faculty (safety if mounted anywhere)
     if (!isFaculty) return null;
 
-    // Toggle publish status
     const handlePublishToggle = () => {
         setIsPublished(!isPublished);
         setShowSuccessAlert(
@@ -39,14 +37,12 @@ export default function CourseStatus() {
         setTimeout(() => setShowSuccessAlert(""), 3000);
     };
 
-    // Handle import from existing courses
     const handleImportContent = () => {
         setShowImportModal(false);
         setShowSuccessAlert("Content imported successfully");
         setTimeout(() => setShowSuccessAlert(""), 3000);
     };
 
-    // Create new announcement
     const handleCreateAnnouncement = () => {
         if (announcement.title && announcement.content) {
             setShowAnnouncementModal(false);
@@ -56,24 +52,20 @@ export default function CourseStatus() {
         }
     };
 
-    // Change home page
     const handleChangeHomePage = () => {
         setShowHomePageModal(false);
         setShowSuccessAlert(`Home page set to ${selectedHomePage}`);
         setTimeout(() => setShowSuccessAlert(""), 3000);
     };
 
-    // View course screen
     const handleViewCourseScreen = () => {
         router.push(`/Courses/${cid}/Home`);
     };
 
-    // View analytics
     const handleViewAnalytics = () => {
         router.push(`/Courses/${cid}/Grades`);
     };
 
-    // View notifications
     const handleViewNotifications = () => {
         setShowSuccessAlert("No new notifications");
         setTimeout(() => setShowSuccessAlert(""), 3000);
@@ -82,7 +74,7 @@ export default function CourseStatus() {
     return (
         <>
             <div id="wd-course-status" style={{ width: 350 }}>
-                <h2>Course Status</h2>
+                <h2 className="mb-3">Course Status</h2>
 
                 {showSuccessAlert && (
                     <Alert variant="success" className="mb-3">

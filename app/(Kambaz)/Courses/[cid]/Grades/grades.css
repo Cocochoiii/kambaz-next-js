@@ -1,11 +1,8 @@
 /* =========================================================
-   Grades (scoped styles)
-   File: app/(Kambaz)/Courses/[cid]/Grades/grades.css
-   Scope: #wd-grades only (no global bleed)
-   Purpose: Edit Grades UI independently from the rest of the app
+   Grades — Canvas-like look
+   Scope: #wd-grades
    ========================================================= */
 
-/* ---------- design tokens ---------- */
 #wd-grades {
     --gr-text: #2d3b45;
     --gr-muted: #6c757d;
@@ -19,7 +16,6 @@
     --gr-warning: #fc5e13;
 }
 
-/* ---------- page container ---------- */
 #wd-grades {
     background-color: var(--gr-surface);
     padding: 20px;
@@ -28,82 +24,85 @@
     color: var(--gr-text);
 }
 
-/* ---------- header ---------- */
 #wd-grades h2 {
     color: var(--gr-text);
     font-weight: 300;
     font-size: 2rem;
 }
 
-/* ---------- filter bar ---------- */
+/* ---------- toolbar ---------- */
 #wd-grades .bg-light {
     background-color: var(--gr-surface-alt) !important;
     border: 1px solid var(--gr-border);
 }
 
-#wd-grades .form-label {
+#wd-grades .chip {
+    border: 1px solid var(--gr-border);
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
     color: var(--gr-text);
-    font-size: 14px;
+}
+#wd-grades .chip:hover { background: #fafafa; }
+#wd-grades .chip-active {
+    background: #e7f2fb;
+    border-color: #9cc9e8;
+    color: #055d8d;
     font-weight: 600;
-    margin-bottom: 4px;
 }
 
-#wd-grades .form-select {
+#wd-grades .searchbox {
+    display: flex;
+    align-items: center;
     border: 1px solid var(--gr-border);
-    border-radius: 4px;
+    border-radius: 6px;
+    padding: 6px 10px;
+    background: #fff;
+}
+#wd-grades .searchbox input {
+    border: none;
+    outline: none;
     font-size: 14px;
-    padding: 8px 12px;
-    background-color: #fff;
-}
-#wd-grades .form-select:focus {
-    border-color: var(--gr-primary);
-    box-shadow: 0 0 0 3px rgba(3, 116, 181, 0.1);
+    width: 220px;
 }
 
-/* ---------- buttons ---------- */
-#wd-grades .btn {
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 400;
-    padding: 8px 14px;
-    transition: all 0.2s ease;
-}
-
-#wd-grades .btn-danger {
-    background-color: var(--gr-danger);
-    border-color: var(--gr-danger);
-    color: #fff;
-}
-#wd-grades .btn-danger:hover { filter: brightness(0.95); }
-
-#wd-grades .btn-success {
-    background-color: var(--gr-success);
-    border-color: var(--gr-success);
-    color: #fff;
-}
-#wd-grades .btn-success:hover { filter: brightness(0.95); }
-
-#wd-grades .btn-primary {
-    background-color: var(--gr-primary);
-    border-color: var(--gr-primary);
-    color: #fff;
-}
-#wd-grades .btn-primary:hover { filter: brightness(0.95); }
-
-#wd-grades .btn-outline-secondary {
-    background-color: #fff;
+/* ---------- pills / legend ---------- */
+#wd-grades .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 999px;
     border: 1px solid var(--gr-border);
+    background: #fff;
     color: var(--gr-text);
 }
-#wd-grades .btn-outline-secondary:hover {
-    background-color: var(--gr-surface-alt);
-    border-color: #8b969e;
+#wd-grades .pill-assn { background: #f6fbff; border-color: #cbe6ff; }
+#wd-grades .pill-quiz { background: #fef7f1; border-color: #ffd9b8; }
+#wd-grades .pill-exam { background: #f8f6ff; border-color: #d6c8ff; }
+#wd-grades .pill-muted { background: #f6f7f8; border-color: #d7dde1; color: var(--gr-muted); }
+#wd-grades .legend { gap: 8px; }
+
+/* ---------- section headers ---------- */
+#wd-grades .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border: 1px solid var(--gr-border);
+    border-bottom: none;
+    background: #fafafa;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
 }
 
-/* ---------- tables (student view) ---------- */
+/* ---------- tables ---------- */
 #wd-grades .table {
     border-collapse: separate;
     border-spacing: 0;
+    margin-bottom: 0;
 }
 
 #wd-grades .table thead {
@@ -130,7 +129,29 @@
     background-color: #f8f8f8;
 }
 
-/* ---------- links ---------- */
+/* wrap each table in a bordered box like Canvas */
+#wd-grades .section .table {
+    border: 1px solid var(--gr-border);
+    border-top: none;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    overflow: hidden;
+}
+
+/* ---------- progress bar ---------- */
+#wd-grades .progress.gradebar {
+    width: 90px;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 999px;
+    overflow: hidden;
+}
+#wd-grades .progress-bar {
+    background-color: var(--gr-primary);
+    transition: width 0.3s ease;
+}
+
+/* ---------- link look ---------- */
 #wd-grades a.text-primary {
     color: var(--gr-primary) !important;
     font-weight: 600;
@@ -138,17 +159,6 @@
 #wd-grades a.text-primary:hover {
     color: #0061a0 !important;
     text-decoration: underline;
-}
-
-/* ---------- progress bar ---------- */
-#wd-grades .progress {
-    background-color: #e9ecef;
-    border-radius: 4px;
-    overflow: hidden;
-}
-#wd-grades .progress-bar {
-    background-color: var(--gr-primary);
-    transition: width 0.3s ease;
 }
 
 /* ---------- tiny status dot ---------- */
@@ -160,72 +170,25 @@
 /* ---------- right summary card ---------- */
 #wd-grades .border.rounded {
     border: 1px solid var(--gr-border) !important;
-    border-radius: 4px !important;
+    border-radius: 6px !important;
     background: #fff;
 }
-#wd-grades .border.rounded h4 {
-    color: var(--gr-text);
-    font-weight: 600;
-}
-#wd-grades .border.rounded h6 {
-    color: var(--gr-text);
-    font-weight: 600;
-    font-size: 14px;
-}
+#wd-grades .border.rounded h4 { color: var(--gr-text); font-weight: 600; }
+#wd-grades .border.rounded h6 { color: var(--gr-text); font-weight: 600; font-size: 14px; }
 
-/* ---------- small table (weights) ---------- */
-#wd-grades .table-sm {
-    font-size: 13px;
-}
-#wd-grades .table-sm th {
-    font-weight: 600;
-    color: var(--gr-text);
-    padding: 6px 8px;
-    border-bottom: 1px solid var(--gr-border);
-}
-#wd-grades .table-sm td {
-    padding: 6px 8px;
-    color: var(--gr-text);
-}
-
-/* ---------- colors / utility in scope ---------- */
-#wd-grades .text-success { color: var(--gr-success) !important; }
-#wd-grades .text-warning { color: var(--gr-warning) !important; }
-#wd-grades .text-danger  { color: var(--gr-danger)  !important; }
-#wd-grades .text-muted   { color: var(--gr-muted)   !important; }
-#wd-grades strong        { font-weight: 600; color: var(--gr-text); }
-
-/* ---------- “more” icon hover ---------- */
-#wd-grades .BsThreeDots { cursor: pointer; }
-#wd-grades .BsThreeDots:hover { color: var(--gr-primary) !important; }
-
-/* =========================================================
-   FACULTY GRID
-   ========================================================= */
-#wd-grades .table-bordered {
-    border: 1px solid var(--gr-border);
-}
+/* ---------- faculty grid ---------- */
+#wd-grades .table-bordered { border: 1px solid var(--gr-border); }
 #wd-grades .table-bordered th,
-#wd-grades .table-bordered td {
-    border: 1px solid var(--gr-row-border);
-}
+#wd-grades .table-bordered td { border: 1px solid var(--gr-row-border); }
 
-#wd-grades .grade-cell:hover {
-    background-color: #e8f4fd;
-    cursor: pointer;
-}
+#wd-grades .grade-cell:hover { background-color: #e8f4fd; cursor: pointer; }
 
-#wd-grades .sticky-top {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
+#wd-grades .sticky-top { position: sticky; top: 0; z-index: 10; }
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+/* ---------- responsive ---------- */
 @media (max-width: 768px) {
     #wd-grades .table { font-size: 12px; }
-    #wd-grades .btn   { font-size: 12px; padding: 6px 10px; }
-    #wd-grades h2     { font-size: 1.5rem; }
+    #wd-grades .btn { font-size: 12px; padding: 6px 10px; }
+    #wd-grades h2 { font-size: 1.5rem; }
+    #wd-grades .searchbox input { width: 140px; }
 }

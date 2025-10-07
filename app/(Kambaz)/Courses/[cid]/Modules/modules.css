@@ -50,3 +50,77 @@
 /* Keep list borders tidy like your global style */
 .list-group-item { --bs-list-group-border-color: #b8b8b8; }
 .border-gray { border: 1px solid #b8b8b8 !important; }
+
+/* (existing content kept) */
+
+/* Publish toggle chip — clear green vs gray states */
+.wd-pub-toggle {
+    --wd-pub-green: #2ea043;   /* Canvas-like green */
+    --wd-pub-gray:  #6b7780;   /* darker than header bar */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    border: 2px solid rgba(0,0,0,.08);
+    background: #fff;
+    cursor: pointer;
+    padding: 0;
+    line-height: 0;
+}
+.wd-pub-toggle svg { width: 18px; height: 18px; }
+
+.wd-pub-toggle.is-on svg { color: var(--wd-pub-green); }
+.wd-pub-toggle.is-off svg { color: var(--wd-pub-gray); }
+
+.wd-pub-toggle:hover { box-shadow: 0 0 0 3px rgba(3,116,181,.18); }
+.wd-pub-toggle:disabled { opacity: .6; cursor: not-allowed; box-shadow: none; }
+
+/* Keep headers distinct */
+.bg-secondary { --bs-secondary-rgb: 199,205,209; }
+
+/* Existing toolbar theming preserved */
+#wd-modules-toolbar .btn-primary,
+#wd-modules-toolbar .dropdown-toggle.btn-primary {
+    background-color: #157347 !important;
+    border-color: #157347 !important;
+    color: #fff !important;
+}
+#wd-modules-toolbar .btn-primary:hover,
+#wd-modules-toolbar .dropdown-toggle.btn-primary:hover {
+    background-color: #157347 !important;
+    border-color: #157347 !important;
+}
+
+/* existing rules kept; additions below make the gray toggle stand out */
+
+.wd-lesson .float-end .align-middle { /* the circular toggle next to kebab */
+    box-shadow: 0 0 0 2px rgba(0,0,0,.06);
+}
+
+.wd-module .float-end .align-middle {
+    box-shadow: 0 0 0 2px rgba(0,0,0,.06);
+}
+
+/* Make gray header strip slightly lighter so gray toggle contrasts */
+.bg-secondary { --bs-secondary-rgb: 209,214,218; }
+
+/* Keep items tall and easy to click */
+.wd-lesson { min-height: 48px; }
+
+/* …existing styles… */
+
+/* Equal, consistent spacing for the action icons on the right */
+.wd-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;                 /* <- one uniform gap for all three buttons */
+}
+
+/* Remove leftover per-icon margins so gap controls spacing */
+.wd-actions svg,
+.wd-actions span {
+    margin: 0 !important;
+    vertical-align: middle;
+}
