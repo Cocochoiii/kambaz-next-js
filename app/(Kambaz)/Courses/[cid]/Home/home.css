@@ -275,3 +275,91 @@
 #wd-courses-home .wd-pub-toggle.is-off svg { color:var(--wd-pub-gray); }
 #wd-courses-home .wd-pub-toggle:hover { box-shadow:0 0 0 3px rgba(3,116,181,.18); }
 #wd-courses-home .wd-pub-toggle:disabled { opacity:.6; cursor:not-allowed; box-shadow:none; }
+
+/* Equal, consistent spacing for the action icons on the right */
+.wd-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;                 /* <- one uniform gap for all three buttons */
+}
+
+/* Remove leftover per-icon margins so gap controls spacing */
+.wd-actions svg,
+.wd-actions span {
+    margin: 0 !important;
+    vertical-align: middle;
+}
+
+/* ================================
+   Canvas-y polish for Home page
+   (CSS-only; no TSX changes)
+   ================================ */
+
+/* Make module header a true flex row:
+   title on left, actions (✏️ 🗑️ ✅ ➕ ⋮) pinned to the right */
+#wd-courses-home .bg-secondary {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    transition: background-color .12s ease-in-out;
+}
+#wd-courses-home .bg-secondary:hover {
+    background-color: rgba(0,0,0,.03);
+}
+
+/* The ModuleControlButtons wrapper uses .float-end.
+   Neutralize the float so flex can place it. */
+#wd-courses-home .bg-secondary > .float-end {
+    float: none !important;
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;                /* even spacing like Canvas */
+}
+
+/* Grip / icons tone */
+#wd-courses-home .wd-grip {
+    color: #9aa6ae;
+    opacity: .9;
+    font-size: 1.05rem;
+}
+
+/* Keep borders light and consistent */
+#wd-courses-home .list-group-item { border-color: var(--wd-line) !important; }
+#wd-courses-home .border-gray      { border-color: var(--wd-line) !important; }
+
+/* Lesson rows: left green rail & comfy height */
+#wd-courses-home .wd-lesson {
+    border-left: 3px solid #2ea043 !important;
+    min-height: 48px;
+}
+
+/* Your TSX already uses a .d-flex row for lessons.
+   This tightens spacing and pins controls to the far right. */
+#wd-courses-home .wd-lesson > .d-flex { min-height: 44px; }
+#wd-courses-home .wd-lesson .ms-auto {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Check toggle chip (match Canvas feel) */
+#wd-courses-home .wd-checktoggle {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 999px;
+    border: 2px solid rgba(0,0,0,.08);
+    background: #fff;
+    line-height: 0;
+}
+#wd-courses-home .wd-checktoggle:hover {
+    box-shadow: 0 0 0 3px rgba(3,116,181,.18);
+}
+
+/* Tidy the + icon and kebab alignment */
+#wd-courses-home .bg-secondary > .float-end .fs-1 { line-height: 1; }
+#wd-courses-home .bg-secondary > .float-end svg   { margin-left: 0; }
+
+/* Headings/labels nits */
+#wd-courses-home .wd-title { font-weight: 600; }
+#wd-courses-home .wd-lesson:first-child .wd-title { letter-spacing: .2px; }

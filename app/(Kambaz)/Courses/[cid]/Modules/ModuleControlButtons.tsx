@@ -9,43 +9,33 @@ export default function ModuleControlButtons({
                                                  moduleId,
                                                  deleteModule,
                                                  editModule,
+                                                 published,
+                                                 onTogglePublished,
                                              }: {
     moduleId: string;
     deleteModule: (moduleId: string) => void;
     editModule: (moduleId: string) => void;
+    published: boolean;
+    onTogglePublished: () => void;
 }) {
     return (
-        <div className="wd-actions float-end">
+        <div className="float-end d-inline-flex align-items-center">
             <FaPencil
                 onClick={(e) => {
                     e.stopPropagation();
                     editModule(moduleId);
                 }}
-                className="text-primary"
-                aria-label="Edit module"
-                role="button"
+                className="text-primary me-3"
             />
-
             <FaTrash
-                className="text-danger"
+                className="text-danger me-3"
                 onClick={(e) => {
                     e.stopPropagation();
                     deleteModule(moduleId);
                 }}
-                aria-label="Delete module"
-                role="button"
             />
-
-            {/* Small Canvas-style publish toggle (no behavior change here) */}
-            <CheckToggle
-                active={true}
-                title="Published"
-                onClick={(e) => e.stopPropagation()}
-                size={22}
-            />
-
-            {/* Keep your other controls; spacing is handled by .wd-actions */}
-            <BsPlus className="fs-5" />
+            <CheckToggle active={published} onToggle={onTogglePublished} size="sm" />
+            <BsPlus className="fs-1 ms-3 me-3" />
             <IoEllipsisVertical className="fs-4" />
         </div>
     );

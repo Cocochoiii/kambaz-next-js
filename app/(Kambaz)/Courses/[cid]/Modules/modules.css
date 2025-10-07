@@ -109,7 +109,7 @@
 /* Keep items tall and easy to click */
 .wd-lesson { min-height: 48px; }
 
-/* …existing styles… */
+
 
 /* Equal, consistent spacing for the action icons on the right */
 .wd-actions {
@@ -124,3 +124,111 @@
     margin: 0 !important;
     vertical-align: middle;
 }
+
+/* show the right-side check + kebab */
+#wd-courses-modules .float-end .wd-checktoggle{ display:inline-flex !important; }
+#wd-courses-modules .float-end .fs-4{ display:inline-block !important; }
+
+/* tidy spacing to match the pic */
+#wd-courses-modules .float-end svg{ margin-left:12px; }
+#wd-courses-modules .float-end .fs-1{ line-height:1; } /* the + icon */
+
+/* ================================
+   Canvas-y polish for Modules page
+   (CSS-only; no TSX changes)
+   ================================ */
+
+/* Make the module header a real flex row.
+   Keep title on the left, actions all the way right. */
+#wd-courses-modules .wd-title {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+/* Right-side action cluster (your <span class="float-end ...">) */
+#wd-courses-modules .wd-title > .float-end {
+    float: none !important;           /* kill float so flex can place it */
+    margin-left: auto;                /* push to far right */
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;                        /* even spacing like Canvas */
+}
+
+/* Subtle header hover like Canvas */
+#wd-courses-modules .bg-secondary {
+    --bs-secondary-rgb: 207,212,217;  /* a touch lighter */
+    transition: background-color .12s ease-in-out;
+}
+#wd-courses-modules .wd-module .bg-secondary:hover {
+    background-color: rgba(0,0,0,.03);
+}
+
+/* Grip icon + general icon tone */
+#wd-courses-modules .wd-grip {
+    color: #9aa6ae;
+    opacity: .9;
+    font-size: 1.05rem;
+}
+
+/* Row borders: light gray lines like Canvas */
+#wd-courses-modules .list-group-item {
+    --bs-list-group-border-color: #e1e3e5;
+    border-color: #e1e3e5 !important;
+}
+#wd-courses-modules .border-gray {
+    border-color: #e1e3e5 !important;
+}
+
+/* Left green rail for lesson rows (Canvas style) */
+#wd-courses-modules .wd-lesson {
+    border-left: 3px solid #2ea043 !important;
+}
+
+/* Lesson rows: use the same flex rhythm you have on Home.
+   (Your TSX already renders a .d-flex; this tunes spacing/height.) */
+#wd-courses-modules .wd-lesson > .d-flex {
+    min-height: 44px;
+}
+#wd-courses-modules .wd-lesson .ms-auto {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* CheckToggle visual to match Canvas chip */
+#wd-courses-modules .wd-checktoggle {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 999px;
+    border: 2px solid rgba(0,0,0,.08);
+    background: #fff;
+    line-height: 0;
+}
+#wd-courses-modules .wd-checktoggle:hover {
+    box-shadow: 0 0 0 3px rgba(3,116,181,.18);
+}
+
+/* Keep the + icon and kebab neat and aligned */
+#wd-courses-modules .wd-title > .float-end .fs-1 {  /* the + icon */
+    line-height: 1;
+}
+#wd-courses-modules .wd-title > .float-end svg {
+    margin-left: 0;  /* spacing handled by 'gap' above */
+}
+
+/* Typography nits */
+#wd-courses-modules .wd-module .wd-title { font-size: 15.5px; font-weight: 600; }
+#wd-courses-modules .wd-lesson .wd-title { font-weight: 600; }
+
+/* Keep click targets comfy */
+#wd-courses-modules .wd-lesson { min-height: 48px; }
+
+/* Make the LO header read like a section header */
+#wd-courses-modules .wd-lesson:first-child .wd-title {
+    letter-spacing: .2px;
+}
+
+/* Ensure the right-side check + kebab are visible (in case earlier rules hid them) */
+#wd-courses-modules .float-end .wd-checktoggle { display: inline-flex !important; }
+#wd-courses-modules .float-end .fs-4 { display: inline-block !important; }

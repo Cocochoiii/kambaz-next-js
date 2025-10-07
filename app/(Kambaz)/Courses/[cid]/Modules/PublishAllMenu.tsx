@@ -12,28 +12,40 @@ export default function PublishAllMenu({
                                        }: {
     idPrefix?: string;
     label?: string;
-    onPublishAll: () => void;
-    onPublishModulesOnly: () => void;
-    onUnpublishAll: () => void;
-    onUnpublishModulesOnly: () => void;
+    onPublishAll?: () => void;
+    onPublishModulesOnly?: () => void;
+    onUnpublishAll?: () => void;
+    onUnpublishModulesOnly?: () => void;
 }) {
     return (
         <Dropdown>
-            <Dropdown.Toggle id={`${idPrefix}-publish-all-btn`} className="btn btn-primary">
+            <Dropdown.Toggle id={`${idPrefix}-publish-all-btn`} className="btn btn-secondary">
                 ✓ {label}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-                <Dropdown.Item id={`${idPrefix}-publish-all-modules-and-items`} onClick={onPublishAll}>
+                <Dropdown.Item
+                    id={`${idPrefix}-publish-all-modules-and-items`}
+                    onClick={() => onPublishAll?.()}
+                >
                     ✓ Publish all modules and items
                 </Dropdown.Item>
-                <Dropdown.Item id={`${idPrefix}-publish-modules-only`} onClick={onPublishModulesOnly}>
+                <Dropdown.Item
+                    id={`${idPrefix}-publish-modules-only`}
+                    onClick={() => onPublishModulesOnly?.()}
+                >
                     ✓ Publish modules only
                 </Dropdown.Item>
                 <Dropdown.Divider />
-                <Dropdown.Item id={`${idPrefix}-unpublish-all-modules-and-items`} onClick={onUnpublishAll}>
+                <Dropdown.Item
+                    id={`${idPrefix}-unpublish-all-modules-and-items`}
+                    onClick={() => onUnpublishAll?.()}
+                >
                     ⊘ Unpublish all modules and items
                 </Dropdown.Item>
-                <Dropdown.Item id={`${idPrefix}-unpublish-modules-only`} onClick={onUnpublishModulesOnly}>
+                <Dropdown.Item
+                    id={`${idPrefix}-unpublish-modules-only`}
+                    onClick={() => onUnpublishModulesOnly?.()}
+                >
                     ⊘ Unpublish modules only
                 </Dropdown.Item>
             </Dropdown.Menu>

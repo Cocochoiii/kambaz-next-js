@@ -1,34 +1,54 @@
 "use client";
 
-import { FaCheck } from "react-icons/fa6";
+import { BsCheckCircleFill } from "react-icons/bs";
 
 export default function CheckToggle({
-                                        onClick,
                                         active,
+                                        onToggle,
                                         title,
-                                        size = 20,
+                                        size = "sm",
                                     }: {
-    onClick: (e: React.MouseEvent) => void;
     active: boolean;
+    onToggle: () => void;
     title?: string;
-    size?: number;
+    size?: "sm" | "md";
 }) {
-    const bg = active ? "#22a652" : "#6c7a86";      // green / distinct gray
-    const fg = "#ffffff";
-    const circle = {
-        width: size,
-        height: size,
-        borderRadius: "999px",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: bg,
-        cursor: "pointer",
-    } as const;
+    const px = size === "sm" ? 26 : 32;
 
     return (
-        <span title={title} onClick={onClick} style={circle} className="me-2 align-middle">
-      <FaCheck color={fg} />
-    </span>
+        <button
+            type="button"
+            title={title ?? (active ? "Unpublish" : "Publish")}
+            className="wd-checktoggle"
+            onClick={(e) => {
+                e.stopPropagation();
+                onToggle();
+            }}
+            aria-pressed={active}
+            aria-label={active ? "Unpublish" : "Publish"}
+            style={{ width: px, height: px }}
+        >
+            <BsCheckCircleFill className={active ? "text-success" : "text-secondary"} />
+            <style jsx>{`
+        .wd-checktoggle {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border: 0;
+          background: transparent;
+          border-radius: 999px;
+          padding: 0;
+          cursor: pointer;
+          line-height: 1;
+        }
+        .wd-checktoggle :global(svg) {
+          font-size: ${size === "sm" ? 20 : 24}px;
+          transition: transform 0.08s ease-in-out;
+        }
+        .wd-checktoggle:hover :global(svg) {
+          transform: scale(1.06);
+        }
+      `}</style>
+        </button>
     );
 }

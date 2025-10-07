@@ -42,7 +42,6 @@ export default function HomePage() {
     const isFaculty = role === "FACULTY";
 
     const allModulesRaw = (modules || []).filter((m: any) => m.course === cid);
-    // Students see only published modules/lessons on Home as well
     const allModules = isFaculty ? allModulesRaw : allModulesRaw.filter((m: any) => m.published);
     const displayModules = allModules.slice(0, 4);
 
@@ -145,7 +144,7 @@ export default function HomePage() {
                                                     deleteModule={handleDeleteModule}
                                                     editModule={handleEditModule}
                                                     published={!!module.published}
-                                                    onTogglePublished={(id) => dispatch(toggleModulePublished(id))}
+                                                    onTogglePublished={() => dispatch(toggleModulePublished(module._id))}
                                                 />
                                             )}
                                         </div>
@@ -157,7 +156,6 @@ export default function HomePage() {
                                                 <div className="d-flex align-items-center">
                                                     <BsGripVertical className="me-2 wd-grip" />
                                                     <span className="wd-title ms-2">LEARNING OBJECTIVES</span>
-                                                    {/* header has no toggle */}
                                                 </div>
                                             </ListGroup.Item>
 
@@ -170,12 +168,14 @@ export default function HomePage() {
                                                             <div className="ms-auto">
                                                                 <LessonControlButtons
                                                                     published={!!lesson.published}
-                                                                    onToggle={(e) => {
-                                                                        e.stopPropagation();
+                                                                    onToggle={() =>
                                                                         dispatch(
-                                                                            toggleLessonPublished({ moduleId: module._id, lessonId: lesson._id })
-                                                                        );
-                                                                    }}
+                                                                            toggleLessonPublished({
+                                                                                moduleId: module._id,
+                                                                                lessonId: lesson._id,
+                                                                            })
+                                                                        )
+                                                                    }
                                                                 />
                                                             </div>
                                                         )}

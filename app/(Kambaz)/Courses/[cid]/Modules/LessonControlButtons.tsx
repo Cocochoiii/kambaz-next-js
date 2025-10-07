@@ -3,20 +3,17 @@
 import { IoEllipsisVertical } from "react-icons/io5";
 import CheckToggle from "./CheckToggle";
 
-/**
- * Faculty-only action cluster shown on lesson rows.
- * Spacing matches the module header actions.
- */
-export default function LessonControlButtons() {
+export default function LessonControlButtons({
+                                                 published,
+                                                 onToggle,
+                                             }: {
+    published: boolean;
+    onToggle: () => void;
+}) {
     return (
-        <div className="wd-actions float-end">
-            <CheckToggle
-                active={true}
-                title="Published"
-                onClick={(e) => e.stopPropagation()}
-                size={22}
-            />
-            <IoEllipsisVertical className="fs-4" />
+        <div className="d-inline-flex align-items-center">
+            <CheckToggle active={published} onToggle={onToggle} size="sm" />
+            <IoEllipsisVertical className="fs-4 ms-3" />
         </div>
     );
 }
