@@ -632,3 +632,135 @@
     opacity: .6;
     cursor: not-allowed;
 }
+
+/* ===========================================================
+   PAZZA – Piazza look & UX polish (ADD-ON STYLES ONLY)
+   paste after your existing styles
+   =========================================================== */
+
+/* 1) Top bar: glassy, tighter, and with clearer focus rings */
+.pazza-nav{
+    padding:10px 18px;
+    background: linear-gradient(180deg, rgba(52,111,190,0.96), rgba(52,111,190,0.88));
+    backdrop-filter: saturate(120%) blur(4px);
+    box-shadow: 0 2px 0 rgba(0,0,0,.06);
+}
+.pazza-logo{ letter-spacing:2.5px }
+.pazza-nav .nav-tab:focus-visible,
+.pazza-nav-right .user-avatar:focus-visible{
+    outline: none;
+    box-shadow: 0 0 0 .2rem rgba(255,255,255,.35);
+    border-radius:6px;
+}
+
+/* 2) Folder pill row: keep visible while scrolling threads */
+.folder-filters{
+    position: sticky; top: 48px; z-index: 9;
+    border-top: 1px solid var(--piazza-border);
+}
+.folder-btn{
+    transition: transform .08s ease, box-shadow .12s ease, background .15s ease;
+}
+.folder-btn:hover{ transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,.06) }
+.folder-btn.active{
+    box-shadow: 0 2px 10px rgba(70,129,196,.24);
+}
+
+/* 3) Sidebar: denser list, clearer groups, nicer scrollbar */
+.posts-sidebar{ border-right-color:#e5e7eb }
+.posts-list{ scrollbar-gutter: stable; }
+.posts-list::-webkit-scrollbar{ width:10px }
+.posts-list::-webkit-scrollbar-thumb{
+    background:#ced4da;border-radius:8px;border:2px solid #fff;
+}
+.group-header{ padding:8px 12px }
+.group-title{ color:#6b7280 }
+.post-item{
+    padding:11px 12px;
+    transition: background .12s ease, border-color .12s ease;
+}
+.post-item:hover{ background:#f4f7fb }
+.post-item.active{ background:#e9f2ff }
+
+/* unread dot (shows when item not active; subtle Piazza vibe) */
+.post-item:not(.active)::after{
+    content:"";
+    width:6px;height:6px;border-radius:999px;background:#4681c4;
+    position:absolute; right:12px; top:14px; opacity:.25;
+}
+.post-item:hover::after{ opacity:.4 }
+
+/* 4) Post rows: tighten hierarchy & badges */
+.post-title{ font-weight:800; letter-spacing:.1px }
+.post-meta{ gap: 6px 12px }
+.author-role{ border:1px solid rgba(0,0,0,.06) }
+.post-preview{ color:#6b7280 }
+.post-time{ color:#9aa3ab }
+
+/* 5) Composer & editor: bolder CTAs, unified radii */
+.btn-primary, .btn-post-primary{
+    border-radius:8px; font-weight:800; letter-spacing:.2px;
+    box-shadow: 0 1px 0 rgba(0,0,0,.05);
+}
+.btn-primary:hover, .btn-post-primary:hover{ transform: translateY(-1px) }
+.btn-draft, .btn-save-draft, .btn-cancel{ border-radius:8px }
+.post-type-tabs, .posting-options, .option-checkboxes{
+    border-radius:10px;
+}
+
+/* 6) Class-at-a-Glance: cards grid like Piazza */
+.stats-grid{
+    grid-template-columns: repeat( auto-fit, minmax(240px, 1fr) );
+}
+.stat-item{ background:#fff }
+.metric-card{ background:#fff }
+
+/* 7) Thread header/tools: make actions look like Piazza chips */
+.post-header-bar{
+    background:#fff; border:1px solid var(--piazza-border);
+    border-radius:10px; margin: 0 0 16px 0; padding:10px 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.04);
+}
+.btn-edit,.btn-actions{
+    border-radius:8px; border-color:#e5e7eb; font-weight:600;
+}
+.dropdown-content{
+    border-color:#e5e7eb; border-radius:10px;
+}
+
+/* 8) Answers/followups: readable blocks + subtle dividers */
+.answer{ border-radius:10px }
+.instructor-answer{ border:1px solid #ffe8a3 }
+.followup-thread{ border-radius:8px }
+.followup-reply{ border-radius:8px }
+
+/* 9) Right panel: comfortable reading width & airy padding */
+.post-screen-container{
+    padding: 18px 22px;
+}
+.post-details{ max-width: 980px }
+
+/* 10) “New Post” button: stronger prominence in sidebar */
+.new-post-btn{
+    border-radius:8px; letter-spacing:.25px;
+    box-shadow: 0 2px 10px rgba(70,129,196,.18);
+}
+.new-post-btn:focus-visible{
+    outline: none;
+    box-shadow: 0 0 0 .2rem rgba(70,129,196,.25);
+}
+
+/* 11) Tiny typographic touches */
+.pazza-container{ line-height: 1.45 }
+.post-body{ font-size: 15.5px }
+
+/* 12) Mobile: keep sidebar usable, improve stacking */
+@media (max-width: 992px){
+    .posts-sidebar{ width: 320px }
+}
+@media (max-width: 768px){
+    .folder-filters{ top: 44px }
+    .post-screen-container{ padding: 14px }
+}
+
+

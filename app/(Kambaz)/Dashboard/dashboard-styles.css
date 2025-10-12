@@ -228,3 +228,100 @@
     .courses-title{ font-size:16px; }
     .course-card-title{ font-size:15px; }
 }
+
+/* =========================
+   Canvas polish (additions)
+   ========================= */
+
+/* 1) Keep the header visible as you scroll like Canvas */
+.dashboard-header{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+}
+
+/* subtle separator under the sticky header when scrolled */
+.dashboard-header::after{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:-1px; height:1px;
+    background: var(--wd-line);
+}
+
+/* 2) Card image: gentle zoom on hover + crisper gradient cap */
+.course-card-image{ overflow:hidden; }
+.course-card-image img{ transition: transform .25s ease; }
+.course-card:hover .course-card-image img{ transform: scale(1.04); }
+.course-card-image::after{
+    height: 64px;                     /* slightly taller for readability */
+    background: linear-gradient(180deg, rgba(0,0,0,.32), rgba(0,0,0,0));
+}
+
+/* 3) Title/metadata spacing to breathe a bit like Canvas */
+.course-card-body{ gap: 8px; }
+.course-card-number{
+    letter-spacing:.2px;
+    display:inline-block;
+}
+.course-card-term{
+    margin-top:2px;
+}
+
+/* 4) Action row: stronger affordance + tighter alignment */
+.course-card-actions{
+    padding-top:12px;
+    gap:10px;
+}
+.btn-card-go,
+.btn-card-enroll{
+    box-shadow:0 1px 0 rgba(0,0,0,.04);
+}
+
+/* 5) Icon link bar: clearer hover target */
+.card-link-icon{
+    border:1px solid transparent;
+}
+.card-link-icon:hover{
+    background:#fff;
+    border-color:#E8ECEF;
+}
+
+/* 6) “Enrolled” pill: a touch smaller & bolder like Canvas */
+.enrolled-badge{
+    font-size:11.5px;
+    padding:3px 9px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+
+/* 7) Course editor panel: elevate above content */
+.course-editor-panel{
+    box-shadow: var(--wd-shadow);
+}
+
+/* 8) Focus styles for a11y (match Canvas feel) */
+.btn-add-course:focus,
+.btn-toggle-courses:focus,
+.btn-card-go:focus,
+.btn-card-enroll:focus,
+.btn-card-unenroll:focus,
+.btn-card-edit:focus,
+.btn-card-delete:focus,
+.card-link-icon:focus{
+    outline: none;
+    box-shadow: 0 0 0 .25rem rgba(3,116,181,.18);
+    border-color: var(--wd-blue);
+}
+
+/* 9) Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce){
+    .course-card,
+    .course-card-image img{ transition: none; }
+}
+
+/* 10) Mobile refinements */
+@media (max-width:700px){
+    .course-card{ height:auto; }         /* let content define height on narrow screens */
+    .course-card-image{ height: 140px; }
+    .dashboard-header::after{ display:none; } /* avoid double rule on tight spaces */
+}

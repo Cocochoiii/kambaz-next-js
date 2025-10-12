@@ -94,3 +94,53 @@
         margin-bottom: 10px;
     }
 }
+/* ===========================================================
+   Canvas-like Announcements polish (ADD-ON; no markup changes)
+   Scope: #wd-announcements
+   =========================================================== */
+
+/* 1) Top toolbar: compact & sticky when scrolling */
+#wd-announcements .mb-4{
+    position: sticky; top: 64px; z-index: 5;
+    background: #fff; padding: 8px 0 6px;
+    border-bottom: 1px solid var(--ann-border);
+}
+#wd-announcements .form-control{
+    height: 40px; padding: .5rem .75rem;
+}
+#wd-announcements .btn-danger{
+    height: 40px; display: inline-flex; align-items: center; gap: .4rem;
+    background:#C8102E; border-color:#C8102E;
+}
+#wd-announcements .btn-danger:hover{
+    background:#b40e29; border-color:#b40e29;
+}
+
+/* 2) Card list spacing like Canvas */
+#wd-announcements .list-group{
+    display: flex; flex-direction: column; gap: 12px;
+}
+#wd-announcements .list-group-item{
+    border-radius: 12px;
+    border-color: var(--ann-border);
+    padding: 16px 18px;
+    box-shadow: 0 1px 0 rgba(0,0,0,.04);
+    transition: box-shadow .15s ease, background .12s ease, transform .06s ease;
+}
+#wd-announcements .list-group-item:hover{
+    background:#fafbfc;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+/* subtle Canvas left accent (already have border-start); lighten it */
+#wd-announcements .border-secondary{ border-color:#c7cdd1 !important }
+
+
+/* 4) Meta row (author • section) like Canvas chips */
+#wd-announcements .text-muted.small{
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+}
+#wd-announcements .text-muted.small::before{
+    content:""; display:inline-block; width:4px; height:4px; border-radius:999px;
+    background:#c1c7cd; margin-right:2px;
+}
