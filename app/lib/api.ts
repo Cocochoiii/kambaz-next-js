@@ -6,7 +6,7 @@ const isProd = process.env.NODE_ENV === "production";
 
 // In production, call the backend directly. In dev, use Next.js rewrites
 const API_BASE = isProd
-    ? "https://kambaz-node-server-app-final.vercel.app/api"
+    ? "https://kambaz-node-server-app-final2.vercel.app/api"
     : "/api";
 
 const api = axios.create({
