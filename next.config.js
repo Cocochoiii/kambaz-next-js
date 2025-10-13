@@ -18,7 +18,7 @@ const nextConfig = {
     async headers() {
         return [
             {
-                source: '/(.*)',
+                source: '/:path*',
                 headers: [
                     {
                         key: 'X-Frame-Options',
@@ -28,6 +28,9 @@ const nextConfig = {
             },
         ];
     },
+    env: {
+        NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL || 'https://kambaz-node-server-app-final2.vercel.app'
+    }
 };
 
 module.exports = nextConfig;
