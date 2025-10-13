@@ -4,10 +4,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
 import { Form, Button } from "react-bootstrap";
-import axios from "axios";
-
-const axiosWithCredentials = axios.create({ withCredentials: true });
-const API = "/api";
+import api from "@/app/lib/api";
 
 export default function Profile() {
     const [profile, setProfile] = useState<any>({});
@@ -27,14 +24,10 @@ export default function Profile() {
     const updateProfile = async () => {
         setLoading(true);
         try {
-            const { data } = await axiosWithCredentials.put(
-                `${API}/users/${profile._id}`,
-                profile
-            );
+            const { data } = await api.put(`/users/${profile._id}`, profile);
             dispatch(setCurrentUser(data));
-            // Show success message briefly then navigate
             alert("Profile updated successfully!");
-            router.push("/Dashboard"); // Navigate to Dashboard after update
+            router.push("/Dashboard");
         } catch (err) {
             console.error(err);
             alert("Error updating profile");
@@ -45,7 +38,7 @@ export default function Profile() {
 
     const signout = async () => {
         try {
-            await axiosWithCredentials.post(`${API}/users/signout`);
+            await api.post("/users/signout");
             dispatch(setCurrentUser(null));
             router.push("/Account/Signin");
         } catch (err) {
@@ -62,7 +55,6 @@ export default function Profile() {
     return (
         <div id="wd-profile-screen" className="account-form-container">
             <h1 className="account-header mb-4">Profile</h1>
-
             <Form className="account-form">
                 <div className="form-floating-group">
                     <Form.Control
@@ -74,7 +66,6 @@ export default function Profile() {
                     />
                     <Form.Label className="account-label">Username</Form.Label>
                 </div>
-
                 <div className="form-floating-group">
                     <Form.Control
                         value={profile.password || ""}
@@ -86,7 +77,6 @@ export default function Profile() {
                     />
                     <Form.Label className="account-label">Password</Form.Label>
                 </div>
-
                 <div className="row g-3">
                     <div className="col-sm-6">
                         <div className="form-floating-group">
@@ -113,7 +103,6 @@ export default function Profile() {
                         </div>
                     </div>
                 </div>
-
                 <div className="form-floating-group">
                     <Form.Control
                         value={profile.dob || ""}
@@ -125,7 +114,6 @@ export default function Profile() {
                     />
                     <Form.Label className="account-label">Date of Birth</Form.Label>
                 </div>
-
                 <div className="form-floating-group">
                     <Form.Control
                         value={profile.email || ""}
@@ -137,7 +125,6 @@ export default function Profile() {
                     />
                     <Form.Label className="account-label">Email</Form.Label>
                 </div>
-
                 <div className="form-floating-group">
                     <Form.Select
                         value={profile.role || "USER"}
@@ -152,21 +139,10 @@ export default function Profile() {
                     </Form.Select>
                     <Form.Label className="account-label">Role</Form.Label>
                 </div>
-
-                <Button
-                    onClick={updateProfile}
-                    className="account-btn-primary mb-3"
-                    id="wd-update-profile-btn"
-                    disabled={loading}
-                >
+                <Button onClick={updateProfile} className="account-btn-primary mb-3" id="wd-update-profile-btn" disabled={loading}>
                     {loading ? "Updating..." : "Update Profile"}
                 </Button>
-
-                <Button
-                    onClick={signout}
-                    className="account-btn-secondary"
-                    id="wd-signout-btn"
-                >
+                <Button onClick={signout} className="account-btn-secondary" id="wd-signout-btn">
                     Sign out
                 </Button>
             </Form>

@@ -1,27 +1,36 @@
+// app/lib/client.ts (or your current path: app/(Kambaz)/Account/client.ts)
 import axios from "axios";
 
-const axiosWithCredentials = axios.create({ withCredentials: true });
+/**
+ * Dev:
+ *   - leave NEXT_PUBLIC_HTTP_SERVER empty
+ *   - Next dev rewrite proxies /api/* → http://127.0.0.1:4000/api
+ *
+ * Prod (Vercel):
+ *   - set NEXT_PUBLIC_HTTP_SERVER to your backend URL, e.g.
+ *     https://kambaz-node-server-app-final.vercel.app
+ */
+const backendRoot = (process.env.NEXT_PUBLIC_HTTP_SERVER || "").replace(/\/+$/, "");
 
-// ✅ Always relative base via Next proxy
-export const USERS_API = `/api/users`;
+// If no env is set, stick to relative "/api" (works with Next rewrites)
+const baseURL = backendRoot ? `${backendRoot}/api` : "/api";
 
-export const findAllUsers = async () => (await axiosWithCredentials.get(USERS_API)).data;
-export const findUsersByRole = async (role: string) =>
-    (await axiosWithCredentials.get(`${USERS_API}?role=${role}`)).data;
-export const findUsersByPartialName = async (name: string) =>
-    (await axiosWithCredentials.get(`${USERS_API}?name=${name}`)).data;
-export const findUserById = async (id: string) =>
-    (await axiosWithCredentials.get(`${USERS_API}/${id}`)).data;
-export const createUser = async (user: any) =>
-    (await axiosWithCredentials.post(USERS_API, user)).data;
-export const updateUser = async (user: any) =>
-    (await axiosWithCredentials.put(`${USERS_API}/${user._id}`, user)).data;
-export const deleteUser = async (userId: string) =>
-    (await axiosWithCredentials.delete(`${USERS_API}/${userId}`)).data;
+const api = axios.create({
+    baseURL,
+    withCredentials: true,
+    headers: { "Content-Type": "application/json" },
+});
 
-export const findCoursesForUser = async (userId: string) =>
-    (await axiosWithCredentials.get(`${USERS_API}/${userId}/courses`)).data;
-export const enrollIntoCourse = async (userId: string, courseId: string) =>
-    (await axiosWithCredentials.post(`${USERS_API}/${userId}/courses/${courseId}`)).data;
-export const unenrollFromCourse = async (userId: string, courseId: string) =>
-    (await axiosWithCredentials.delete(`${USERS_API}/${userId}/courses/${courseId}`)).data;
+// Safety: if someone calls api with a URL that still starts with "/api/...",
+// normalize it so we don't end up with "/api/api/...".
+api.interceptors.request.use((config) => {
+    if (config.url?.startsWith("/api/")) {
+        config.url = config.url.replace(/^\/api/, "");
+    }
+    return config;
+});
+
+export default api;
+
+// Optional convenience if you want the same constant everywhere:
+export const USERS_API = "/users";

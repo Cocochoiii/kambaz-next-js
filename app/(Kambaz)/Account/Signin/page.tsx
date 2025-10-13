@@ -4,11 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { setCurrentUser } from "../reducer";
 import { useDispatch } from "react-redux";
-import { Form, Button } from "react-bootstrap";
-import axios from "axios";
-
-const axiosWithCredentials = axios.create({ withCredentials: true });
-const API = "/api";
+import { Button } from "react-bootstrap";
+import api from "@/app/lib/api";
 
 export default function Signin() {
     const [credentials, setCredentials] = useState<any>({});
@@ -21,17 +18,13 @@ export default function Signin() {
         e.preventDefault();
         setError("");
         setLoading(true);
-
         try {
-            const { data } = await axiosWithCredentials.post(
-                `${API}/users/signin`,
-                credentials
-            );
+            const { data } = await api.post("/users/signin", credentials);
             dispatch(setCurrentUser(data));
             router.push("/Dashboard");
         } catch (err: any) {
             console.error(err);
-            setError(err.response?.data?.message || "Invalid username or password");
+            setError(err?.response?.data?.message || "Invalid username or password");
         } finally {
             setLoading(false);
         }
@@ -41,7 +34,6 @@ export default function Signin() {
         <div id="wd-signin-screen" className="account-container">
             <div className="account-box">
                 <h1 className="account-title">Northeastern University</h1>
-
                 <form onSubmit={signin} className="account-form">
                     <div className="form-floating-group">
                         <input
@@ -54,11 +46,8 @@ export default function Signin() {
                             required
                             autoFocus
                         />
-                        <label className="account-label" htmlFor="wd-username">
-                            myNortheastern Username
-                        </label>
+                        <label className="account-label" htmlFor="wd-username">myNortheastern Username</label>
                     </div>
-
                     <div className="form-floating-group">
                         <input
                             value={credentials.password || ""}
@@ -69,26 +58,12 @@ export default function Signin() {
                             id="wd-password"
                             required
                         />
-                        <label className="account-label" htmlFor="wd-password">
-                            myNortheastern Password
-                        </label>
+                        <label className="account-label" htmlFor="wd-password">myNortheastern Password</label>
                     </div>
-
-                    {error && (
-                        <div className="account-error">
-                            {error}
-                        </div>
-                    )}
-
-                    <Button
-                        type="submit"
-                        id="wd-signin-btn"
-                        className="account-btn-primary"
-                        disabled={loading}
-                    >
+                    {error && <div className="account-error">{error}</div>}
+                    <Button type="submit" id="wd-signin-btn" className="account-btn-primary" disabled={loading}>
                         {loading ? "Signing in..." : "Log In"}
                     </Button>
-
                     <div className="account-link-container">
                         <Link id="wd-signup-link" href="/Account/Signup" className="account-link">
                             Don't have an account? Sign up
