@@ -1,15 +1,27 @@
 // app/(Kambaz)/Courses/[cid]/Pazza/client.ts
 import axios from "axios";
 
-// CRITICAL: Use production backend when deployed
-const API_BASE = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-    ? "https://kambaz-node-server-app-final2.vercel.app"
-    : "http://localhost:4000";
+// FORCE production URL in all environments for now to debug
+// Change this back to conditional logic once working
+const API_BASE = "https://kambaz-node-server-app-final2.vercel.app";
 
 const http = axios.create({
     baseURL: `${API_BASE}/api`,
     withCredentials: true,
+    timeout: 30000,
 });
+
+// Add request interceptor to debug
+http.interceptors.request.use(
+    (config) => {
+        console.log(`[Pazza API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
+        return config;
+    },
+    (error) => {
+        console.error("[Pazza API Error]", error);
+        return Promise.reject(error);
+    }
+);
 
 // Keep all your existing types and functions unchanged
 export type Role = "STUDENT" | "TA" | "FACULTY" | "INSTRUCTOR";
@@ -85,8 +97,13 @@ export interface Stats {
 const cid = (courseId: string) => `/courses/${encodeURIComponent(courseId)}/pazza`;
 
 export const listFolders = async (courseId: string): Promise<Folder[]> => {
-    const { data } = await http.get(`${cid(courseId)}/folders`);
-    return data;
+    try {
+        const { data } = await http.get(`${cid(courseId)}/folders`);
+        return data;
+    } catch (error) {
+        console.error("Error fetching folders:", error);
+        throw error;
+    }
 };
 
 export const addFolder = async (courseId: string, name: string): Promise<Folder> => {
@@ -104,11 +121,16 @@ export const removeFolder = async (courseId: string, folderId: string): Promise<
 };
 
 export const listPosts = async (courseId: string, opts?: { folder?: string; search?: string }): Promise<Post[]> => {
-    const params = new URLSearchParams();
-    if (opts?.folder) params.set("folder", opts.folder);
-    if (opts?.search) params.set("search", opts.search);
-    const { data } = await http.get(`${cid(courseId)}/posts?${params.toString()}`);
-    return data;
+    try {
+        const params = new URLSearchParams();
+        if (opts?.folder) params.set("folder", opts.folder);
+        if (opts?.search) params.set("search", opts.search);
+        const { data } = await http.get(`${cid(courseId)}/posts?${params.toString()}`);
+        return data;
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+        throw error;
+    }
 };
 
 export const createPost = async (courseId: string, post: Partial<Post> & { type: "question" | "note"; details: string; folders: string[]; postTo: "entire_class" | "individual"; visibleTo?: string[]; }): Promise<Post> => {
@@ -155,6 +177,11 @@ export const toggleFollowupResolved = async (courseId: string, followupId: strin
 };
 
 export const getStats = async (courseId: string): Promise<Stats> => {
-    const { data } = await http.get(`${cid(courseId)}/stats`);
-    return data;
+    try {
+        const { data } = await http.get(`${cid(courseId)}/stats`);
+        return data;
+    } catch (error) {
+        console.error("Error fetching stats:", error);
+        throw error;
+    }
 };
