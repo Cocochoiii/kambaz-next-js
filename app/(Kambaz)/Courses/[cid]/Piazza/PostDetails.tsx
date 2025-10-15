@@ -24,8 +24,8 @@ interface PostDetailsProps {
 
 export default function PostDetails({ courseId, post }: PostDetailsProps) {
     const dispatch = useDispatch();
-    const currentUser = useSelector((state: any) => state.auth.currentUser);
-    const { currentAnswers, currentFollowups } = useSelector((state: any) => state.pazza);
+    const currentUser = useSelector((state: any) => state.accountReducer?.currentUser);  // FIXED: was state.auth
+    const { currentAnswers, currentFollowups } = useSelector((state: any) => state.pazza);  // This is correct after store fix
 
     const [isEditingPost, setIsEditingPost] = useState(false);
     const [editTitle, setEditTitle] = useState(post.title);

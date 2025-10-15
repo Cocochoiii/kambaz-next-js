@@ -2,13 +2,14 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:4000";
+// Use the same production URL as client.ts
+const API_BASE = "https://kambaz-node-server-app-final2.vercel.app";
 
 /** ===== Types ===== */
 export interface Folder {
     _id: string;
     courseId?: string;
-    course?: string; // Backend uses 'course' field
+    course?: string;
     name: string;
     isDefault?: boolean;
     order?: number;
@@ -26,7 +27,7 @@ export interface UserRef {
 export interface Post {
     _id: string;
     courseId?: string;
-    course?: string; // Backend uses 'course' field
+    course?: string;
     type: "question" | "note";
     summary?: string;
     title?: string;
@@ -35,7 +36,7 @@ export interface Post {
     authorId?: string;
     authorName?: string;
     authorRole?: Role | string;
-    folders: string[]; // Array of folder names, not IDs
+    folders: string[];
     postTo: "entire_class" | "individual";
     visibleTo?: string[];
     views?: number;
@@ -134,10 +135,12 @@ const ensureCourseData = (state: PazzaState, courseId: string) => {
 export const fetchFolders = createAsyncThunk(
     "pazza/folders",
     async (courseId: string) => {
+        console.log(`Fetching folders for course ${courseId}`);
         const { data } = await axios.get(
             `${API_BASE}/api/courses/${courseId}/pazza/folders`,
             { withCredentials: true }
         );
+        console.log(`Folders fetched:`, data);
         return { courseId, folders: data as Folder[] };
     }
 );
@@ -180,6 +183,7 @@ export const deleteFolder = createAsyncThunk(
 export const fetchPosts = createAsyncThunk(
     "pazza/posts",
     async ({ courseId, folder, search }: { courseId: string; folder?: string; search?: string }) => {
+        console.log(`Fetching posts for course ${courseId}, folder: ${folder}, search: ${search}`);
         const params = new URLSearchParams();
         if (folder) params.append("folder", folder);
         if (search) params.append("search", search);
@@ -187,6 +191,7 @@ export const fetchPosts = createAsyncThunk(
             `${API_BASE}/api/courses/${courseId}/pazza/posts?${params}`,
             { withCredentials: true }
         );
+        console.log(`Posts fetched:`, data);
         return { courseId, posts: data as Post[] };
     }
 );
@@ -207,10 +212,12 @@ export const createPost = createAsyncThunk(
 export const fetchPostDetails = createAsyncThunk(
     "pazza/postDetails",
     async ({ courseId, postId }: { courseId: string; postId: string }) => {
+        console.log(`Fetching post details for ${postId}`);
         const { data } = await axios.get(
             `${API_BASE}/api/courses/${courseId}/pazza/posts/${postId}`,
             { withCredentials: true }
         );
+        console.log(`Post details fetched:`, data);
         return data as { post: Post; answers: Answer[]; followups: Followup[] };
     }
 );
@@ -300,10 +307,12 @@ export const toggleFollowupResolved = createAsyncThunk(
 export const fetchStats = createAsyncThunk(
     "pazza/stats",
     async (courseId: string) => {
+        console.log(`Fetching stats for course ${courseId}`);
         const { data } = await axios.get(
             `${API_BASE}/api/courses/${courseId}/pazza/stats`,
             { withCredentials: true }
         );
+        console.log(`Stats fetched:`, data);
         return { courseId, stats: data as Stats };
     }
 );
@@ -340,8 +349,15 @@ const pazzaSlice = createSlice({
         }
     },
     extraReducers: (b) => {
-        b.addCase(fetchPosts.pending, (s) => { s.loading = true; s.error = null; })
-            .addCase(fetchPosts.rejected, (s, a) => { s.loading = false; s.error = a.error.message || "Failed to fetch posts"; })
+        b.addCase(fetchPosts.pending, (s) => {
+            s.loading = true;
+            s.error = null;
+        })
+            .addCase(fetchPosts.rejected, (s, a) => {
+                s.loading = false;
+                s.error = a.error.message || "Failed to fetch posts";
+                console.error("Failed to fetch posts:", a.error);
+            })
 
             // Folders
             .addCase(fetchFolders.fulfilled, (s, a) => {

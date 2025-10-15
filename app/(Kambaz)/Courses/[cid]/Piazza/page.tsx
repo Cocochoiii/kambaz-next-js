@@ -36,28 +36,37 @@ export default function Pazza() {
 
     const [showNewPost, setShowNewPost] = useState(false);
     const [activeTab, setActiveTab] = useState("qa");
+    const [dataInitialized, setDataInitialized] = useState(false);
 
     const isInstructor = ["FACULTY", "TA", "INSTRUCTOR"].includes(currentUser?.role);
 
-    const defaultFolders = [
-        "hw1", "hw2", "hw3", "hw4", "hw5", "hw6",
-        "project", "exam", "logistics", "other", "office_hours",
-    ];
-
+    // Initialize data on mount
     useEffect(() => {
-        if (courseId) {
+        if (courseId && !dataInitialized) {
+            console.log(`Initializing Pazza for course ${courseId}`);
             dispatch(setCurrentCourse(courseId));
-            dispatch(fetchFolders(courseId));
-            dispatch(fetchPosts({ courseId }));
-            dispatch(fetchStats(courseId));
-        }
-    }, [courseId, dispatch]);
 
+            // Fetch initial data
+            Promise.all([
+                dispatch(fetchFolders(courseId)),
+                dispatch(fetchPosts({ courseId })),
+                dispatch(fetchStats(courseId))
+            ]).then(() => {
+                setDataInitialized(true);
+                console.log('Initial data loaded');
+            }).catch(error => {
+                console.error('Error loading initial data:', error);
+            });
+        }
+    }, [courseId, dispatch, dataInitialized]);
+
+    // Refresh posts when selected folder changes
     useEffect(() => {
-        if (courseId && selectedFolder) {
+        if (courseId && selectedFolder !== null && dataInitialized) {
+            console.log(`Fetching posts for folder: ${selectedFolder}`);
             dispatch(fetchPosts({ courseId, folder: selectedFolder }));
         }
-    }, [courseId, selectedFolder, dispatch]);
+    }, [courseId, selectedFolder, dispatch, dataInitialized]);
 
     const handleNewPost = () => {
         setShowNewPost(true);
@@ -66,9 +75,11 @@ export default function Pazza() {
 
     const handleFolderSelect = (folderName: string) => {
         if (selectedFolder === folderName) {
+            // Deselect folder - show all posts
             dispatch(setSelectedFolder(null));
             dispatch(fetchPosts({ courseId }));
         } else {
+            // Select folder - filter posts
             dispatch(setSelectedFolder(folderName));
             dispatch(fetchPosts({ courseId, folder: folderName }));
         }
@@ -83,12 +94,26 @@ export default function Pazza() {
 
     const handlePostSaved = () => {
         setShowNewPost(false);
-        dispatch(fetchPosts({ courseId }));
+        // Refresh posts after creating new one
+        dispatch(fetchPosts({ courseId, folder: selectedFolder || undefined }));
     };
 
+    // Use folders from backend or show default folders
     const displayFolders = folders.length > 0
         ? folders
-        : defaultFolders.map((name) => ({ _id: name, name, isDefault: true }));
+        : [
+            { _id: "hw1", name: "hw1", isDefault: true },
+            { _id: "hw2", name: "hw2", isDefault: true },
+            { _id: "hw3", name: "hw3", isDefault: true },
+            { _id: "hw4", name: "hw4", isDefault: true },
+            { _id: "hw5", name: "hw5", isDefault: true },
+            { _id: "hw6", name: "hw6", isDefault: true },
+            { _id: "project", name: "project", isDefault: true },
+            { _id: "exam", name: "exam", isDefault: true },
+            { _id: "logistics", name: "logistics", isDefault: true },
+            { _id: "other", name: "other", isDefault: true },
+            { _id: "office_hours", name: "office_hours", isDefault: true },
+        ];
 
     return (
         <div className="pazza-container">
@@ -99,7 +124,7 @@ export default function Pazza() {
                         pazza
                     </Link>
                     <div className="course-name">
-                        CS {course?.number || courseId}
+                        CS {course?.number || courseId.substring(0, 6)}
                     </div>
                 </div>
                 <div className="pazza-nav-tabs">
@@ -143,7 +168,7 @@ export default function Pazza() {
 
                         {displayFolders.map((folder: any) => (
                             <button
-                                key={folder._id}
+                                key={folder._id || folder.name}
                                 className={`folder-btn ${selectedFolder === folder.name ? "active" : ""}`}
                                 onClick={() => handleFolderSelect(folder.name)}
                             >
@@ -153,7 +178,11 @@ export default function Pazza() {
 
                         <button
                             className="folder-btn"
-                            onClick={() => { if (isInstructor) handleTabChange("manage"); }}
+                            onClick={() => {
+                                if (isInstructor) {
+                                    handleTabChange("manage");
+                                }
+                            }}
                         >
                             more
                         </button>

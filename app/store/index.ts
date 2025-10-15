@@ -23,7 +23,7 @@ const store = configureStore({
         counterReducer,
         addReducer,
         todosReducer,
-        pazzaReducer,
+        pazza: pazzaReducer,
     },
 });
 

@@ -16,8 +16,8 @@ interface NewPostProps {
 
 export default function NewPost({ courseId, folders = [], onCancel, onSuccess }: NewPostProps) {
     const dispatch = useDispatch();
-    const currentUser = useSelector((state: any) => state.auth?.currentUser);
-    const enrollments = useSelector((state: any) => state.enrollments?.enrollments || []);
+    const currentUser = useSelector((state: any) => state.accountReducer?.currentUser);  // FIXED: was state.auth
+    const enrollments = useSelector((state: any) => state.enrollmentsReducer?.enrollments || []); // FIXED: was state.enrollments
 
     const [postType, setPostType] = useState<"question" | "note">("question");
     const [postTo, setPostTo] = useState("entire_class");

@@ -27,16 +27,15 @@ const ManageClass: React.FC = () => {
     useEffect(() => {
         if (currentUser && !isInstructor) {
             // simple client-side protection; your API/SSR can also protect
-            router.replace(`/Courses/${cid}/Pazza`); // back to Q&A home
+            router.replace(`/Kambaz/Courses/${cid}/Pazza`);
         }
     }, [currentUser, isInstructor, router, cid]);
 
     if (!isInstructor) {
-        // brief friendly fallback if the redirect hasn’t fired yet
         return (
             <Container fluid className="p-4">
                 <div className="alert alert-warning mb-0">
-                    You don’t have permission to manage this class.
+                    You don't have permission to manage this class.
                 </div>
             </Container>
         );
@@ -57,7 +56,7 @@ const ManageClass: React.FC = () => {
                 </div>
             </div>
 
-            {/* Content area – we still keep react-bootstrap Tab.Container so structure stays intact */}
+            {/* Content area */}
             <div className="p-3">
                 <Tab.Container
                     activeKey={activeKey}
