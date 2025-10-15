@@ -1,6 +1,13 @@
+// app/(Kambaz)/Courses/[cid]/Quizzes/client.ts
 import axios from "axios";
 
+// Match the pattern from your api.ts
+const isProd = process.env.NODE_ENV === "production" || process.env.NEXT_PUBLIC_VERCEL === "1";
+const BACKEND_URL = "https://kambaz-node-server-app-final2.vercel.app";
+const API_BASE = isProd ? BACKEND_URL : "";
+
 const axiosWithCredentials = axios.create({
+    baseURL: API_BASE,
     withCredentials: true,
     headers: { "Content-Type": "application/json" },
 });
