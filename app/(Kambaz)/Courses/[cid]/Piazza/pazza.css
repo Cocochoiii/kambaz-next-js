@@ -763,4 +763,79 @@
     .post-screen-container{ padding: 14px }
 }
 
+/* ===== Piazza-like Alerts (polish only; works with react-bootstrap <Alert>) ===== */
+.pazza-alert {
+    position: relative;
+    padding: 12px 14px 12px 46px;  /* room for the icon */
+    border-radius: 10px !important;
+    border-width: 1px !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+/* shared left accent bar */
+.pazza-alert::after{
+    content:"";
+    position:absolute;
+    left:0; top:0; bottom:0;
+    width:4px;
+    border-radius:10px 0 0 10px;
+    opacity:.9;
+}
+
+/* close button tweak */
+.pazza-alert .btn-close{
+    filter: none;
+    opacity:.6;
+}
+.pazza-alert .btn-close:hover{ opacity:.9 }
+
+/* DANGER variant — matches Piazza feel */
+.pazza-alert-danger{
+    background: #fff5f5 !important;
+    border-color: #ffd6d7 !important;
+    color: #7a1f27 !important;
+}
+.pazza-alert-danger::after{ background:#e35d6a }
+
+/* SUCCESS variant — for your “Folder added/updated/deleted.” toasts */
+.pazza-alert-success{
+    background: #f3fff6 !important;
+    border-color: #cfeedd !important;
+    color: #1d5e39 !important;
+}
+.pazza-alert-success::after{ background:#2fab66 }
+
+/* Leading icon bubble (pure CSS, no extra markup) */
+.pazza-alert::before{
+    content:"";
+    position:absolute;
+    left:12px; top:50%;
+    transform:translateY(-50%);
+    width:24px; height:24px;
+    border-radius:8px;
+    display:grid; place-items:center;
+    font-weight:800;
+    font-size:14px;
+    color:#fff;
+}
+
+/* icon glyphs per variant */
+.pazza-alert-danger::before{
+    content:"!";
+    background:#e35d6a;
+}
+.pazza-alert-success::before{
+    content:"✓";
+    background:#2fab66;
+}
+
+/* subtle “slide in” like Piazza */
+@keyframes piazzaAlertIn {
+    from { opacity:0; transform: translateY(-6px) }
+    to   { opacity:1; transform: translateY(0) }
+}
+.pazza-alert { animation: piazzaAlertIn .18s ease-out }
+
 

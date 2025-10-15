@@ -182,7 +182,13 @@ const ManageFoldersScreen: React.FC = () => {
                     </Card.Header>
                     <Card.Body>
                         {error && (
-                            <Alert variant="danger" dismissible onClose={() => setError("")}>
+                            <Alert
+                                variant="danger"
+                                dismissible
+                                onClose={() => setError("")}
+                                className="pazza-alert pazza-alert-danger"
+                                aria-live="polite"
+                            >
                                 {error}
                             </Alert>
                         )}
@@ -191,9 +197,12 @@ const ManageFoldersScreen: React.FC = () => {
                                 variant="success"
                                 dismissible
                                 onClose={() => setSuccess("")}
+                                className="pazza-alert pazza-alert-success"
+                                aria-live="polite"
                             >
                                 {success}
                             </Alert>
+
                         )}
 
                         {/* Add new folder */}
