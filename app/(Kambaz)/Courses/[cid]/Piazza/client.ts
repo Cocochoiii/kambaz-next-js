@@ -1,7 +1,7 @@
 // app/(Kambaz)/Courses/[cid]/Pazza/client.ts
 import axios from "axios";
 
-// Match the pattern from your api.ts
+// Fix: Use production backend URL when deployed
 const isProd = process.env.NODE_ENV === "production" || process.env.NEXT_PUBLIC_VERCEL === "1";
 const BACKEND_URL = "https://kambaz-node-server-app-final2.vercel.app";
 const API_BASE = isProd ? BACKEND_URL : "";
@@ -11,7 +11,7 @@ const http = axios.create({
     withCredentials: true,
 });
 
-/* ===== Keep all your existing types unchanged ===== */
+/* ===== Types (keep all your existing types) ===== */
 export type Role = "STUDENT" | "TA" | "FACULTY" | "INSTRUCTOR";
 
 export interface Folder {
@@ -82,9 +82,10 @@ export interface Stats {
     totalContributions: number;
 }
 
-/* ===== Keep all your existing functions unchanged ===== */
+/* ===== Helpers ===== */
 const cid = (courseId: string) => `/courses/${encodeURIComponent(courseId)}/pazza`;
 
+/* ===== All your existing functions unchanged ===== */
 export const listFolders = async (courseId: string): Promise<Folder[]> => {
     const { data } = await http.get(`${cid(courseId)}/folders`);
     return data;
