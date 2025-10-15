@@ -9,11 +9,10 @@ import {
     Card,
     Form,
     Button,
-    ListGroup,
     Alert,
     Badge,
 } from "react-bootstrap";
-import { FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
+import { FaEdit, FaTrash, FaCheck, FaTimes, FaFolder } from "react-icons/fa";
 import {
     addFolder,
     updateFolder,
@@ -21,16 +20,6 @@ import {
     fetchFolders,
 } from "./pazzaReducer";
 
-/**
- * Manage Folders Screen (MFS)
- * - Title: "Configure Class Folders"
- * - Default folders shown/seeded if empty (once per course)
- * - Add one folder at a time
- * - Edit flow: Edit -> (Save | Cancel)
- * - Delete: single + bulk delete selected
- * - Immediate refresh/persist after each operation
- * - No subfolders / no disable / no numbered suffix (not required)
- */
 const DEFAULTS = [
     "hw1",
     "hw2",
@@ -98,8 +87,8 @@ const ManageFoldersScreen: React.FC = () => {
             await dispatch(fetchFolders(cid));
             setNewFolderName("");
             setError("");
-            setSuccess("Folder added.");
-            setTimeout(() => setSuccess(""), 1500);
+            setSuccess("Folder added successfully!");
+            setTimeout(() => setSuccess(""), 2500);
         } catch {
             setError("Failed to add folder.");
         }
@@ -121,8 +110,8 @@ const ManageFoldersScreen: React.FC = () => {
             setEditingFolder(null);
             setEditingName("");
             setError("");
-            setSuccess("Folder updated.");
-            setTimeout(() => setSuccess(""), 1500);
+            setSuccess("Folder updated successfully!");
+            setTimeout(() => setSuccess(""), 2500);
         } catch {
             setError("Failed to update folder.");
         }
@@ -146,8 +135,8 @@ const ManageFoldersScreen: React.FC = () => {
         try {
             await dispatch(deleteFolder({ courseId: cid, folderId: id }));
             await dispatch(fetchFolders(cid));
-            setSuccess("Folder deleted.");
-            setTimeout(() => setSuccess(""), 1500);
+            setSuccess("Folder deleted successfully!");
+            setTimeout(() => setSuccess(""), 2500);
         } catch {
             setError("Failed to delete folder.");
         }
@@ -166,170 +155,200 @@ const ManageFoldersScreen: React.FC = () => {
             }
             await dispatch(fetchFolders(cid));
             setSelected([]);
-            setSuccess("Selected folders deleted.");
-            setTimeout(() => setSuccess(""), 1500);
+            setSuccess("Selected folders deleted successfully!");
+            setTimeout(() => setSuccess(""), 2500);
         } catch {
             setError("Failed to delete selected folders.");
         }
     };
 
     return (
-        <Row>
-            <Col md={8}>
-                <Card className="shadow-sm">
-                    <Card.Header>
-                        <h5 className="mb-0">Configure Class Folders</h5>
-                    </Card.Header>
-                    <Card.Body>
-                        {error && (
-                            <Alert
-                                variant="danger"
-                                dismissible
-                                onClose={() => setError("")}
-                                className="pazza-alert pazza-alert-danger"
-                                aria-live="polite"
-                            >
-                                {error}
-                            </Alert>
-                        )}
-                        {success && (
-                            <Alert
-                                variant="success"
-                                dismissible
-                                onClose={() => setSuccess("")}
-                                className="pazza-alert pazza-alert-success"
-                                aria-live="polite"
-                            >
-                                {success}
-                            </Alert>
+        <div className="pazza-manage-folders-container">
+            <Row>
+                <Col lg={8}>
+                    <Card className="pazza-manage-card">
+                        <Card.Header className="pazza-manage-header">
+                            <h5 className="pazza-manage-title">Configure Class Folders</h5>
+                        </Card.Header>
+                        <Card.Body className="pazza-manage-body">
+                            {error && (
+                                <Alert
+                                    variant="danger"
+                                    dismissible
+                                    onClose={() => setError("")}
+                                    className="pazza-alert-danger"
+                                    aria-live="polite"
+                                >
+                                    <span className="pazza-alert-icon">!</span>
+                                    {error}
+                                </Alert>
+                            )}
+                            {success && (
+                                <Alert
+                                    variant="success"
+                                    dismissible
+                                    onClose={() => setSuccess("")}
+                                    className="pazza-alert-success"
+                                    aria-live="polite"
+                                >
+                                    <span className="pazza-alert-icon">✓</span>
+                                    {success}
+                                </Alert>
+                            )}
 
-                        )}
+                            {/* Add new folder section */}
+                            <div className="pazza-manage-section">
+                                <h6 className="pazza-section-title">Create new folders:</h6>
+                                <p className="pazza-section-description">
+                                    Add a folder relevant to your class. (Numbered sets & subfolders are not required.)
+                                </p>
+                                <Form.Group>
+                                    <div className="pazza-input-group">
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Add a folder…"
+                                            value={newFolderName}
+                                            onChange={(e) => setNewFolderName(e.target.value)}
+                                            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+                                            className="pazza-folder-input"
+                                        />
+                                        <Button
+                                            onClick={handleAdd}
+                                            className="pazza-btn-primary"
+                                        >
+                                            Add Folder
+                                        </Button>
+                                    </div>
+                                </Form.Group>
+                            </div>
 
-                        {/* Add new folder */}
-                        <div className="mb-3">
-                            <h6>Create new folders:</h6>
-                            <p className="text-muted small mb-2">
-                                Add a folder relevant to your class. (Numbered sets &amp;
-                                subfolders are not required.)
-                            </p>
-                            <Form.Group>
-                                <div className="d-flex gap-2">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Add a folder…"
-                                        value={newFolderName}
-                                        onChange={(e) => setNewFolderName(e.target.value)}
-                                        onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-                                    />
-                                    <Button onClick={handleAdd}>Add Folder</Button>
-                                </div>
-                            </Form.Group>
-                        </div>
+                            {/* Manage folders list */}
+                            <div className="pazza-manage-list-section">
+                                <h6 className="pazza-section-title">Manage folders:</h6>
+                                <p className="pazza-section-description">
+                                    Select to delete, or click <strong>Edit</strong> to rename.
+                                </p>
 
-                        {/* Manage list */}
-                        <div className="mb-2">
-                            <h6 className="mb-2">Manage folders:</h6>
-                            <p className="text-muted small mb-2">
-                                Select to delete, or click <strong>Edit</strong> to rename.
-                            </p>
+                                <div className="pazza-folders-list">
+                                    {folders.map((f: any, index: number) => (
+                                        <div
+                                            key={f._id}
+                                            className={`pazza-folder-item ${selected.includes(f._id) ? 'selected' : ''}`}
+                                        >
+                                            <div className="pazza-folder-left">
+                                                <Form.Check
+                                                    type="checkbox"
+                                                    checked={selected.includes(f._id)}
+                                                    disabled={f.isDefault}
+                                                    onChange={() => toggleSelected(f._id)}
+                                                    className="pazza-folder-checkbox"
+                                                />
+                                                <FaFolder className="pazza-folder-icon" />
+                                                {editingFolder === f._id ? (
+                                                    <div className="pazza-folder-edit-group">
+                                                        <Form.Control
+                                                            type="text"
+                                                            value={editingName}
+                                                            onChange={(e) => setEditingName(e.target.value)}
+                                                            size="sm"
+                                                            className="pazza-folder-edit-input"
+                                                            onKeyDown={(e) => e.key === "Enter" && saveEdit()}
+                                                            autoFocus
+                                                        />
+                                                        <Button
+                                                            size="sm"
+                                                            variant="success"
+                                                            onClick={saveEdit}
+                                                            className="pazza-btn-save"
+                                                            title="Save"
+                                                        >
+                                                            <FaCheck />
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="secondary"
+                                                            onClick={cancelEdit}
+                                                            className="pazza-btn-cancel"
+                                                            title="Cancel"
+                                                        >
+                                                            <FaTimes />
+                                                        </Button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="pazza-folder-name-group">
+                                                        <span className={`pazza-folder-name ${f.isDefault ? 'default' : ''}`}>
+                                                            {f.name}
+                                                        </span>
+                                                        {f.isDefault && (
+                                                            <Badge className="pazza-default-badge">
+                                                                Default
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
 
-                            <ListGroup className="mb-3">
-                                {folders.map((f: any) => (
-                                    <ListGroup.Item
-                                        key={f._id}
-                                        className="d-flex justify-content-between align-items-center"
-                                    >
-                                        <div className="d-flex align-items-center gap-2">
-                                            <Form.Check
-                                                type="checkbox"
-                                                checked={selected.includes(f._id)}
-                                                disabled={f.isDefault}
-                                                onChange={() => toggleSelected(f._id)}
-                                            />
-                                            {editingFolder === f._id ? (
-                                                <>
-                                                    <Form.Control
-                                                        type="text"
-                                                        value={editingName}
-                                                        onChange={(e) => setEditingName(e.target.value)}
-                                                        size="sm"
-                                                        style={{ width: 240 }}
-                                                        onKeyDown={(e) => e.key === "Enter" && saveEdit()}
-                                                    />
-                                                    <Button
-                                                        size="sm"
-                                                        variant="success"
-                                                        onClick={saveEdit}
-                                                        title="Save"
-                                                    >
-                                                        <FaCheck />
-                                                    </Button>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="secondary"
-                                                        onClick={cancelEdit}
-                                                        title="Cancel"
-                                                    >
-                                                        <FaTimes />
-                                                    </Button>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <span>{f.name}</span>
-                                                    {f.isDefault && <Badge bg="secondary">Default</Badge>}
-                                                </>
-                                            )}
-                                        </div>
-
-                                        {editingFolder !== f._id && (
-                                            <div className="d-flex align-items-center">
-                                                <Button
-                                                    size="sm"
-                                                    variant="link"
-                                                    onClick={() => startEdit(f)}
-                                                >
-                                                    <FaEdit /> Edit
-                                                </Button>
-                                                {!f.isDefault && (
+                                            {editingFolder !== f._id && (
+                                                <div className="pazza-folder-actions">
                                                     <Button
                                                         size="sm"
                                                         variant="link"
-                                                        className="text-danger"
-                                                        onClick={() => removeOne(f._id)}
+                                                        onClick={() => startEdit(f)}
+                                                        className="pazza-btn-edit"
                                                     >
-                                                        <FaTrash /> Delete
+                                                        <FaEdit className="pazza-action-icon" />
+                                                        Edit
                                                     </Button>
-                                                )}
-                                            </div>
-                                        )}
-                                    </ListGroup.Item>
-                                ))}
-                            </ListGroup>
+                                                    {!f.isDefault && (
+                                                        <>
+                                                            <span className="pazza-action-separator">|</span>
+                                                            <Button
+                                                                size="sm"
+                                                                variant="link"
+                                                                onClick={() => removeOne(f._id)}
+                                                                className="pazza-btn-delete"
+                                                            >
+                                                                Delete
+                                                            </Button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
 
-                            {selected.length > 0 && (
-                                <Button variant="danger" onClick={removeSelected}>
-                                    Delete selected folders ({selected.length})
-                                </Button>
-                            )}
-                        </div>
-                    </Card.Body>
-                </Card>
-            </Col>
+                                {selected.length > 0 && (
+                                    <Button
+                                        variant="danger"
+                                        onClick={removeSelected}
+                                        className="pazza-btn-delete-selected"
+                                    >
+                                        Delete selected folders ({selected.length})
+                                    </Button>
+                                )}
+                            </div>
+                        </Card.Body>
+                    </Card>
+                </Col>
 
-            {/* Optional right info card (blue box not required per spec) */}
-            <Col md={4}>
-                <Card className="shadow-sm">
-                    <Card.Body>
-                        <h6 className="text-primary">Organize your Q&amp;A</h6>
-                        <p className="small text-muted mb-0">
-                            Use folders like <em>hw1</em>, <em>exam</em>, or{" "}
-                            <em>office_hours</em> to make it easy for students to find the
-                            right place to post.
-                        </p>
-                    </Card.Body>
-                </Card>
-            </Col>
-        </Row>
+                {/* Right info panel */}
+                <Col lg={4}>
+                    <Card className="pazza-info-card">
+                        <Card.Body className="pazza-info-body">
+                            <h6 className="pazza-info-title">
+                                Organize your Q&A
+                            </h6>
+                            <p className="pazza-info-text">
+                                Use folders like <em>hw1</em>, <em>exam</em>, or{" "}
+                                <em>office_hours</em> to make it easy for students to find the
+                                right place to post.
+                            </p>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+        </div>
     );
 };
 

@@ -838,4 +838,436 @@
 }
 .pazza-alert { animation: piazzaAlertIn .18s ease-out }
 
+/* ============ MANAGE FOLDERS ENHANCED STYLES ============ */
+.pazza-manage-folders-container {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #f5f6f8;
+    min-height: calc(100vh - 60px);
+}
 
+/* Main card styling */
+.pazza-manage-card {
+    border: 1px solid #dee2e6 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+}
+
+.pazza-manage-header {
+    background: linear-gradient(to bottom, #fafbfc, #f8f9fa) !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    padding: 16px 20px !important;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.pazza-manage-title {
+    margin: 0 !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #212529 !important;
+    letter-spacing: -0.2px;
+}
+
+.pazza-manage-body {
+    padding: 20px !important;
+}
+
+/* Enhanced Alert Styles */
+.pazza-alert-danger,
+.pazza-alert-success {
+    position: relative;
+    padding: 12px 48px 12px 46px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
+    animation: slideDown 0.3s ease-out;
+    margin-bottom: 20px;
+}
+
+.pazza-alert-danger {
+    background: #fff5f5 !important;
+    border: 1px solid #ffcdd2 !important;
+    color: #721c24 !important;
+}
+
+.pazza-alert-danger::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #dc3545;
+    border-radius: 8px 0 0 8px;
+}
+
+.pazza-alert-success {
+    background: #f3fff6 !important;
+    border: 1px solid #c3e6cb !important;
+    color: #155724 !important;
+}
+
+.pazza-alert-success::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #28a745;
+    border-radius: 8px 0 0 8px;
+}
+
+.pazza-alert-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+}
+
+.pazza-alert-danger .pazza-alert-icon {
+    background: #dc3545;
+}
+
+.pazza-alert-success .pazza-alert-icon {
+    background: #28a745;
+}
+
+/* Close button styling */
+.pazza-alert-danger .btn-close,
+.pazza-alert-success .btn-close {
+    position: absolute !important;
+    right: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    opacity: 0.6 !important;
+    transition: opacity 0.2s ease;
+}
+
+.pazza-alert-danger .btn-close:hover,
+.pazza-alert-success .btn-close:hover {
+    opacity: 1 !important;
+}
+
+/* Section styling */
+.pazza-manage-section {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 24px;
+    border: 1px solid #e9ecef;
+}
+
+.pazza-section-title {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    margin-bottom: 4px !important;
+    color: #495057 !important;
+}
+
+.pazza-section-description {
+    font-size: 12px !important;
+    color: #6c757d !important;
+    margin-bottom: 12px !important;
+}
+
+/* Input group */
+.pazza-input-group {
+    display: flex;
+    gap: 8px;
+}
+
+.pazza-folder-input {
+    font-size: 14px !important;
+    padding: 8px 12px !important;
+    border-color: #ced4da !important;
+    transition: all 0.2s ease;
+}
+
+.pazza-folder-input:focus {
+    border-color: #4681c4 !important;
+    box-shadow: 0 0 0 3px rgba(70, 129, 196, 0.1) !important;
+}
+
+/* Primary button */
+.pazza-btn-primary {
+    background-color: #4681c4 !important;
+    border-color: #4681c4 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    padding: 8px 20px !important;
+    transition: all 0.2s ease !important;
+    letter-spacing: 0.2px;
+}
+
+.pazza-btn-primary:hover {
+    background-color: #346fbe !important;
+    border-color: #346fbe !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(70, 129, 196, 0.2) !important;
+}
+
+/* Folders list container */
+.pazza-manage-list-section {
+    margin-top: 24px;
+}
+
+.pazza-folders-list {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: #fff;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+/* Individual folder item */
+.pazza-folder-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f3f5;
+    transition: background-color 0.15s ease;
+}
+
+.pazza-folder-item:last-child {
+    border-bottom: none;
+}
+
+.pazza-folder-item:hover {
+    background-color: #fafbfc;
+}
+
+.pazza-folder-item.selected {
+    background-color: #f8f9fa;
+}
+
+.pazza-folder-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pazza-folder-checkbox {
+    margin-bottom: 0 !important;
+}
+
+.pazza-folder-icon {
+    color: #6c757d;
+    font-size: 16px;
+}
+
+/* Folder name styling */
+.pazza-folder-name-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pazza-folder-name {
+    font-size: 14px;
+    color: #212529;
+}
+
+.pazza-folder-name.default {
+    font-weight: 600;
+}
+
+.pazza-default-badge {
+    background-color: #6c757d !important;
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Edit mode styling */
+.pazza-folder-edit-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pazza-folder-edit-input {
+    width: 200px !important;
+    font-size: 14px !important;
+    border-color: #4681c4 !important;
+    box-shadow: 0 0 0 2px rgba(70, 129, 196, 0.1) !important;
+}
+
+.pazza-btn-save {
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+}
+
+.pazza-btn-cancel {
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+}
+
+/* Folder actions */
+.pazza-folder-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pazza-btn-edit {
+    color: #4681c4 !important;
+    text-decoration: none !important;
+    font-size: 13px !important;
+    padding: 4px 8px !important;
+    transition: all 0.2s ease;
+}
+
+.pazza-btn-edit:hover {
+    color: #346fbe !important;
+    background-color: #e8f1ff !important;
+    border-radius: 4px;
+}
+
+.pazza-action-icon {
+    margin-right: 4px;
+}
+
+.pazza-action-separator {
+    color: #dee2e6;
+    font-size: 12px;
+}
+
+.pazza-btn-delete {
+    color: #dc3545 !important;
+    text-decoration: none !important;
+    font-size: 13px !important;
+    padding: 4px 8px !important;
+    transition: all 0.2s ease;
+}
+
+.pazza-btn-delete:hover {
+    color: #c82333 !important;
+    background-color: #fff5f5 !important;
+    border-radius: 4px;
+}
+
+/* Delete selected button */
+.pazza-btn-delete-selected {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    padding: 8px 16px !important;
+    transition: all 0.2s ease;
+}
+
+.pazza-btn-delete-selected:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2) !important;
+}
+
+/* Info card (right sidebar) */
+.pazza-info-card {
+    border: 1px solid #4681c4 !important;
+    border-radius: 8px !important;
+    background: linear-gradient(135deg, #e8f1ff 0%, #f0f6ff 100%) !important;
+    box-shadow: 0 2px 8px rgba(70, 129, 196, 0.1) !important;
+}
+
+.pazza-info-body {
+    padding: 20px !important;
+}
+
+.pazza-info-title {
+    color: #346fbe !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    margin-bottom: 12px !important;
+}
+
+.pazza-info-text {
+    font-size: 13px !important;
+    color: #495057 !important;
+    line-height: 1.6 !important;
+    margin-bottom: 0 !important;
+}
+
+.pazza-info-text em {
+    font-style: italic;
+    color: #346fbe;
+    font-weight: 500;
+}
+
+/* Animations */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .pazza-manage-folders-container {
+        padding: 16px;
+    }
+
+    .pazza-folder-edit-input {
+        width: 150px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .pazza-manage-folders-container {
+        padding: 12px;
+    }
+
+    .pazza-folder-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .pazza-folder-actions {
+        margin-left: 40px;
+    }
+}
+
+/* Focus states for accessibility */
+.pazza-btn-primary:focus-visible,
+.pazza-btn-edit:focus-visible,
+.pazza-btn-delete:focus-visible,
+.pazza-btn-delete-selected:focus-visible {
+    outline: 2px solid #4681c4;
+    outline-offset: 2px;
+}
+
+/* Disabled state styling */
+.pazza-folder-checkbox:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Loading state (if needed) */
+.pazza-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Smooth transitions for all interactive elements */
+.pazza-manage-folders-container button,
+.pazza-manage-folders-container input,
+.pazza-manage-folders-container .form-control {
+    transition: all 0.2s ease;
+}
