@@ -59,6 +59,38 @@ export const assignmentCatalog: Catalog = {
         { title: "A5 – Scalable Service on Kubernetes", description: "Deploy, auto-scale, and expose a service.",     points: 100 },
         { title: "A6 – Cloud Cost & Observability", description: "Budgeting, metrics, logging, tracing.",             points: 100 },
     ],
+    "5700": [
+        { title: "A1 – Socket Programming",       description: "Build a client/server program with Python sockets.",   points: 100 },
+        { title: "A2 – Reliable Transport",       description: "Implement reliable data transfer over UDP.",            points: 100 },
+        { title: "A3 – Web Crawler",              description: "Crawl a website over HTTP and collect data.",           points: 100 },
+        { title: "A4 – TCP Congestion Analysis",  description: "Compare TCP Tahoe/Reno performance.",                   points: 100 },
+        { title: "A5 – BGP Router",               description: "Implement a simple BGP router over many sockets.",      points: 100 },
+        { title: "A6 – Final Networking Project", description: "Build an end-to-end networked application.",             points: 150 },
+    ],
+    "6140": [
+        { title: "A1 – Probability & Linear Algebra", description: "Theory problem set on ML foundations.",             points: 100 },
+        { title: "A2 – Regression",               description: "Implement linear and logistic regression in Python.",   points: 100 },
+        { title: "A3 – Trees & Naive Bayes",      description: "Train and evaluate classification models.",             points: 100 },
+        { title: "A4 – SVM & PCA",                description: "Kernel machines and dimensionality reduction.",         points: 100 },
+        { title: "A5 – Clustering & EM",          description: "K-means and mixture models.",                           points: 100 },
+        { title: "A6 – Final ML Project",         description: "Apply machine learning to a dataset of your choice.",   points: 150 },
+    ],
+    "5100": [
+        { title: "A1 – Search",                   description: "Implement BFS, DFS, UCS, and A* in Python.",            points: 100 },
+        { title: "A2 – Adversarial Search",       description: "Minimax and alpha-beta pruning for a game.",            points: 100 },
+        { title: "A3 – Constraint Satisfaction",  description: "Solve CSPs with backtracking search.",                  points: 100 },
+        { title: "A4 – MDPs & Reinforcement Learning", description: "Value iteration and Q-learning.",                  points: 100 },
+        { title: "A5 – Logic & Knowledge",        description: "Propositional logic problem set.",                      points: 100 },
+        { title: "A6 – Final AI Project",         description: "Apply an AI technique to a problem of interest.",       points: 150 },
+    ],
+    "6650": [
+        { title: "A1 – Single-Server Key-Value Store", description: "Build a key-value store over TCP and UDP.",        points: 100 },
+        { title: "A2 – Multi-threaded Store",     description: "Add multi-threading and RPC to the store.",             points: 100 },
+        { title: "A3 – Client Load Testing",      description: "Build a multi-threaded client and measure throughput.", points: 100 },
+        { title: "A4 – Message Queues",           description: "Use RabbitMQ for asynchronous processing.",             points: 100 },
+        { title: "A5 – Microservices & Scaling",  description: "Split into microservices and scale on the cloud.",      points: 100 },
+        { title: "A6 – Final Scalable System",    description: "Design and deploy a scalable distributed app.",         points: 150 },
+    ],
 };
 
 // Helper

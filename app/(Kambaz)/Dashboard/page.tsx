@@ -1,29 +1,44 @@
 import Link from "next/link";
 import Image from "next/image";
+
 const courses = [
   { id: "5610", title: "CS5610 Web Development", tag: "Full Stack Web", img: "course1.jpg" },
   { id: "5520", title: "CS5520 Mobile Application Development", tag: "Mobile Dev", img: "course2.jpg" },
   { id: "5004", title: "CS5004 Object-Oriented Design", tag: "OOD in Java", img: "course3.jpg" },
   { id: "5200", title: "CS5200 Database Management Systems", tag: "Relational DBMS", img: "course4.jpg" },
-  {id: "5800", title: "CS5800 Algorithms", tag: "Algorithm Analysis", img: "course5.jpg" },
+  { id: "5800", title: "CS5800 Algorithms", tag: "Algorithm Analysis", img: "course5.jpg" },
   { id: "6620", title: "CS6620 Fundamentals of Cloud Computing", tag: "Cloud Computing", img: "course6.jpg" },
-  { id: "6510", title: "CS6510 Advanced Software Dev", tag: "Large-scale projects", img: "course7.jpg" }
+  { id: "6510", title: "CS6510 Advanced Software Dev", tag: "Large-scale projects", img: "course7.jpg" },
+  { id: "5700", title: "CS5700 Computer Networks", tag: "Internet Protocols", img: "course8.jpg" },
+  { id: "6140", title: "CS6140 Machine Learning", tag: "Supervised & Unsupervised ML", img: "course9.jpg" },
+  { id: "5100", title: "CS5100 Foundations of Artificial Intelligence", tag: "Search, Logic & Learning", img: "course10.jpg" },
+  { id: "6650", title: "CS6650 Building Scalable Distributed Systems", tag: "Scalable Systems", img: "course11.jpg" },
 ];
+
 export default function Dashboard() {
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
       <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
-      <div id="wd-dashboard-courses">
-        {courses.map(c => (
-          <div className="wd-dashboard-course" key={c.id} style={{display:"inline-block", margin: 12}}>
+      <div
+        id="wd-dashboard-courses"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 220px)",
+          gap: 24,
+          alignItems: "start",
+          marginTop: 16,
+        }}
+      >
+        {courses.map((c) => (
+          <div className="wd-dashboard-course" key={c.id}>
             <Link href={`/Courses/${c.id}`} className="wd-dashboard-course-link">
               <Image src={`/images/${c.img}`} alt={c.title} width={200} height={140} />
-              <div>
-                  <h5>{c.title}</h5>
-                  <p className="wd-dashboard-course-title">{c.tag}</p>
-                <button>Go</button>
-              </div>
+              <h5 style={{ marginBottom: 4 }}>{c.title}</h5>
+              <p className="wd-dashboard-course-title" style={{ marginTop: 0 }}>
+                {c.tag}
+              </p>
+              <button>Go</button>
             </Link>
           </div>
         ))}

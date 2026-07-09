@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kambaz — CS5610 Assignment 1
 
-## Getting Started
+This is my Assignment 1 for CS5610 Web Development.
+It is built with Next.js (App Router) and TypeScript.
 
-First, run the development server:
+**Name:** Coco Choi
+**Section:** Fall 2025, Section 04
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Links
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Live site (Vercel): _add your Vercel URL here after you deploy_
+- GitHub repo: https://github.com/Cocochoiii/kambaz-next-js
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How to run it on your computer
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Install the packages:
 
-## Learn More
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Start the app:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. Open http://localhost:3000 in your browser.
 
-## Deploy on Vercel
+## What is inside
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Labs** — the landing page of the labs. It shows my name and section,
+  links to Lab 1 / Lab 2 / Lab 3, a link to the GitHub repo, and a link back
+  to Kambaz. Lab 1 has all the HTML examples: headings, paragraphs, lists,
+  a table, images, and a form.
+- **Kambaz** — the main app. It has:
+  - **Account**: Sign in, Sign up, and Profile screens.
+  - **Dashboard**: a list of courses.
+  - **Courses**: Home, Modules, Piazza, Zoom, Assignments, Quizzes,
+    Grades, and People.
+  - **Assignment Editor**: a form to edit one assignment.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## How to deploy
+
+Push the code to GitHub. Vercel is connected to this repo, so it builds and
+deploys the app every time I push.
