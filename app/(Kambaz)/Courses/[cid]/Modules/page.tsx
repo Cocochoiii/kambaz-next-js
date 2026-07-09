@@ -268,6 +268,13 @@ export function ModulesContent({ cid }: { cid: string }) {
                       {m.items.map((x, j)=>(<li className="wd-content-item" key={j}>{x}</li>))}
                     </ul>
                   </li>
+                  <li className="wd-lesson">
+                    <span className="wd-title">Reading &amp; Slides</span>
+                    <ul className="wd-content">
+                      <li className="wd-content-item">Lecture slides</li>
+                      <li className="wd-content-item">Assigned reading</li>
+                    </ul>
+                  </li>
                 </ul>
               </li>
           ))}
