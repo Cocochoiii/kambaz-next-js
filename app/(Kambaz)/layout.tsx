@@ -16,7 +16,6 @@ function KambazContent({ children }: { children: ReactNode }) {
     const needsProtection = protectedRoutes.some(route => pathname.startsWith(route));
 
     // Account routes don't need protection (except Profile)
-    const isAccountRoute = pathname.startsWith('/Account');
     const isProfileRoute = pathname.startsWith('/Account/Profile');
 
     return (

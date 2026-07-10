@@ -83,7 +83,7 @@ export default function ModulesPage() {
                         {module.lessons && (
                             <div id={`wd-module-panel-${i}`} hidden={collapsed[i]}>
                                 <ListGroup className="wd-lessons rounded-0">
-                                    <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <ListGroup.Item className="wd-lesson p-3 ps-1 d-flex align-items-center">
                                         <BsGripVertical className="me-2 wd-grip" />
                                         <span className="wd-title ms-2">LEARNING OBJECTIVES</span>
                                         {/* Checkmark + kebab inside LessonControlButtons - faculty only */}
@@ -91,7 +91,7 @@ export default function ModulesPage() {
                                     </ListGroup.Item>
 
                                     {module.lessons.map((lesson: any) => (
-                                        <ListGroup.Item key={lesson._id} className="wd-lesson p-3 ps-1">
+                                        <ListGroup.Item key={lesson._id} className="wd-lesson p-3 ps-1 d-flex align-items-center">
                                             <BsGripVertical className="me-2 wd-grip" />
                                             {lesson.name}
                                             {isFaculty && <LessonControlButtons />}

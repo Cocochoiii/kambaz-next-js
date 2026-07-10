@@ -6,7 +6,7 @@ import GreenCheckmark from "./GreenCheckmark";
 // Faculty-only control; the parent decides visibility.
 export default function LessonControlButtons() {
     return (
-        <div className="float-end">
+        <div className="d-flex align-items-center ms-auto">
             <GreenCheckmark />
             <IoEllipsisVertical className="fs-4" />
         </div>
