@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { FaUserCircle, FaPlus } from "react-icons/fa";
+import { FaUserCircle, FaPlus, FaTrash } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
@@ -126,33 +126,34 @@ export default function Announcements() {
                                                 })}
                                             </p>
                                             {isFaculty && (
-                                                <div className="dropdown">
+                                                <div className="d-flex justify-content-end align-items-center gap-2 mt-1">
                                                     <button
-                                                        className="btn btn-link text-muted p-0"
+                                                        className="btn btn-link text-danger p-0"
                                                         type="button"
-                                                        data-bs-toggle="dropdown"
-                                                        aria-expanded="false"
+                                                        onClick={() => handleDeleteClick(announcement._id)}
                                                     >
-                                                        <BsThreeDots />
+                                                        <FaTrash />
                                                     </button>
-                                                    <ul className="dropdown-menu">
-                                                        <li>
-                                                            <button
-                                                                className="dropdown-item"
-                                                                onClick={() => handleEditClick(announcement)}
-                                                            >
-                                                                Edit
-                                                            </button>
-                                                        </li>
-                                                        <li>
-                                                            <button
-                                                                className="dropdown-item text-danger"
-                                                                onClick={() => handleDeleteClick(announcement._id)}
-                                                            >
-                                                                Delete
-                                                            </button>
-                                                        </li>
-                                                    </ul>
+                                                    <div className="dropdown">
+                                                        <button
+                                                            className="btn btn-link text-muted p-0"
+                                                            type="button"
+                                                            data-bs-toggle="dropdown"
+                                                            aria-expanded="false"
+                                                        >
+                                                            <BsThreeDots />
+                                                        </button>
+                                                        <ul className="dropdown-menu">
+                                                            <li>
+                                                                <button
+                                                                    className="dropdown-item"
+                                                                    onClick={() => handleEditClick(announcement)}
+                                                                >
+                                                                    Edit
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>

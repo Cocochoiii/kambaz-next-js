@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { BsRocket, BsRocketFill, BsThreeDots } from "react-icons/bs";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaTrash } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { setQuizzes, addQuiz, deleteQuiz, updateQuiz } from "./reducer";
@@ -145,33 +145,34 @@ export default function Quizzes() {
                                 </div>
                             </div>
                             {isFaculty && (
-                                <div className="dropdown">
+                                <div className="ms-3 d-flex align-items-center gap-2">
                                     <button
-                                        className="btn btn-link text-muted p-0"
+                                        className="btn btn-link text-danger p-0"
                                         type="button"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
+                                        onClick={() => handleDeleteClick(quiz._id)}
                                     >
-                                        <BsThreeDots />
+                                        <FaTrash />
                                     </button>
-                                    <ul className="dropdown-menu">
-                                        <li>
-                                            <button
-                                                className="dropdown-item"
-                                                onClick={() => handleEditClick(quiz)}
-                                            >
-                                                Edit
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button
-                                                className="dropdown-item text-danger"
-                                                onClick={() => handleDeleteClick(quiz._id)}
-                                            >
-                                                Delete
-                                            </button>
-                                        </li>
-                                    </ul>
+                                    <div className="dropdown">
+                                        <button
+                                            className="btn btn-link text-muted p-0"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <BsThreeDots />
+                                        </button>
+                                        <ul className="dropdown-menu">
+                                            <li>
+                                                <button
+                                                    className="dropdown-item"
+                                                    onClick={() => handleEditClick(quiz)}
+                                                >
+                                                    Edit
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             )}
                         </div>
