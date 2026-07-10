@@ -86,7 +86,7 @@ export default function ModulesPage() {
                                     <ListGroup.Item className="wd-lesson p-3 ps-1">
                                         <BsGripVertical className="me-2 wd-grip" />
                                         <span className="wd-title ms-2">LEARNING OBJECTIVES</span>
-                                        {/* Checkmark + kebab inside LessonControlButtons — faculty only */}
+                                        {/* Checkmark + kebab inside LessonControlButtons - faculty only */}
                                         {isFaculty && <LessonControlButtons />}
                                     </ListGroup.Item>
 

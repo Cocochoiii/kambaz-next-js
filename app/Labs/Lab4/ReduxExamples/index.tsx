@@ -1,4 +1,3 @@
-// app/Labs/Lab4/ReduxExamples/index.tsx
 "use client";
 
 import HelloRedux from "./HelloRedux";

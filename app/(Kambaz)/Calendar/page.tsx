@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
 import { IoChevronBack, IoChevronForward, IoCalendarClearOutline } from "react-icons/io5";
 
-/** ---------- helpers ---------- */
+// helpers
 type CalEvent = {
     id: string;
     title: string;
@@ -47,7 +47,7 @@ const COURSE_COLORS: Record<string, string> = {
     CS6510: "#10b981",
 };
 
-/** ---------- inline fallback styles (so the grid always renders) ---------- */
+// inline fallback styles so the grid always renders
 const GRID_HEAD_STYLE: React.CSSProperties = {
     display: "grid",
     gridTemplateColumns: "repeat(7, 1fr)",
@@ -94,7 +94,6 @@ const DOT = (bg: string): React.CSSProperties => ({
     background: bg,
 });
 
-/** ---------- component ---------- */
 export default function CalendarPage() {
     const [view, setView] = useState<"week" | "month" | "agenda">("month");
     const [cursor, setCursor] = useState<Date>(new Date());
@@ -214,7 +213,7 @@ export default function CalendarPage() {
                                         </div>
 
                                         {visible.map((ev) => (
-                                            <div key={ev.id} className="text-truncate mt-1" style={PILL_STYLE} title={`${ev.title} • ${ev.course ?? ""}`}>
+                                            <div key={ev.id} className="text-truncate mt-1" style={PILL_STYLE} title={`${ev.title} - ${ev.course ?? ""}`}>
                                                 <span className="me-1" style={DOT(ev.color || "#64748b")} />
                                                 {ev.title}
                                             </div>
@@ -324,7 +323,7 @@ export default function CalendarPage() {
             {/* +N more modal */}
             <Modal show={moreOpen.items.length > 0} onHide={closeMore} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Events — {moreOpen.date}</Modal.Title>
+                    <Modal.Title>Events - {moreOpen.date}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {moreOpen.items.map((ev) => (

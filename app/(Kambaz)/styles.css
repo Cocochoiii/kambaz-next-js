@@ -1,4 +1,4 @@
-/* ===== Canvas-like type & spacing ===== */
+/* Canvas-like type and spacing */
 :root{
   --wd-font-body: 14px;
   --wd-font-small: 13px;
@@ -48,7 +48,7 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
 /* Hide right status on narrower screens (as in spec) */
 @media (max-width: 1200px){ #wd-course-status{ display:none; } }
 
-/* ===== Your (kept) nav + cards polish ===== */
+/* Nav and card polish */
 @media (min-width: 768px) {
   #wd-kambaz .wd-main-content-offset { padding-left: 124px !important; }
 }
@@ -78,7 +78,7 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
 #wd-dashboard-title{ font-size: var(--wd-font-h1); font-weight:700; }
 #wd-dashboard-published{ letter-spacing:.2px; }
 
-/* Dashboard card icon buttons - hover effects */
+/* Dashboard card icon buttons */
 .dashboard-icon-btn {
   color: #6c757d;
   transition: color 0.2s ease;
@@ -122,12 +122,12 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
 /* Slightly lighter hover than default */
 .wd-course-card:hover{ box-shadow: 0 10px 28px rgba(0,0,0,.10); }
 
-/* tighten gutters on very wide screens so more cards fit like Canvas */
+/* Tighter gutters on very wide screens */
 @media (min-width: 1600px){
   #wd-dashboard .row.g-4{ --bs-gutter-x:1.25rem; --bs-gutter-y:1.25rem; }
 }
 
-/* Account screens – Canvas-like spacing */
+/* Account screens spacing */
 #wd-account h1 { font-size: 24px; font-weight: 600; }
 #wd-signin-screen h2,
 #wd-signup-screen h2,
@@ -135,10 +135,10 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
 
 #wd-account-navigation .vr { height: 68px; }
 
-/* keep forms comfortably narrow on wide monitors */
+/* Narrow forms on wide monitors */
 #wd-account .form-control, #wd-account .form-select { font-size: 14px; }
 
-/* ===== Calendar layout ===== */
+/* Calendar layout */
 .wd-cal-grid {
   display: grid;
   gap: 2px;
@@ -495,3 +495,9 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
     font-size: 1.5rem;
   }
 }
+/* Course sidebar (list-group): red links; active gets black text + black left border */
+#wd-courses-navigation .list-group-item{ border:0; color:#b02a37; font-size:.95rem; padding:.5rem .75rem; }
+#wd-courses-navigation .list-group-item:hover{ background:#f5f5f5; }
+#wd-courses-navigation .list-group-item.active{ color:#000; background:#fff; border-left:3px solid #000; font-weight:600; }
+/* Green left accent on each assignment row */
+#wd-assignment-list .list-group-item{ border-left:5px solid green; }

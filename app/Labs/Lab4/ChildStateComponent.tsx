@@ -1,4 +1,3 @@
-// app/Labs/Lab4/ChildStateComponent.tsx
 "use client";
 
 export default function ChildStateComponent({

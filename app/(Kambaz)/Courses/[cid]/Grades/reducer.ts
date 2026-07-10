@@ -1,5 +1,3 @@
-// app/(Kambaz)/Courses/[cid]/Grades/reducer.ts
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define interfaces

@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 export default function SettingsPage() {
-    // Local demo state (purely client-side placeholders)
+    // demo state only
     const [displayName, setDisplayName] = useState("Your Name");
     const [email, setEmail] = useState("you@example.com");
     const [darkMode, setDarkMode] = useState(false);
@@ -12,7 +12,7 @@ export default function SettingsPage() {
 
     const onSave = (e: React.FormEvent) => {
         e.preventDefault();
-        // Placeholder – wire up to real API later
+        // demo only
         alert("Settings saved (demo)");
     };
 

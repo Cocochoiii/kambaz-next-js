@@ -27,9 +27,6 @@ export default function CourseStatus() {
     const role = (currentUser?.role ?? "").toString().toUpperCase();
     const isFaculty = role === "FACULTY";
 
-    // Hide the entire panel for non-faculty (safety if mounted anywhere)
-    if (!isFaculty) return null;
-
     // Toggle publish status
     const handlePublishToggle = () => {
         setIsPublished(!isPublished);

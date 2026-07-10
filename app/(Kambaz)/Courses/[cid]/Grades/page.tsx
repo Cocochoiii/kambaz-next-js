@@ -354,7 +354,7 @@ export default function Grades() {
 
                             <div className="d-grid gap-2 mb-4">
                                 <button className="btn btn-outline-secondary text-start">
-                                    📊 Show Saved "What-If" Scores
+                                     Show Saved "What-If" Scores
                                 </button>
                                 <button className="btn btn-outline-secondary text-start">
                                     Show All Details

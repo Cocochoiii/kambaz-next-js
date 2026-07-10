@@ -1,4 +1,3 @@
-// app/Labs/Lab4/PassingFunctions.tsx
 "use client";
 
 export default function PassingFunctions({ theFunction }: { theFunction: () => void }) {

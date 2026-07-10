@@ -185,7 +185,7 @@ export default function Dashboard() {
                                 <div className="card-body flex-grow-1 d-flex flex-column position-relative pb-5">
                                     <h5 className="wd-dashboard-course-title course-title mt-2 mb-1">{c.name}</h5>
                                     <div className="text-muted small">{c.number}</div>
-                                    <div className="text-muted small">{c.term || "Full Term"} · {c.semester || ""}</div>
+                                    <div className="text-muted small">{c.term || "Full Term"} - {c.semester || ""}</div>
 
                                     {/* Button bar for faculty/students */}
                                     <div

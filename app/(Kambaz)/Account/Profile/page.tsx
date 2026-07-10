@@ -23,7 +23,7 @@ export default function Profile() {
     const updateProfile = () => {
         // Update the currentUser in Redux with the edited profile
         dispatch(setCurrentUser(profile));
-        // ➜ After saving, go to Dashboard so the UI reflects the role immediately
+        // after saving, go to Dashboard so the role change shows immediately
         router.push("/Dashboard");
     };
 

@@ -98,7 +98,7 @@ export default function Announcements() {
                                         <div>
                                             <h5 className="mb-1">{announcement.title}</h5>
                                             <p className="text-muted small mb-2">
-                                                {announcement.author} • {announcement.section}
+                                                {announcement.author} - {announcement.section}
                                             </p>
                                         </div>
                                         <div className="text-end">

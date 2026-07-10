@@ -1,4 +1,3 @@
-// app/Labs/Lab4/ReduxExamples/HelloRedux/index.tsx
 "use client";
 
 import { useSelector } from "react-redux";

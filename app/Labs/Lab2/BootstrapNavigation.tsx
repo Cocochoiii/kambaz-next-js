@@ -1,4 +1,3 @@
-
 "use client";
 import { Nav, NavItem, NavLink, Card, Button } from "react-bootstrap";
 export default function BootstrapNavigation(){

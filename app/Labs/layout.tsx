@@ -1,4 +1,3 @@
-// app/Labs/layout.tsx
 "use client";
 import type { ReactNode } from "react";
 import TOC from "./Navigation";

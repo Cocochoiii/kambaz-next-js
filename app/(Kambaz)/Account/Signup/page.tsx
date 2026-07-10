@@ -25,8 +25,7 @@ export default function Signup() {
             return;
         }
 
-        // In a real app, you'd save the user (including role) to the database here
-        // For now, just redirect to signin
+        // a real app would persist the user here; for now just redirect to signin
         router.push("/Account/Signin");
     };
 

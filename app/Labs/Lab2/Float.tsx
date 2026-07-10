@@ -1,4 +1,3 @@
-
 export default function FloatEx(){
   return (
     <div id="wd-float-divs">

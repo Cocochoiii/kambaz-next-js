@@ -1,4 +1,3 @@
-
 "use client";
 import { Table } from "react-bootstrap";
 export default function BootstrapTables(){

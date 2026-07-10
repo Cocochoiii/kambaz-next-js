@@ -1,4 +1,3 @@
-// app/Labs/Lab4/DateStateVariable.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -23,7 +22,7 @@ export default function DateStateVariable() {
 
             {startDate && (
                 <>
-                    {/* suppressHydrationWarning is a belt-and-suspenders in case the string differs slightly */}
+                    {/* avoids hydration mismatch if the date string differs */}
                     <h3 suppressHydrationWarning>{JSON.stringify(startDate)}</h3>
                     <h3 suppressHydrationWarning>{toHtmlDate(startDate)}</h3>
                 </>

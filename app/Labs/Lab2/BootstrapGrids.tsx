@@ -1,4 +1,3 @@
-
 "use client";
 import { Row, Col } from "react-bootstrap";
 export default function BootstrapGrids(){

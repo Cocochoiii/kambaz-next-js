@@ -1,4 +1,3 @@
-// app/Labs/Lab4/StringStateVariables.tsx
 "use client";
 
 import { useState } from "react";
