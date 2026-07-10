@@ -1,7 +1,7 @@
 [
   {
     "_id": "M-5610-01",
-    "name": "Web Foundations & Tooling",
+    "name": "Week 1: Web Foundations & Tooling",
     "course": "5610",
     "lessons": [
       {
@@ -20,7 +20,7 @@
   },
   {
     "_id": "M-5610-02",
-    "name": "HTML & Semantic Markup",
+    "name": "Week 2: HTML & Semantic Markup",
     "course": "5610",
     "lessons": [
       {
@@ -39,7 +39,7 @@
   },
   {
     "_id": "M-5610-03",
-    "name": "CSS & Layout",
+    "name": "Week 3: CSS & Layout",
     "course": "5610",
     "lessons": [
       {
@@ -58,7 +58,7 @@
   },
   {
     "_id": "M-5610-04",
-    "name": "JavaScript Fundamentals",
+    "name": "Week 4: JavaScript Fundamentals",
     "course": "5610",
     "lessons": [
       {
@@ -77,7 +77,7 @@
   },
   {
     "_id": "M-5610-05",
-    "name": "Modern JavaScript (ES6+)",
+    "name": "Week 5: Modern JavaScript (ES6+)",
     "course": "5610",
     "lessons": [
       {
@@ -96,7 +96,7 @@
   },
   {
     "_id": "M-5610-06",
-    "name": "React Fundamentals",
+    "name": "Week 6: React Fundamentals",
     "course": "5610",
     "lessons": [
       {
@@ -115,7 +115,7 @@
   },
   {
     "_id": "M-5610-07",
-    "name": "React Hooks & State",
+    "name": "Week 7: React Hooks & State",
     "course": "5610",
     "lessons": [
       {
@@ -134,7 +134,7 @@
   },
   {
     "_id": "M-5610-08",
-    "name": "Next.js & Routing",
+    "name": "Week 8: Next.js & Routing",
     "course": "5610",
     "lessons": [
       {
@@ -153,7 +153,7 @@
   },
   {
     "_id": "M-5610-09",
-    "name": "Node & Express APIs",
+    "name": "Week 9: Node & Express APIs",
     "course": "5610",
     "lessons": [
       {
@@ -172,7 +172,7 @@
   },
   {
     "_id": "M-5610-10",
-    "name": "MongoDB & Deployment",
+    "name": "Week 10: MongoDB & Deployment",
     "course": "5610",
     "lessons": [
       {
@@ -191,7 +191,7 @@
   },
   {
     "_id": "M-5520-01",
-    "name": "Mobile Foundations",
+    "name": "Week 1: Mobile Foundations",
     "course": "5520",
     "lessons": [
       {
@@ -210,7 +210,7 @@
   },
   {
     "_id": "M-5520-02",
-    "name": "UI Components & Layout",
+    "name": "Week 2: UI Components & Layout",
     "course": "5520",
     "lessons": [
       {
@@ -229,7 +229,7 @@
   },
   {
     "_id": "M-5520-03",
-    "name": "Navigation & Routing",
+    "name": "Week 3: Navigation & Routing",
     "course": "5520",
     "lessons": [
       {
@@ -248,7 +248,7 @@
   },
   {
     "_id": "M-5520-04",
-    "name": "State & Data",
+    "name": "Week 4: State & Data",
     "course": "5520",
     "lessons": [
       {
@@ -267,7 +267,7 @@
   },
   {
     "_id": "M-5520-05",
-    "name": "Lists & Forms",
+    "name": "Week 5: Lists & Forms",
     "course": "5520",
     "lessons": [
       {
@@ -286,7 +286,7 @@
   },
   {
     "_id": "M-5520-06",
-    "name": "Networking",
+    "name": "Week 6: Networking",
     "course": "5520",
     "lessons": [
       {
@@ -305,7 +305,7 @@
   },
   {
     "_id": "M-5520-07",
-    "name": "Local Persistence",
+    "name": "Week 7: Local Persistence",
     "course": "5520",
     "lessons": [
       {
@@ -324,7 +324,7 @@
   },
   {
     "_id": "M-5520-08",
-    "name": "Device APIs",
+    "name": "Week 8: Device APIs",
     "course": "5520",
     "lessons": [
       {
@@ -343,7 +343,7 @@
   },
   {
     "_id": "M-5520-09",
-    "name": "Notifications & Background",
+    "name": "Week 9: Notifications & Background",
     "course": "5520",
     "lessons": [
       {
@@ -362,7 +362,7 @@
   },
   {
     "_id": "M-5520-10",
-    "name": "Testing & Release",
+    "name": "Week 10: Testing & Release",
     "course": "5520",
     "lessons": [
       {
@@ -381,7 +381,7 @@
   },
   {
     "_id": "M-5004-01",
-    "name": "OOP Foundations",
+    "name": "Week 1: OOP Foundations",
     "course": "5004",
     "lessons": [
       {
@@ -400,7 +400,7 @@
   },
   {
     "_id": "M-5004-02",
-    "name": "Inheritance & Polymorphism",
+    "name": "Week 2: Inheritance & Polymorphism",
     "course": "5004",
     "lessons": [
       {
@@ -419,7 +419,7 @@
   },
   {
     "_id": "M-5004-03",
-    "name": "Interfaces & Abstraction",
+    "name": "Week 3: Interfaces & Abstraction",
     "course": "5004",
     "lessons": [
       {
@@ -438,7 +438,7 @@
   },
   {
     "_id": "M-5004-04",
-    "name": "SOLID Principles",
+    "name": "Week 4: SOLID Principles",
     "course": "5004",
     "lessons": [
       {
@@ -457,7 +457,7 @@
   },
   {
     "_id": "M-5004-05",
-    "name": "Creational Patterns",
+    "name": "Week 5: Creational Patterns",
     "course": "5004",
     "lessons": [
       {
@@ -476,7 +476,7 @@
   },
   {
     "_id": "M-5004-06",
-    "name": "Structural Patterns",
+    "name": "Week 6: Structural Patterns",
     "course": "5004",
     "lessons": [
       {
@@ -495,7 +495,7 @@
   },
   {
     "_id": "M-5004-07",
-    "name": "Behavioral Patterns",
+    "name": "Week 7: Behavioral Patterns",
     "course": "5004",
     "lessons": [
       {
@@ -514,7 +514,7 @@
   },
   {
     "_id": "M-5004-08",
-    "name": "Testing & Refactoring",
+    "name": "Week 8: Testing & Refactoring",
     "course": "5004",
     "lessons": [
       {
@@ -533,7 +533,7 @@
   },
   {
     "_id": "M-5004-09",
-    "name": "Exceptions & Robustness",
+    "name": "Week 9: Exceptions & Robustness",
     "course": "5004",
     "lessons": [
       {
@@ -552,7 +552,7 @@
   },
   {
     "_id": "M-5004-10",
-    "name": "Design Case Study",
+    "name": "Week 10: Design Case Study",
     "course": "5004",
     "lessons": [
       {
@@ -571,7 +571,7 @@
   },
   {
     "_id": "M-5200-01",
-    "name": "Data & Databases",
+    "name": "Week 1: Data & Databases",
     "course": "5200",
     "lessons": [
       {
@@ -590,7 +590,7 @@
   },
   {
     "_id": "M-5200-02",
-    "name": "Relational Model",
+    "name": "Week 2: Relational Model",
     "course": "5200",
     "lessons": [
       {
@@ -609,7 +609,7 @@
   },
   {
     "_id": "M-5200-03",
-    "name": "SQL Basics",
+    "name": "Week 3: SQL Basics",
     "course": "5200",
     "lessons": [
       {
@@ -628,7 +628,7 @@
   },
   {
     "_id": "M-5200-04",
-    "name": "Advanced SQL",
+    "name": "Week 4: Advanced SQL",
     "course": "5200",
     "lessons": [
       {
@@ -647,7 +647,7 @@
   },
   {
     "_id": "M-5200-05",
-    "name": "Normalization",
+    "name": "Week 5: Normalization",
     "course": "5200",
     "lessons": [
       {
@@ -666,7 +666,7 @@
   },
   {
     "_id": "M-5200-06",
-    "name": "Indexing & Storage",
+    "name": "Week 6: Indexing & Storage",
     "course": "5200",
     "lessons": [
       {
@@ -685,7 +685,7 @@
   },
   {
     "_id": "M-5200-07",
-    "name": "Transactions",
+    "name": "Week 7: Transactions",
     "course": "5200",
     "lessons": [
       {
@@ -704,7 +704,7 @@
   },
   {
     "_id": "M-5200-08",
-    "name": "Recovery & Reliability",
+    "name": "Week 8: Recovery & Reliability",
     "course": "5200",
     "lessons": [
       {
@@ -723,7 +723,7 @@
   },
   {
     "_id": "M-5200-09",
-    "name": "NoSQL & Big Data",
+    "name": "Week 9: NoSQL & Big Data",
     "course": "5200",
     "lessons": [
       {
@@ -742,7 +742,7 @@
   },
   {
     "_id": "M-5200-10",
-    "name": "Data Applications",
+    "name": "Week 10: Data Applications",
     "course": "5200",
     "lessons": [
       {
@@ -761,7 +761,7 @@
   },
   {
     "_id": "M-5800-01",
-    "name": "Algorithm Analysis",
+    "name": "Week 1: Algorithm Analysis",
     "course": "5800",
     "lessons": [
       {
@@ -780,7 +780,7 @@
   },
   {
     "_id": "M-5800-02",
-    "name": "Sorting",
+    "name": "Week 2: Sorting",
     "course": "5800",
     "lessons": [
       {
@@ -799,7 +799,7 @@
   },
   {
     "_id": "M-5800-03",
-    "name": "Divide and Conquer",
+    "name": "Week 3: Divide and Conquer",
     "course": "5800",
     "lessons": [
       {
@@ -818,7 +818,7 @@
   },
   {
     "_id": "M-5800-04",
-    "name": "Greedy Algorithms",
+    "name": "Week 4: Greedy Algorithms",
     "course": "5800",
     "lessons": [
       {
@@ -837,7 +837,7 @@
   },
   {
     "_id": "M-5800-05",
-    "name": "Dynamic Programming",
+    "name": "Week 5: Dynamic Programming",
     "course": "5800",
     "lessons": [
       {
@@ -856,7 +856,7 @@
   },
   {
     "_id": "M-5800-06",
-    "name": "Graph Basics",
+    "name": "Week 6: Graph Basics",
     "course": "5800",
     "lessons": [
       {
@@ -875,7 +875,7 @@
   },
   {
     "_id": "M-5800-07",
-    "name": "Shortest Paths",
+    "name": "Week 7: Shortest Paths",
     "course": "5800",
     "lessons": [
       {
@@ -894,7 +894,7 @@
   },
   {
     "_id": "M-5800-08",
-    "name": "Minimum Spanning Trees",
+    "name": "Week 8: Minimum Spanning Trees",
     "course": "5800",
     "lessons": [
       {
@@ -913,7 +913,7 @@
   },
   {
     "_id": "M-5800-09",
-    "name": "Network Flow",
+    "name": "Week 9: Network Flow",
     "course": "5800",
     "lessons": [
       {
@@ -932,7 +932,7 @@
   },
   {
     "_id": "M-5800-10",
-    "name": "NP-Completeness",
+    "name": "Week 10: NP-Completeness",
     "course": "5800",
     "lessons": [
       {
@@ -951,7 +951,7 @@
   },
   {
     "_id": "M-6620-01",
-    "name": "Cloud Foundations",
+    "name": "Week 1: Cloud Foundations",
     "course": "6620",
     "lessons": [
       {
@@ -970,7 +970,7 @@
   },
   {
     "_id": "M-6620-02",
-    "name": "Virtualization",
+    "name": "Week 2: Virtualization",
     "course": "6620",
     "lessons": [
       {
@@ -989,7 +989,7 @@
   },
   {
     "_id": "M-6620-03",
-    "name": "Containers",
+    "name": "Week 3: Containers",
     "course": "6620",
     "lessons": [
       {
@@ -1008,7 +1008,7 @@
   },
   {
     "_id": "M-6620-04",
-    "name": "Orchestration",
+    "name": "Week 4: Orchestration",
     "course": "6620",
     "lessons": [
       {
@@ -1027,7 +1027,7 @@
   },
   {
     "_id": "M-6620-05",
-    "name": "Storage",
+    "name": "Week 5: Storage",
     "course": "6620",
     "lessons": [
       {
@@ -1046,7 +1046,7 @@
   },
   {
     "_id": "M-6620-06",
-    "name": "Cloud Networking",
+    "name": "Week 6: Cloud Networking",
     "course": "6620",
     "lessons": [
       {
@@ -1065,7 +1065,7 @@
   },
   {
     "_id": "M-6620-07",
-    "name": "Serverless",
+    "name": "Week 7: Serverless",
     "course": "6620",
     "lessons": [
       {
@@ -1084,7 +1084,7 @@
   },
   {
     "_id": "M-6620-08",
-    "name": "Data Systems",
+    "name": "Week 8: Data Systems",
     "course": "6620",
     "lessons": [
       {
@@ -1103,7 +1103,7 @@
   },
   {
     "_id": "M-6620-09",
-    "name": "Security & IAM",
+    "name": "Week 9: Security & IAM",
     "course": "6620",
     "lessons": [
       {
@@ -1122,7 +1122,7 @@
   },
   {
     "_id": "M-6620-10",
-    "name": "Reliability & Cost",
+    "name": "Week 10: Reliability & Cost",
     "course": "6620",
     "lessons": [
       {
@@ -1141,7 +1141,7 @@
   },
   {
     "_id": "M-6510-01",
-    "name": "Software Process",
+    "name": "Week 1: Software Process",
     "course": "6510",
     "lessons": [
       {
@@ -1160,7 +1160,7 @@
   },
   {
     "_id": "M-6510-02",
-    "name": "Architecture",
+    "name": "Week 2: Architecture",
     "course": "6510",
     "lessons": [
       {
@@ -1179,7 +1179,7 @@
   },
   {
     "_id": "M-6510-03",
-    "name": "Design & Modeling",
+    "name": "Week 3: Design & Modeling",
     "course": "6510",
     "lessons": [
       {
@@ -1198,7 +1198,7 @@
   },
   {
     "_id": "M-6510-04",
-    "name": "Version Control & Collaboration",
+    "name": "Week 4: Version Control & Collaboration",
     "course": "6510",
     "lessons": [
       {
@@ -1217,7 +1217,7 @@
   },
   {
     "_id": "M-6510-05",
-    "name": "Testing Strategy",
+    "name": "Week 5: Testing Strategy",
     "course": "6510",
     "lessons": [
       {
@@ -1236,7 +1236,7 @@
   },
   {
     "_id": "M-6510-06",
-    "name": "Continuous Integration",
+    "name": "Week 6: Continuous Integration",
     "course": "6510",
     "lessons": [
       {
@@ -1255,7 +1255,7 @@
   },
   {
     "_id": "M-6510-07",
-    "name": "Continuous Delivery",
+    "name": "Week 7: Continuous Delivery",
     "course": "6510",
     "lessons": [
       {
@@ -1274,7 +1274,7 @@
   },
   {
     "_id": "M-6510-08",
-    "name": "Quality & Metrics",
+    "name": "Week 8: Quality & Metrics",
     "course": "6510",
     "lessons": [
       {
@@ -1293,7 +1293,7 @@
   },
   {
     "_id": "M-6510-09",
-    "name": "Security & Reliability",
+    "name": "Week 9: Security & Reliability",
     "course": "6510",
     "lessons": [
       {
@@ -1312,7 +1312,7 @@
   },
   {
     "_id": "M-6510-10",
-    "name": "Capstone Delivery",
+    "name": "Week 10: Capstone Delivery",
     "course": "6510",
     "lessons": [
       {
@@ -1331,7 +1331,7 @@
   },
   {
     "_id": "M-5700-01",
-    "name": "Internet Architecture",
+    "name": "Week 1: Internet Architecture",
     "course": "5700",
     "lessons": [
       {
@@ -1350,7 +1350,7 @@
   },
   {
     "_id": "M-5700-02",
-    "name": "Application Layer",
+    "name": "Week 2: Application Layer",
     "course": "5700",
     "lessons": [
       {
@@ -1369,7 +1369,7 @@
   },
   {
     "_id": "M-5700-03",
-    "name": "Socket Programming",
+    "name": "Week 3: Socket Programming",
     "course": "5700",
     "lessons": [
       {
@@ -1388,7 +1388,7 @@
   },
   {
     "_id": "M-5700-04",
-    "name": "Transport Layer",
+    "name": "Week 4: Transport Layer",
     "course": "5700",
     "lessons": [
       {
@@ -1407,7 +1407,7 @@
   },
   {
     "_id": "M-5700-05",
-    "name": "TCP in Depth",
+    "name": "Week 5: TCP in Depth",
     "course": "5700",
     "lessons": [
       {
@@ -1426,7 +1426,7 @@
   },
   {
     "_id": "M-5700-06",
-    "name": "Network Layer",
+    "name": "Week 6: Network Layer",
     "course": "5700",
     "lessons": [
       {
@@ -1445,7 +1445,7 @@
   },
   {
     "_id": "M-5700-07",
-    "name": "Routing",
+    "name": "Week 7: Routing",
     "course": "5700",
     "lessons": [
       {
@@ -1464,7 +1464,7 @@
   },
   {
     "_id": "M-5700-08",
-    "name": "Link Layer",
+    "name": "Week 8: Link Layer",
     "course": "5700",
     "lessons": [
       {
@@ -1483,7 +1483,7 @@
   },
   {
     "_id": "M-5700-09",
-    "name": "Wireless & Mobility",
+    "name": "Week 9: Wireless & Mobility",
     "course": "5700",
     "lessons": [
       {
@@ -1502,7 +1502,7 @@
   },
   {
     "_id": "M-5700-10",
-    "name": "Network Security",
+    "name": "Week 10: Network Security",
     "course": "5700",
     "lessons": [
       {
@@ -1521,7 +1521,7 @@
   },
   {
     "_id": "M-6140-01",
-    "name": "ML Foundations",
+    "name": "Week 1: ML Foundations",
     "course": "6140",
     "lessons": [
       {
@@ -1540,7 +1540,7 @@
   },
   {
     "_id": "M-6140-02",
-    "name": "Linear Regression",
+    "name": "Week 2: Linear Regression",
     "course": "6140",
     "lessons": [
       {
@@ -1559,7 +1559,7 @@
   },
   {
     "_id": "M-6140-03",
-    "name": "Logistic Regression",
+    "name": "Week 3: Logistic Regression",
     "course": "6140",
     "lessons": [
       {
@@ -1578,7 +1578,7 @@
   },
   {
     "_id": "M-6140-04",
-    "name": "Model Evaluation",
+    "name": "Week 4: Model Evaluation",
     "course": "6140",
     "lessons": [
       {
@@ -1597,7 +1597,7 @@
   },
   {
     "_id": "M-6140-05",
-    "name": "Trees & Ensembles",
+    "name": "Week 5: Trees & Ensembles",
     "course": "6140",
     "lessons": [
       {
@@ -1616,7 +1616,7 @@
   },
   {
     "_id": "M-6140-06",
-    "name": "Probabilistic Models",
+    "name": "Week 6: Probabilistic Models",
     "course": "6140",
     "lessons": [
       {
@@ -1635,7 +1635,7 @@
   },
   {
     "_id": "M-6140-07",
-    "name": "Support Vector Machines",
+    "name": "Week 7: Support Vector Machines",
     "course": "6140",
     "lessons": [
       {
@@ -1654,7 +1654,7 @@
   },
   {
     "_id": "M-6140-08",
-    "name": "Neural Networks",
+    "name": "Week 8: Neural Networks",
     "course": "6140",
     "lessons": [
       {
@@ -1673,7 +1673,7 @@
   },
   {
     "_id": "M-6140-09",
-    "name": "Unsupervised Learning",
+    "name": "Week 9: Unsupervised Learning",
     "course": "6140",
     "lessons": [
       {
@@ -1692,7 +1692,7 @@
   },
   {
     "_id": "M-6140-10",
-    "name": "Applied ML",
+    "name": "Week 10: Applied ML",
     "course": "6140",
     "lessons": [
       {
@@ -1711,7 +1711,7 @@
   },
   {
     "_id": "M-5100-01",
-    "name": "Intro to AI",
+    "name": "Week 1: Intro to AI",
     "course": "5100",
     "lessons": [
       {
@@ -1730,7 +1730,7 @@
   },
   {
     "_id": "M-5100-02",
-    "name": "Uninformed Search",
+    "name": "Week 2: Uninformed Search",
     "course": "5100",
     "lessons": [
       {
@@ -1749,7 +1749,7 @@
   },
   {
     "_id": "M-5100-03",
-    "name": "Informed Search",
+    "name": "Week 3: Informed Search",
     "course": "5100",
     "lessons": [
       {
@@ -1768,7 +1768,7 @@
   },
   {
     "_id": "M-5100-04",
-    "name": "Local Search",
+    "name": "Week 4: Local Search",
     "course": "5100",
     "lessons": [
       {
@@ -1787,7 +1787,7 @@
   },
   {
     "_id": "M-5100-05",
-    "name": "Adversarial Search",
+    "name": "Week 5: Adversarial Search",
     "course": "5100",
     "lessons": [
       {
@@ -1806,7 +1806,7 @@
   },
   {
     "_id": "M-5100-06",
-    "name": "Constraint Satisfaction",
+    "name": "Week 6: Constraint Satisfaction",
     "course": "5100",
     "lessons": [
       {
@@ -1825,7 +1825,7 @@
   },
   {
     "_id": "M-5100-07",
-    "name": "Markov Decision Processes",
+    "name": "Week 7: Markov Decision Processes",
     "course": "5100",
     "lessons": [
       {
@@ -1844,7 +1844,7 @@
   },
   {
     "_id": "M-5100-08",
-    "name": "Reinforcement Learning",
+    "name": "Week 8: Reinforcement Learning",
     "course": "5100",
     "lessons": [
       {
@@ -1863,7 +1863,7 @@
   },
   {
     "_id": "M-5100-09",
-    "name": "Probabilistic Reasoning",
+    "name": "Week 9: Probabilistic Reasoning",
     "course": "5100",
     "lessons": [
       {
@@ -1882,7 +1882,7 @@
   },
   {
     "_id": "M-5100-10",
-    "name": "Logic & Knowledge",
+    "name": "Week 10: Logic & Knowledge",
     "course": "5100",
     "lessons": [
       {
@@ -1901,7 +1901,7 @@
   },
   {
     "_id": "M-6650-01",
-    "name": "Distributed Foundations",
+    "name": "Week 1: Distributed Foundations",
     "course": "6650",
     "lessons": [
       {
@@ -1920,7 +1920,7 @@
   },
   {
     "_id": "M-6650-02",
-    "name": "Concurrency",
+    "name": "Week 2: Concurrency",
     "course": "6650",
     "lessons": [
       {
@@ -1939,7 +1939,7 @@
   },
   {
     "_id": "M-6650-03",
-    "name": "Networking",
+    "name": "Week 3: Networking",
     "course": "6650",
     "lessons": [
       {
@@ -1958,7 +1958,7 @@
   },
   {
     "_id": "M-6650-04",
-    "name": "Remote Communication",
+    "name": "Week 4: Remote Communication",
     "course": "6650",
     "lessons": [
       {
@@ -1977,7 +1977,7 @@
   },
   {
     "_id": "M-6650-05",
-    "name": "Consistency",
+    "name": "Week 5: Consistency",
     "course": "6650",
     "lessons": [
       {
@@ -1996,7 +1996,7 @@
   },
   {
     "_id": "M-6650-06",
-    "name": "Consensus",
+    "name": "Week 6: Consensus",
     "course": "6650",
     "lessons": [
       {
@@ -2015,7 +2015,7 @@
   },
   {
     "_id": "M-6650-07",
-    "name": "Messaging",
+    "name": "Week 7: Messaging",
     "course": "6650",
     "lessons": [
       {
@@ -2034,7 +2034,7 @@
   },
   {
     "_id": "M-6650-08",
-    "name": "Storage at Scale",
+    "name": "Week 8: Storage at Scale",
     "course": "6650",
     "lessons": [
       {
@@ -2053,7 +2053,7 @@
   },
   {
     "_id": "M-6650-09",
-    "name": "Microservices",
+    "name": "Week 9: Microservices",
     "course": "6650",
     "lessons": [
       {
@@ -2072,7 +2072,7 @@
   },
   {
     "_id": "M-6650-10",
-    "name": "Cloud & Reliability",
+    "name": "Week 10: Cloud & Reliability",
     "course": "6650",
     "lessons": [
       {

@@ -10,12 +10,11 @@ export default function Signup() {
         username: "",
         password: "",
         verifyPassword: "",
-        role: "STUDENT", // default role
+        role: "STUDENT",
     });
     const router = useRouter();
 
     const signup = () => {
-        // Basic validation
         if (!user.username || !user.password) {
             alert("Please enter username and password");
             return;
@@ -57,7 +56,7 @@ export default function Signup() {
                 onChange={(e) => setUser({ ...user, verifyPassword: e.target.value })}
             />
 
-            {/* Role selector (same style as Profile) */}
+            {/* Role selector (same options as Profile) */}
             <Form.Select
                 value={user.role}
                 id="wd-su-role"
