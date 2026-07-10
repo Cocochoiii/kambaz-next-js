@@ -401,22 +401,39 @@ export default function Grades() {
                 </div>
             )}
 
-            {/* Faculty View - Grade Grid */}
+            {/* Faculty View - compact gradebook. Short column codes keep it narrow; the Student column and header stay pinned while scrolling. */}
             {isFaculty && (
-                <div className="bg-white border rounded p-0 overflow-auto">
-                    <table className="table table-hover table-bordered mb-0">
-                        <thead className="sticky-top bg-light">
+                <div className="border rounded" style={{ overflow: "auto", maxHeight: "70vh" }}>
+                    <table className="table table-sm table-hover table-striped align-middle mb-0">
+                        <thead>
                         <tr>
-                            <th className="bg-light" style={{ minWidth: "200px" }}>Student</th>
-                            {courseAssignments.map((assignment: any) => (
-                                <th key={assignment._id} className="text-center" style={{ minWidth: "100px" }}>
-                                    <div className="text-truncate" title={assignment.title}>
-                                        {assignment.title}
-                                    </div>
-                                    <small className="text-muted">{assignment.points} pts</small>
-                                </th>
-                            ))}
-                            <th className="text-center bg-light">Total</th>
+                            <th
+                                className="bg-light text-nowrap"
+                                style={{ position: "sticky", left: 0, top: 0, zIndex: 3, minWidth: "180px" }}
+                            >
+                                Student
+                            </th>
+                            {courseAssignments.map((assignment: any) => {
+                                // Show the short code (text before ":") to keep columns narrow; full title on hover.
+                                const code = assignment.title.split(":")[0].trim();
+                                return (
+                                    <th
+                                        key={assignment._id}
+                                        className="text-center bg-light"
+                                        style={{ position: "sticky", top: 0, zIndex: 1, minWidth: "64px" }}
+                                        title={assignment.title}
+                                    >
+                                        <div className="fw-semibold">{code}</div>
+                                        <small className="text-muted">{assignment.points}</small>
+                                    </th>
+                                );
+                            })}
+                            <th
+                                className="text-center bg-light"
+                                style={{ position: "sticky", top: 0, zIndex: 1, minWidth: "90px" }}
+                            >
+                                Total
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -424,7 +441,10 @@ export default function Grades() {
                             const studentTotal = calculateTotalGrade(student._id);
                             return (
                                 <tr key={student._id}>
-                                    <td className="bg-light">
+                                    <td
+                                        className="bg-white text-nowrap"
+                                        style={{ position: "sticky", left: 0, zIndex: 2 }}
+                                    >
                                         <strong>{student.firstName} {student.lastName}</strong>
                                         <div className="text-muted small">{student._id}</div>
                                     </td>
@@ -438,21 +458,21 @@ export default function Grades() {
                                                 onClick={() => handleEditGrade(student._id, assignment._id)}
                                             >
                                                 {grade?.score !== undefined && grade?.score !== null ? (
-                                                    <div>
-                                                        <span className="fw-bold">{grade.score}</span>
+                                                    <span className="fw-bold">
+                                                        {grade.score}
                                                         {!grade.released && (
                                                             <FaEyeSlash className="text-warning ms-1 small" />
                                                         )}
-                                                    </div>
+                                                    </span>
                                                 ) : (
                                                     <span className="text-muted">-</span>
                                                 )}
                                             </td>
                                         );
                                     })}
-                                    <td className="text-center bg-light">
-                                        <strong>{studentTotal.percentage}%</strong>
-                                        <div className="small text-muted">{studentTotal.letter}</div>
+                                    <td className="text-center bg-light fw-bold">
+                                        {studentTotal.percentage}%
+                                        <div className="small text-muted fw-normal">{studentTotal.letter}</div>
                                     </td>
                                 </tr>
                             );
