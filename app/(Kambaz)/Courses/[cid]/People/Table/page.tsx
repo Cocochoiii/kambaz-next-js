@@ -1,4 +1,3 @@
-// app/(Kambaz)/Courses/[cid]/People/Table/page.tsx
 "use client";
 
 import { useParams } from "next/navigation";

@@ -82,6 +82,7 @@ export default function Lab3Page({ params }: PageProps) {
       <Classes />
       <Styles />
 
+      <Add a={1} b={2} />
       <Add a={3} b={4} />
       <h4>Square of 4</h4>
       <Square>4</Square>

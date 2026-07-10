@@ -1,4 +1,3 @@
-// app/(Kambaz)/Courses/[cid]/Modules/page.tsx
 "use client";
 
 import { useState } from "react";

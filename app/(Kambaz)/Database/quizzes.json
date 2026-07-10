@@ -71,7 +71,6 @@
     "points": 10,
     "questions": 10
   },
-
   {
     "_id": "Q5520-01",
     "course": "5520",
@@ -144,7 +143,6 @@
     "points": 50,
     "questions": 0
   },
-
   {
     "_id": "Q5004-01",
     "course": "5004",
@@ -217,7 +215,6 @@
     "points": 75,
     "questions": 0
   },
-
   {
     "_id": "Q5200-01",
     "course": "5200",
@@ -290,7 +287,6 @@
     "points": 60,
     "questions": 0
   },
-
   {
     "_id": "Q5800-01",
     "course": "5800",
@@ -363,7 +359,6 @@
     "points": 80,
     "questions": 0
   },
-
   {
     "_id": "Q6620-01",
     "course": "6620",
@@ -436,7 +431,6 @@
     "points": 70,
     "questions": 0
   },
-
   {
     "_id": "Q6510-01",
     "course": "6510",
@@ -508,5 +502,293 @@
     "dueDate": "Mar 7 at 11:59pm",
     "points": 65,
     "questions": 0
+  },
+  {
+    "_id": "Q5700-01",
+    "course": "5700",
+    "title": "Learning Activity: Protocol Layering & TCP/IP",
+    "status": "Closed",
+    "dueDate": "Jan 15 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5700-02",
+    "course": "5700",
+    "title": "Learning Activity: Socket Programming",
+    "status": "Closed",
+    "dueDate": "Jan 22 at 11:59pm",
+    "points": 12,
+    "questions": 10
+  },
+  {
+    "_id": "Q5700-03",
+    "course": "5700",
+    "title": "Learning Activity: Reliable Data Transfer",
+    "status": "Closed",
+    "dueDate": "Jan 29 at 11:59pm",
+    "points": 11,
+    "questions": 10
+  },
+  {
+    "_id": "Q5700-04",
+    "course": "5700",
+    "title": "Learning Activity: TCP Congestion Control",
+    "status": "Closed",
+    "dueDate": "Feb 5 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5700-05",
+    "course": "5700",
+    "title": "Learning Activity: Routing & Forwarding",
+    "status": "Closed",
+    "dueDate": "Feb 12 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5700-06",
+    "course": "5700",
+    "title": "Midterm Exam",
+    "status": "Closed",
+    "dueDate": "Feb 26 at 9:30pm",
+    "points": 67,
+    "questions": 0
+  },
+  {
+    "_id": "Q5700-07",
+    "course": "5700",
+    "title": "Learning Activity: DNS, HTTP & Applications",
+    "status": "Open",
+    "dueDate": "Feb 19 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5700-08",
+    "course": "5700",
+    "title": "Learning Activity: Network Security & TLS",
+    "status": "Open",
+    "dueDate": "Mar 5 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6140-01",
+    "course": "6140",
+    "title": "Learning Activity: Linear Regression",
+    "status": "Closed",
+    "dueDate": "Jan 15 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6140-02",
+    "course": "6140",
+    "title": "Learning Activity: Logistic Regression",
+    "status": "Closed",
+    "dueDate": "Jan 22 at 11:59pm",
+    "points": 12,
+    "questions": 10
+  },
+  {
+    "_id": "Q6140-03",
+    "course": "6140",
+    "title": "Learning Activity: Decision Trees & Naive Bayes",
+    "status": "Closed",
+    "dueDate": "Jan 29 at 11:59pm",
+    "points": 11,
+    "questions": 10
+  },
+  {
+    "_id": "Q6140-04",
+    "course": "6140",
+    "title": "Learning Activity: SVMs & Kernels",
+    "status": "Closed",
+    "dueDate": "Feb 5 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6140-05",
+    "course": "6140",
+    "title": "Learning Activity: Neural Networks",
+    "status": "Closed",
+    "dueDate": "Feb 12 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6140-06",
+    "course": "6140",
+    "title": "Midterm Exam",
+    "status": "Closed",
+    "dueDate": "Feb 26 at 9:30pm",
+    "points": 67,
+    "questions": 0
+  },
+  {
+    "_id": "Q6140-07",
+    "course": "6140",
+    "title": "Learning Activity: Clustering & PCA",
+    "status": "Open",
+    "dueDate": "Feb 19 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6140-08",
+    "course": "6140",
+    "title": "Learning Activity: Model Evaluation",
+    "status": "Open",
+    "dueDate": "Mar 5 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5100-01",
+    "course": "5100",
+    "title": "Learning Activity: Uninformed Search",
+    "status": "Closed",
+    "dueDate": "Jan 15 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5100-02",
+    "course": "5100",
+    "title": "Learning Activity: Informed Search & A*",
+    "status": "Closed",
+    "dueDate": "Jan 22 at 11:59pm",
+    "points": 12,
+    "questions": 10
+  },
+  {
+    "_id": "Q5100-03",
+    "course": "5100",
+    "title": "Learning Activity: Adversarial Search",
+    "status": "Closed",
+    "dueDate": "Jan 29 at 11:59pm",
+    "points": 11,
+    "questions": 10
+  },
+  {
+    "_id": "Q5100-04",
+    "course": "5100",
+    "title": "Learning Activity: Constraint Satisfaction",
+    "status": "Closed",
+    "dueDate": "Feb 5 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5100-05",
+    "course": "5100",
+    "title": "Learning Activity: Markov Decision Processes",
+    "status": "Closed",
+    "dueDate": "Feb 12 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5100-06",
+    "course": "5100",
+    "title": "Midterm Exam",
+    "status": "Closed",
+    "dueDate": "Feb 26 at 9:30pm",
+    "points": 67,
+    "questions": 0
+  },
+  {
+    "_id": "Q5100-07",
+    "course": "5100",
+    "title": "Learning Activity: Reinforcement Learning",
+    "status": "Open",
+    "dueDate": "Feb 19 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q5100-08",
+    "course": "5100",
+    "title": "Learning Activity: Logic & Inference",
+    "status": "Open",
+    "dueDate": "Mar 5 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6650-01",
+    "course": "6650",
+    "title": "Learning Activity: Threads & Synchronization",
+    "status": "Closed",
+    "dueDate": "Jan 15 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6650-02",
+    "course": "6650",
+    "title": "Learning Activity: Sockets & RPC",
+    "status": "Closed",
+    "dueDate": "Jan 22 at 11:59pm",
+    "points": 12,
+    "questions": 10
+  },
+  {
+    "_id": "Q6650-03",
+    "course": "6650",
+    "title": "Learning Activity: Consistency Models",
+    "status": "Closed",
+    "dueDate": "Jan 29 at 11:59pm",
+    "points": 11,
+    "questions": 10
+  },
+  {
+    "_id": "Q6650-04",
+    "course": "6650",
+    "title": "Learning Activity: Consensus & Paxos",
+    "status": "Closed",
+    "dueDate": "Feb 5 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6650-05",
+    "course": "6650",
+    "title": "Learning Activity: Message Queues",
+    "status": "Closed",
+    "dueDate": "Feb 12 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6650-06",
+    "course": "6650",
+    "title": "Midterm Exam",
+    "status": "Closed",
+    "dueDate": "Feb 26 at 9:30pm",
+    "points": 67,
+    "questions": 0
+  },
+  {
+    "_id": "Q6650-07",
+    "course": "6650",
+    "title": "Learning Activity: Microservices",
+    "status": "Open",
+    "dueDate": "Feb 19 at 11:59pm",
+    "points": 10,
+    "questions": 10
+  },
+  {
+    "_id": "Q6650-08",
+    "course": "6650",
+    "title": "Learning Activity: Cloud Scaling & Load Balancing",
+    "status": "Open",
+    "dueDate": "Mar 5 at 11:59pm",
+    "points": 10,
+    "questions": 10
   }
 ]

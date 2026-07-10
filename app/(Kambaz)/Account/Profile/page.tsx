@@ -1,4 +1,3 @@
-// app/(Kambaz)/Account/Profile/page.tsx
 "use client";
 
 import Link from "next/link";

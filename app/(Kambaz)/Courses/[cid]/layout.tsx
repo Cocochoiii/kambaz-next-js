@@ -1,4 +1,3 @@
-// app/(Kambaz)/Courses/[cid]/layout.tsx
 "use client";
 
 import type { ReactNode } from "react";

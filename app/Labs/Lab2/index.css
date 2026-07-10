@@ -36,3 +36,12 @@
 /* Flex */
 .wd-flex-row-container{ display:flex; flex-direction:row; } .wd-flex-grow-1{ flex-grow:1; } .wd-width-75px{ width:75px; }
 #wd-screen-size-label{ position:fixed; top:0; left:0; background:black; color:white; padding:5px; font-size:12px; z-index:1000; width:220px; text-align:center; }
+
+/* ID selectors */
+#wd-id-selector-1{ background-color:#ff7070; color:white; }
+#wd-id-selector-2{ background-color:#ffff07; color:black; }
+/* Class selector: blue text on a yellow background (used on a paragraph and a heading) */
+.wd-class-selector{ background-color:#ffff07; color:#7070ff; }
+/* Document structure: a red DIV that contains a blue-on-yellow small span */
+#wd-doc-structure{ background-color:#ff7070; color:white; }
+#wd-doc-structure small{ background-color:#ffff07; color:#7070ff; }

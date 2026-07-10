@@ -1,4 +1,3 @@
-// app/(Kambaz)/Courses/[cid]/Home/page.tsx
 "use client";
 
 import { useMemo, useState } from "react";

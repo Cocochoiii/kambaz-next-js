@@ -20,3 +20,5 @@ a { color: inherit; }
 .bg-secondary{ --bs-secondary-rgb:199,205,209; }
 .list-group-item{ --bs-list-group-border-color: gray; }
 .wd-lesson{ border-left: 3px solid green !important; }
+/* green left accent on each assignment row (same idea as module lessons) */
+#wd-assignment-list .list-group-item{ border-left: 5px solid green !important; }

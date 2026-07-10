@@ -3,28 +3,25 @@
 import { AiOutlineDashboard } from "react-icons/ai";
 import { IoCalendarOutline } from "react-icons/io5";
 import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
-import { FaInbox, FaRegCircleUser } from "react-icons/fa6";
+import { FaInbox, FaRegCircleUser, FaBook } from "react-icons/fa6";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// Data-driven links. `match` is the path prefix used to highlight the active item.
+// Courses links to the Dashboard but stays highlighted while viewing a course.
+const links = [
+    { href: "/Account",   label: "Account",   icon: FaRegCircleUser,    match: "/Account" },
+    { href: "/Dashboard", label: "Dashboard", icon: AiOutlineDashboard, match: "/Dashboard" },
+    { href: "/Dashboard", label: "Courses",   icon: FaBook,             match: "/Courses" },
+    { href: "/Calendar",  label: "Calendar",  icon: IoCalendarOutline,  match: "/Calendar" },
+    { href: "/Inbox",     label: "Inbox",      icon: FaInbox,            match: "/Inbox" },
+    { href: "/Labs",      label: "Labs",       icon: LiaBookSolid,       match: "/Labs" },
+    { href: "/Settings",  label: "Settings",   icon: LiaCogSolid,        match: "/Settings" },
+];
+
 export default function KambazNavigation() {
     const pathname = usePathname();
-
-    const links = [
-        { href: "/Dashboard", label: "Dashboard", icon: AiOutlineDashboard },
-        { href: "/Dashboard", label: "Courses", icon: LiaBookSolid }, // Routes to Dashboard as per spec
-        { href: "/Calendar", label: "Calendar", icon: IoCalendarOutline },
-        { href: "/Inbox", label: "Inbox", icon: FaInbox },
-        { href: "/Labs", label: "Labs", icon: LiaBookSolid },
-        { href: "/Settings", label: "Settings", icon: LiaCogSolid },
-    ];
-
-    const isActive = (href: string, label: string) => {
-        if (label === "Courses") {
-            return pathname.includes("/Courses/");
-        }
-        return pathname === href || pathname.startsWith(`${href}/`);
-    };
+    const isActive = (m: string) => pathname === m || pathname.startsWith(`${m}/`);
 
     return (
         <ul
@@ -39,40 +36,19 @@ export default function KambazNavigation() {
             </li>
             <br />
 
-            {/* Account Link */}
-            <li
-                className={`list-group-item border-0 text-center ${
-                    pathname.includes("Account") ? "bg-white text-danger" : "bg-black text-white"
-                }`}
-            >
-                <Link
-                    href="/Account"
-                    className={`text-decoration-none ${pathname.includes("Account") ? "text-danger" : "text-white"}`}
-                >
-                    <FaRegCircleUser className={`fs-1 ${pathname.includes("Account") ? "text-danger" : "text-white"}`} />
-                    <br />
-                    Account
-                </Link>
-            </li>
-
-            {/* Dynamic Links */}
-            {links.map((link) => {
-                const active = isActive(link.href, link.label);
-                const Icon = link.icon;
+            {links.map(({ href, label, icon: Icon, match }) => {
+                const active = isActive(match);
+                // Account shows a white icon; every other item shows a red icon.
+                const iconColor = label === "Account" && !active ? "text-white" : "text-danger";
                 return (
                     <li
-                        key={link.label}
-                        className={`list-group-item border-0 text-center ${
-                            active ? "bg-white" : "bg-black"
-                        }`}
+                        key={label}
+                        className={`list-group-item border-0 text-center ${active ? "bg-white" : "bg-black"}`}
                     >
-                        <Link
-                            href={link.href}
-                            className={`text-decoration-none ${active ? "text-danger" : "text-white"}`}
-                        >
-                            <Icon className={`fs-1 ${active ? "text-danger" : "text-white"}`} />
+                        <Link href={href} className={`text-decoration-none ${active ? "text-danger" : "text-white"}`}>
+                            <Icon className={`fs-1 ${iconColor}`} />
                             <br />
-                            {link.label}
+                            {label}
                         </Link>
                     </li>
                 );

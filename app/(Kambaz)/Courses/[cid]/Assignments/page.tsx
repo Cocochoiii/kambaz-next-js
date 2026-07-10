@@ -1,15 +1,16 @@
-// app/(Kambaz)/Courses/[cid]/Assignments/page.tsx
 "use client";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ListGroup, Badge, Button, Form } from "react-bootstrap";
+import { ListGroup, Badge, Button, Form, InputGroup } from "react-bootstrap";
+import { FaPlus } from "react-icons/fa";
 import {
     BsGripVertical,
     BsFileEarmarkText,
     BsThreeDotsVertical,
     BsCheckCircleFill,
-    BsPlus
+    BsPlus,
+    BsSearch,
 } from "react-icons/bs";
 import * as db from "../../../Database";
 
@@ -20,16 +21,20 @@ export default function Assignments() {
     return (
         <div id="wd-assignments" className="mt-2">
             <div className="d-flex align-items-center gap-2 mb-3">
-                <Form.Control
-                    id="wd-search-assignment"
-                    placeholder="Search…"
-                    style={{ maxWidth: 380 }}
-                />
-                <Button id="wd-add-assignment-group" variant="light" className="ms-auto">
-                    + Group
+                {/* Search field with a magnifying glass, kept to the left */}
+                <InputGroup style={{ maxWidth: 380 }}>
+                    <InputGroup.Text className="bg-white">
+                        <BsSearch className="text-secondary" />
+                    </InputGroup.Text>
+                    <Form.Control id="wd-search-assignment" placeholder="Search for Assignments" />
+                </InputGroup>
+
+                {/* Buttons floated right; same colors as Modules (grey + red) */}
+                <Button id="wd-add-assignment-group" variant="secondary" className="ms-auto">
+                    <FaPlus className="me-1" /> Group
                 </Button>
                 <Button id="wd-add-assignment" variant="danger">
-                    + Assignment
+                    <FaPlus className="me-1" /> Assignment
                 </Button>
             </div>
 
@@ -52,6 +57,7 @@ export default function Assignments() {
                     </div>
                 </div>
 
+                {/* Each row gets a green left border from #wd-assignment-list in globals.css */}
                 <ListGroup variant="flush" id="wd-assignment-list">
                     {assignments.map((assignment: any) => (
                         <ListGroup.Item

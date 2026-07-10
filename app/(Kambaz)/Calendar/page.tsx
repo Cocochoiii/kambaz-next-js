@@ -56,7 +56,7 @@ const demoEvents: CalEvent[] = [
 /** ---------- components ---------- */
 export default function CalendarPage() {
     const [view, setView] = useState<"week" | "month" | "agenda">("month");
-    const [cursor, setCursor] = useState<Date>(new Date());       // which month/week we’re showing
+    const [cursor, setCursor] = useState<Date>(new Date());       // month currently shown
     const [enabledCals, setEnabledCals] = useState<Record<string, boolean>>({
         CS5610: true, CS5520: true, CS5004: true, CS5200: true, CS5800: true, CS6620: true, CS6510: true,
     });

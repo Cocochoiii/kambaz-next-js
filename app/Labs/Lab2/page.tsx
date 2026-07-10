@@ -1,5 +1,8 @@
 
 import "./index.css";
+import IdSelectors from "./IdSelectors";
+import ClassSelectors from "./ClassSelectors";
+import DocumentStructure from "./DocumentStructure";
 import ForegroundColors from "./ForegroundColors";
 import BackgroundColors from "./BackgroundColors";
 import Borders from "./Borders";
@@ -26,6 +29,9 @@ export default function Lab2(){
       <h2>Lab 2 - Cascading Style Sheets</h2>
       <p style={{ backgroundColor:"blue", color:"white" }}>Style attribute allows configuring look and feel.</p>
       <ForegroundColors/>
+      <IdSelectors/>
+      <ClassSelectors/>
+      <DocumentStructure/>
       <BackgroundColors/>
       <Borders/>
       <PaddingEx/>

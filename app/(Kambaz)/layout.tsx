@@ -2,7 +2,6 @@
 import type { ReactNode } from "react";
 import KambazNavigation from "./Navigation";
 import "./styles.css";
-// app/layout.tsx
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../globals.css";
 

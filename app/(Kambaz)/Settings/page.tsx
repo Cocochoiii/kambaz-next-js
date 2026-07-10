@@ -12,7 +12,7 @@ export default function SettingsPage() {
 
     const onSave = (e: React.FormEvent) => {
         e.preventDefault();
-        // Placeholder – wire up to real API later
+        // demo only
         alert("Settings saved (demo)");
     };
 
