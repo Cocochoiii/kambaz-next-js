@@ -1,16 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ListGroup, Badge, Button, Form } from "react-bootstrap";
+import { ListGroup, Badge, Button, Form, InputGroup } from "react-bootstrap";
 import {
     BsGripVertical,
     BsFileEarmarkText,
     BsThreeDotsVertical,
-    BsPlus
+    BsPlus,
+    BsSearch
 } from "react-icons/bs";
+import { FaPlus, FaTrash } from "react-icons/fa6";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteAssignment } from "./reducer";
+import { setAssignments, deleteAssignment } from "./reducer";
+import * as assignmentsClient from "./client";
 
 export default function Assignments() {
     const { cid } = useParams<{ cid: string }>();
@@ -19,11 +23,20 @@ export default function Assignments() {
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
 
+    const loadAssignments = async () => {
+        const list = await assignmentsClient.findAssignmentsForCourse(cid);
+        dispatch(setAssignments(list));
+    };
+    useEffect(() => {
+        loadAssignments();
+    }, [cid]);
+
     const courseAssignments = assignments.filter((a: any) => a.course === cid);
     const isFaculty = (currentUser?.role ?? "").toString().toUpperCase() === "FACULTY";
 
-    const handleDelete = (assignmentId: string) => {
+    const handleDelete = async (assignmentId: string) => {
         if (window.confirm("Are you sure you want to delete this assignment?")) {
+            await assignmentsClient.deleteAssignment(assignmentId);
             dispatch(deleteAssignment(assignmentId));
         }
     };
@@ -33,12 +46,17 @@ export default function Assignments() {
     return (
         <div id="wd-assignments" className="mt-2">
             <div className="d-flex align-items-center gap-2 mb-3">
-                <Form.Control id="wd-search-assignment" placeholder="Search…" style={{ maxWidth: 380 }} />
+                <InputGroup style={{ maxWidth: 380 }}>
+                    <InputGroup.Text><BsSearch /></InputGroup.Text>
+                    <Form.Control id="wd-search-assignment" placeholder="Search for Assignments" />
+                </InputGroup>
                 {isFaculty && (
                     <>
-                        <Button id="wd-add-assignment-group" variant="light" className="ms-auto">+ Group</Button>
+                        <Button id="wd-add-assignment-group" variant="secondary" className="ms-auto">
+                            <FaPlus className="me-1" /> Group
+                        </Button>
                         <Button id="wd-add-assignment" variant="danger" onClick={handleAddAssignment}>
-                            + Assignment
+                            <FaPlus className="me-1" /> Assignment
                         </Button>
                     </>
                 )}
@@ -83,7 +101,7 @@ export default function Assignments() {
                                     <span className="mx-2">|</span>
                                     {assignment.dueDate
                                         ? <>Due {new Date(assignment.dueDate).toLocaleDateString()} at 11:59pm</>
-                                        : <>Due —</>
+                                        : <>Due -</>
                                     }
                                     <span className="mx-2">|</span>
                                     {assignment.points} pts
@@ -98,7 +116,7 @@ export default function Assignments() {
                                         className="text-danger p-0"
                                         onClick={() => handleDelete(assignment._id)}
                                     >
-                                        🗑️
+                                        <FaTrash />
                                     </Button>
                                 )}
                                 <BsThreeDotsVertical className="text-secondary" />

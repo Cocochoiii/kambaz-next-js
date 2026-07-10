@@ -64,6 +64,7 @@ export default function KambazNavigation() {
                 {links.map((link) => {
                     const active = isActive(link.href, link.label);
                     const Icon = link.icon;
+                    const iconColor = (link.label === "Account" && !active) ? "text-white" : "text-danger";
 
                     if (link.dropdown) {
                         return (
@@ -78,7 +79,7 @@ export default function KambazNavigation() {
                                     className={`btn p-0 text-decoration-none ${active ? "text-danger" : "text-white"}`}
                                     style={{ background: "none", border: "none" }}
                                 >
-                                    <Icon className={`fs-1 ${active ? "text-danger" : "text-white"}`} />
+                                    <Icon className={`fs-1 ${iconColor}`} />
                                     <br />
                                     {link.label}
                                 </button>
@@ -97,7 +98,7 @@ export default function KambazNavigation() {
                                 href={link.href}
                                 className={`text-decoration-none d-block ${active ? "text-danger" : "text-white"}`}
                             >
-                                <Icon className={`fs-1 ${active ? "text-danger" : "text-white"}`} />
+                                <Icon className={`fs-1 ${iconColor}`} />
                                 <br />
                                 {link.label}
                             </Link>

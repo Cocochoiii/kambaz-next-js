@@ -4,8 +4,9 @@ import { useParams } from "next/navigation";
 import { FaUserCircle, FaPlus } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
-import { addAnnouncement, deleteAnnouncement, updateAnnouncement } from "./reducer";
+import { useState, useEffect } from "react";
+import { setAnnouncements, addAnnouncement, deleteAnnouncement, updateAnnouncement } from "./reducer";
+import * as announcementsClient from "./client";
 import AnnouncementModal from "./AnnouncementModal";
 
 export default function Announcements() {
@@ -17,6 +18,14 @@ export default function Announcements() {
 
     const { announcements } = useSelector((state: any) => state.announcementsReducer);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
+
+    const loadAnnouncements = async () => {
+        const list = await announcementsClient.findAnnouncementsForCourse(cid);
+        dispatch(setAnnouncements(list));
+    };
+    useEffect(() => {
+        loadAnnouncements();
+    }, [cid]);
 
     // Filter announcements for current course
     const courseAnnouncements = announcements.filter((a: any) => a.course === cid);
@@ -40,21 +49,25 @@ export default function Announcements() {
         setShowModal(true);
     };
 
-    const handleDeleteClick = (announcementId: string) => {
+    const handleDeleteClick = async (announcementId: string) => {
         if (window.confirm("Are you sure you want to delete this announcement?")) {
+            await announcementsClient.deleteAnnouncement(announcementId);
             dispatch(deleteAnnouncement(announcementId));
         }
     };
 
-    const handleSave = (announcementData: any) => {
+    const handleSave = async (announcementData: any) => {
         if (editMode) {
+            await announcementsClient.updateAnnouncement(announcementData);
             dispatch(updateAnnouncement(announcementData));
         } else {
-            dispatch(addAnnouncement({
+            const created = await announcementsClient.createAnnouncement(cid, {
                 ...announcementData,
                 course: cid,
                 author: currentUser?.username || "Unknown",
-            }));
+                date: new Date().toISOString(),
+            });
+            dispatch(addAnnouncement(created));
         }
         setShowModal(false);
         setEditingAnnouncement(null);
@@ -98,7 +111,7 @@ export default function Announcements() {
                                         <div>
                                             <h5 className="mb-1">{announcement.title}</h5>
                                             <p className="text-muted small mb-2">
-                                                {announcement.author} • {announcement.section}
+                                                {announcement.author} - {announcement.section}
                                             </p>
                                         </div>
                                         <div className="text-end">

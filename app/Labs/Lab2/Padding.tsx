@@ -1,4 +1,3 @@
-
 export default function PaddingEx(){
   return (
     <div id="wd-css-paddings">

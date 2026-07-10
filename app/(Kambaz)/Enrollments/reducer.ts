@@ -1,4 +1,3 @@
-// app/(Kambaz)/Enrollments/reducer.ts
 import { createSlice } from "@reduxjs/toolkit";
 import { enrollments } from "../Database";
 import { v4 as uuidv4 } from "uuid";

@@ -1,4 +1,3 @@
-
 "use client";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 export default function BootstrapLists(){

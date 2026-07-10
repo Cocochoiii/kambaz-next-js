@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Form, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { addCourse, deleteCourse, updateCourse, setCourse } from "../Courses/reducer";
-import { enrollUser, unenrollUser } from "../Database/reducer";
+import { setCourses, addCourse, deleteCourse, updateCourse, setCourse } from "../Courses/reducer";
+import * as coursesClient from "../Courses/client";
+import * as accountClient from "../Account/client";
+import * as enrollmentsClient from "../Enrollments/client";
 import {
     FaBullhorn,
     FaRegEdit,
@@ -18,33 +20,67 @@ export default function Dashboard() {
     const dispatch = useDispatch();
     const { courses, course } = useSelector((state: any) => state.coursesReducer);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
 
     const [showAllCourses, setShowAllCourses] = useState(false);
+    const [enrolledIds, setEnrolledIds] = useState<string[]>([]);
 
     const isFaculty = (currentUser?.role ?? "").toString().toUpperCase() === "FACULTY";
+    const isEnrolled = (courseId: string) => enrolledIds.includes(courseId);
 
-    const isEnrolled = (courseId: string) =>
-        !!currentUser &&
-        enrollments.some((e: any) => e.user === currentUser._id && e.course === courseId);
+    // Load all courses from the server into Redux.
+    const loadAllCourses = async () => {
+        const all = await coursesClient.fetchAllCourses();
+        dispatch(setCourses(all));
+    };
+    // Load the current user's enrolled course ids (used for the student view).
+    const loadEnrolled = async () => {
+        if (!currentUser) {
+            setEnrolledIds([]);
+            return;
+        }
+        try {
+            const mine = await enrollmentsClient.findCoursesForUser(currentUser._id);
+            setEnrolledIds(mine.map((c: any) => c._id));
+        } catch (err) {
+            setEnrolledIds([]);
+        }
+    };
+    useEffect(() => {
+        loadAllCourses();
+    }, []);
+    useEffect(() => {
+        loadEnrolled();
+    }, [currentUser]);
 
     const displayedCourses =
         showAllCourses || isFaculty ? courses : courses.filter((c: any) => isEnrolled(c._id));
 
-    // course CRUD
-    const handleAddCourse = () => dispatch(addCourse());
-    const handleDeleteCourse = (courseId: string) => dispatch(deleteCourse(courseId));
-    const handleUpdateCourse = () => dispatch(updateCourse());
+    // course CRUD (through the server)
+    const handleAddCourse = async () => {
+        const newCourse = await accountClient.createCourseForCurrentUser(course);
+        dispatch(addCourse(newCourse));
+        await loadEnrolled();
+    };
+    const handleDeleteCourse = async (courseId: string) => {
+        await coursesClient.deleteCourse(courseId);
+        dispatch(deleteCourse(courseId));
+    };
+    const handleUpdateCourse = async () => {
+        await coursesClient.updateCourse(course);
+        dispatch(updateCourse(course));
+    };
     const handleSetCourse = (c: any) => dispatch(setCourse(c));
 
-    // enrollment
-    const handleEnroll = (courseId: string) => {
+    // enrollment (through the server)
+    const handleEnroll = async (courseId: string) => {
         if (!currentUser) return;
-        dispatch(enrollUser({ userId: currentUser._id, courseId }));
+        await enrollmentsClient.enrollIntoCourse(currentUser._id, courseId);
+        await loadEnrolled();
     };
-    const handleUnenroll = (courseId: string) => {
+    const handleUnenroll = async (courseId: string) => {
         if (!currentUser) return;
-        dispatch(unenrollUser({ userId: currentUser._id, courseId }));
+        await enrollmentsClient.unenrollFromCourse(currentUser._id, courseId);
+        await loadEnrolled();
     };
 
     // helper to render image path safely
@@ -185,7 +221,7 @@ export default function Dashboard() {
                                 <div className="card-body flex-grow-1 d-flex flex-column position-relative pb-5">
                                     <h5 className="wd-dashboard-course-title course-title mt-2 mb-1">{c.name}</h5>
                                     <div className="text-muted small">{c.number}</div>
-                                    <div className="text-muted small">{c.term || "Full Term"} · {c.semester || ""}</div>
+                                    <div className="text-muted small">{c.term || "Full Term"} - {c.semester || ""}</div>
 
                                     {/* Button bar for faculty/students */}
                                     <div
@@ -303,28 +339,16 @@ export default function Dashboard() {
 
                                 {/* Icon buttons at bottom */}
                                 <div className="d-flex justify-content-around align-items-center py-2 px-3 border-top mt-auto">
-                                    <Link
-                                        href={`/Courses/${c._id}/Announcements`}
-                                        className="btn p-0 border-0 bg-transparent dashboard-icon-btn"
-                                    >
+                                    <Link href={`/Courses/${c._id}/Announcements`} className="btn p-0 border-0 bg-transparent dashboard-icon-btn">
                                         <FaBullhorn size={18} />
                                     </Link>
-                                    <Link
-                                        href={`/Courses/${c._id}/Quizzes`}
-                                        className="btn p-0 border-0 bg-transparent dashboard-icon-btn"
-                                    >
+                                    <Link href={`/Courses/${c._id}/Quizzes`} className="btn p-0 border-0 bg-transparent dashboard-icon-btn">
                                         <FaRegEdit size={18} />
                                     </Link>
-                                    <Link
-                                        href={`/Courses/${c._id}/Zoom`}
-                                        className="btn p-0 border-0 bg-transparent dashboard-icon-btn"
-                                    >
+                                    <Link href={`/Courses/${c._id}/Zoom`} className="btn p-0 border-0 bg-transparent dashboard-icon-btn">
                                         <FaRegCommentDots size={18} />
                                     </Link>
-                                    <Link
-                                        href={`/Courses/${c._id}/Assignments`}
-                                        className="btn p-0 border-0 bg-transparent dashboard-icon-btn"
-                                    >
+                                    <Link href={`/Courses/${c._id}/Assignments`} className="btn p-0 border-0 bg-transparent dashboard-icon-btn">
                                         <FaRegFolder size={18} />
                                     </Link>
                                 </div>

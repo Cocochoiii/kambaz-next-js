@@ -2,8 +2,9 @@
 
 import { useParams } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
-import { releaseGrades, updateGrade } from "./reducer";
+import { useState, useEffect } from "react";
+import { setGrades, releaseGrades, updateGrade } from "./reducer";
+import * as gradesClient from "./client";
 import {
     FaPrint,
     FaCheckCircle,
@@ -24,6 +25,14 @@ export default function Grades() {
     const { grades } = useSelector((state: any) => state.gradesReducer);
     const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
     const { courses } = useSelector((state: any) => state.coursesReducer);
+
+    const loadGrades = async () => {
+        const list = await gradesClient.findGradesForCourse(cid);
+        dispatch(setGrades(list));
+    };
+    useEffect(() => {
+        loadGrades();
+    }, [cid]);
 
     const users = db.users;
     const currentCourse = courses.find((c: any) => c._id === cid);
@@ -100,8 +109,9 @@ export default function Grades() {
         );
     };
 
-    const handleReleaseGrades = () => {
+    const handleReleaseGrades = async () => {
         if (window.confirm("Are you sure you want to release all grades for this course?")) {
+            await gradesClient.releaseGrades(cid);
             dispatch(releaseGrades(cid));
             alert("Grades have been released successfully!");
         }
@@ -113,13 +123,20 @@ export default function Grades() {
         setShowEditor(true);
     };
 
-    const handleSaveGrade = (score: number) => {
+    const handleSaveGrade = async (score: number) => {
+        const submitted = new Date().toISOString();
+        await gradesClient.saveGrade(cid, {
+            student: selectedStudent,
+            assignment: selectedAssignment,
+            score: score,
+            submitted: submitted,
+        });
         dispatch(updateGrade({
             studentId: selectedStudent,
             assignmentId: selectedAssignment,
             courseId: cid,
             score: score,
-            submitted: new Date().toISOString()
+            submitted: submitted,
         }));
         setShowEditor(false);
     };
@@ -354,7 +371,7 @@ export default function Grades() {
 
                             <div className="d-grid gap-2 mb-4">
                                 <button className="btn btn-outline-secondary text-start">
-                                    📊 Show Saved "What-If" Scores
+                                     Show Saved "What-If" Scores
                                 </button>
                                 <button className="btn btn-outline-secondary text-start">
                                     Show All Details

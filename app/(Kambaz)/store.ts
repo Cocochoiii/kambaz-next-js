@@ -23,7 +23,7 @@ const store = configureStore({
     },
 });
 
-// Export types for TypeScript - CRITICAL for selectors to work
+// types for selectors and dispatch
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 

@@ -3,13 +3,10 @@
 import { IoEllipsisVertical } from "react-icons/io5";
 import GreenCheckmark from "./GreenCheckmark";
 
-/**
- * This component is **faculty-only** (parent controls visibility).
- * It keeps your original contents; just render it only for faculty.
- */
+// Faculty-only control; the parent decides visibility.
 export default function LessonControlButtons() {
     return (
-        <div className="float-end">
+        <div className="d-flex align-items-center ms-auto">
             <GreenCheckmark />
             <IoEllipsisVertical className="fs-4" />
         </div>

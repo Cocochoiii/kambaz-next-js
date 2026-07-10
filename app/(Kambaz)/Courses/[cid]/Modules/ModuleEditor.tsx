@@ -1,4 +1,3 @@
-// app/(Kambaz)/Courses/[cid]/Modules/ModuleEditor.tsx
 "use client";
 
 import { Modal, Form, Button } from "react-bootstrap";

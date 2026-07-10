@@ -1,5 +1,3 @@
-// app/(Kambaz)/Courses/[cid]/Grades/GradeEditor.tsx
-
 "use client";
 
 import { useState, useEffect } from "react";

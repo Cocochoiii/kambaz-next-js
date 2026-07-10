@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import ListGroup from "react-bootstrap/ListGroup";
 import { BsGripVertical } from "react-icons/bs";
@@ -9,7 +9,9 @@ import LessonControlButtons from "./LessonControlButtons";
 import ModuleControlButtons from "./ModuleControlButtons";
 import ModulesControls from "./ModulesControls";
 import { useSelector, useDispatch } from "react-redux";
-import { addModule, deleteModule, updateModule, editModule } from "./reducer";
+import { setModules, addModule, deleteModule, updateModule, editModule } from "./reducer";
+import * as coursesClient from "../../client";
+import * as modulesClient from "./client";
 
 export default function ModulesPage() {
     const { cid } = useParams<{ cid: string }>();
@@ -17,6 +19,29 @@ export default function ModulesPage() {
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const dispatch = useDispatch();
     const [moduleName, setModuleName] = useState("");
+
+    // Load this course's modules from the server when the course changes.
+    const loadModules = async () => {
+        const mods = await coursesClient.findModulesForCourse(cid);
+        dispatch(setModules(mods));
+    };
+    useEffect(() => {
+        loadModules();
+    }, [cid]);
+
+    const createModule = async () => {
+        const newModule = await coursesClient.createModuleForCourse(cid, { name: moduleName, course: cid });
+        dispatch(addModule(newModule));
+        setModuleName("");
+    };
+    const removeModule = async (moduleId: string) => {
+        await modulesClient.deleteModule(moduleId);
+        dispatch(deleteModule(moduleId));
+    };
+    const saveModule = async (module: any) => {
+        await modulesClient.updateModule(module);
+        dispatch(updateModule(module));
+    };
 
     const courseModules = modules.filter((m: any) => m.course === cid);
     const [collapsed, setCollapsed] = useState<boolean[]>(() => courseModules.map(() => false));
@@ -34,10 +59,7 @@ export default function ModulesPage() {
                     allCollapsed={allCollapsed}
                     moduleName={moduleName}
                     setModuleName={setModuleName}
-                    addModule={() => {
-                        dispatch(addModule({ name: moduleName, course: cid }));
-                        setModuleName("");
-                    }}
+                    addModule={createModule}
                 />
             ) : (
                 <div id="wd-modules-toolbar" className="btn-toolbar gap-2 mb-3">
@@ -65,7 +87,7 @@ export default function ModulesPage() {
                                         onClick={(e) => e.stopPropagation()}
                                         onChange={(e) => dispatch(updateModule({ ...module, name: e.target.value }))}
                                         onKeyDown={(e) => {
-                                            if (e.key === "Enter") dispatch(updateModule({ ...module, editing: false }));
+                                            if (e.key === "Enter") saveModule({ ...module, editing: false });
                                         }}
                                         defaultValue={module.name}
                                     />
@@ -73,7 +95,7 @@ export default function ModulesPage() {
                                 {isFaculty && (
                                     <ModuleControlButtons
                                         moduleId={module._id}
-                                        deleteModule={(moduleId) => dispatch(deleteModule(moduleId))}
+                                        deleteModule={(moduleId) => removeModule(moduleId)}
                                         editModule={(moduleId) => dispatch(editModule(moduleId))}
                                     />
                                 )}
@@ -83,15 +105,14 @@ export default function ModulesPage() {
                         {module.lessons && (
                             <div id={`wd-module-panel-${i}`} hidden={collapsed[i]}>
                                 <ListGroup className="wd-lessons rounded-0">
-                                    <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <ListGroup.Item className="wd-lesson p-3 ps-1 d-flex align-items-center">
                                         <BsGripVertical className="me-2 wd-grip" />
                                         <span className="wd-title ms-2">LEARNING OBJECTIVES</span>
-                                        {/* Checkmark + kebab inside LessonControlButtons — faculty only */}
                                         {isFaculty && <LessonControlButtons />}
                                     </ListGroup.Item>
 
                                     {module.lessons.map((lesson: any) => (
-                                        <ListGroup.Item key={lesson._id} className="wd-lesson p-3 ps-1">
+                                        <ListGroup.Item key={lesson._id} className="wd-lesson p-3 ps-1 d-flex align-items-center">
                                             <BsGripVertical className="me-2 wd-grip" />
                                             {lesson.name}
                                             {isFaculty && <LessonControlButtons />}

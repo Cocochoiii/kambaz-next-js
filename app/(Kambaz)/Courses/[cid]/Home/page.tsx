@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import ListGroup from "react-bootstrap/ListGroup";
 import { BsGripVertical } from "react-icons/bs";
@@ -26,7 +26,7 @@ export default function HomePage() {
     const [showModuleEditor, setShowModuleEditor] = useState(false);
 
     const allModules = modules.filter((m: any) => m.course === cid);
-    const displayModules = allModules.slice(0, 2);
+    const displayModules = allModules;
 
     const [collapsed, setCollapsed] = useState<boolean[]>(() => displayModules.map(() => false));
     const allCollapsed = collapsed.every(Boolean);
@@ -50,7 +50,7 @@ export default function HomePage() {
 
     return (
         <div id="wd-courses-home">
-            <h1 className="text-danger m-0">Course {cid} — {course.name}</h1>
+            <h1 className="text-danger m-0">Course {cid} - {course.name}</h1>
             <p className="text-muted mt-1">{course.description}</p>
 
             <div className="d-flex gap-4">
@@ -135,12 +135,10 @@ export default function HomePage() {
                     ))}
                 </div>
 
-                {/* Right status column — FACULTY ONLY */}
-                {isFaculty && (
-                    <div id="wd-course-status-col" className="d-none d-xl-block" style={{ width: 340 }}>
-                        <Status />
-                    </div>
-                )}
+                {/* right status column */}
+                <div id="wd-course-status-col" className="d-none d-xl-block" style={{ width: 340 }}>
+                    <Status />
+                </div>
             </div>
 
             <ModuleEditor

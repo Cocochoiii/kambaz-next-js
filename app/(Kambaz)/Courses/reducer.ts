@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { courses } from "../Database";
-import { v4 as uuidv4 } from "uuid";
 
 export type Course = {
     _id: string;
@@ -34,18 +33,18 @@ const coursesSlice = createSlice({
     name: "courses",
     initialState,
     reducers: {
-        addCourse: (state) => {
-            const draft = state.course;
-            const newCourse = { ...draft, _id: uuidv4() };
-            state.courses = [...state.courses, newCourse] as any;
+        setCourses: (state, { payload: courses }) => {
+            state.courses = courses as any;
+        },
+        addCourse: (state, { payload: course }) => {
+            state.courses = [...state.courses, course] as any;
         },
         deleteCourse: (state, { payload: courseId }) => {
             state.courses = state.courses.filter((c: any) => c._id !== courseId);
         },
-        // Update saves whatever is currently in state.course
-        updateCourse: (state) => {
+        updateCourse: (state, { payload: course }) => {
             state.courses = state.courses.map((c: any) =>
-                c._id === state.course._id ? { ...c, ...state.course } : c
+                c._id === course._id ? course : c
             ) as any;
         },
         // Called by the Edit button to load that course into the form
@@ -55,5 +54,5 @@ const coursesSlice = createSlice({
     },
 });
 
-export const { addCourse, deleteCourse, updateCourse, setCourse } = coursesSlice.actions;
+export const { setCourses, addCourse, deleteCourse, updateCourse, setCourse } = coursesSlice.actions;
 export default coursesSlice.reducer;

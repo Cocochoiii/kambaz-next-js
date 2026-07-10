@@ -1,4 +1,3 @@
-// app/Labs/Lab4/ClickEvent.tsx
 "use client";
 
 export default function ClickEvent() {

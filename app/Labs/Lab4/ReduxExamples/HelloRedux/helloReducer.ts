@@ -1,4 +1,3 @@
-// app/Labs/Lab4/ReduxExamples/HelloRedux/helloReducer.ts
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {

@@ -3,19 +3,22 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setCurrentUser } from "../reducer";
+import * as client from "../client";
 import { Form, Button } from "react-bootstrap";
 
 export default function Signup() {
-    const [user, setUser] = useState({
+    const [user, setUser] = useState<any>({
         username: "",
         password: "",
         verifyPassword: "",
-        role: "STUDENT", // default role
+        role: "STUDENT",
     });
+    const dispatch = useDispatch();
     const router = useRouter();
 
-    const signup = () => {
-        // Basic validation
+    const signup = async () => {
         if (!user.username || !user.password) {
             alert("Please enter username and password");
             return;
@@ -24,10 +27,13 @@ export default function Signup() {
             alert("Passwords do not match");
             return;
         }
-
-        // In a real app, you'd save the user (including role) to the database here
-        // For now, just redirect to signin
-        router.push("/Account/Signin");
+        try {
+            const currentUser = await client.signup(user);
+            dispatch(setCurrentUser(currentUser));
+            router.push("/Dashboard");
+        } catch (err: any) {
+            alert(err?.response?.data?.message || "Unable to sign up");
+        }
     };
 
     return (
@@ -58,7 +64,6 @@ export default function Signup() {
                 onChange={(e) => setUser({ ...user, verifyPassword: e.target.value })}
             />
 
-            {/* Role selector (same style as Profile) */}
             <Form.Select
                 value={user.role}
                 id="wd-su-role"
@@ -71,17 +76,11 @@ export default function Signup() {
                 <option value="STUDENT">Student</option>
             </Form.Select>
 
-            <Button
-                onClick={signup}
-                className="btn btn-primary w-100 mb-2"
-                id="wd-signup-btn"
-            >
+            <Button onClick={signup} className="btn btn-primary w-100 mb-2" id="wd-signup-btn">
                 Signup
             </Button>
 
-            <Link href="/Account/Signin" className="link-primary">
-                Signin
-            </Link>
+            <Link href="/Account/Signin" className="link-primary">Signin</Link>
         </div>
     );
 }

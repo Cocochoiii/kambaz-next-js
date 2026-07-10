@@ -4,8 +4,9 @@ import { useParams } from "next/navigation";
 import { BsRocket, BsRocketFill, BsThreeDots } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
-import { addQuiz, deleteQuiz, updateQuiz } from "./reducer";
+import { useState, useEffect } from "react";
+import { setQuizzes, addQuiz, deleteQuiz, updateQuiz } from "./reducer";
+import * as quizzesClient from "./client";
 import QuizModal from "./QuizModal";
 
 export default function Quizzes() {
@@ -18,6 +19,14 @@ export default function Quizzes() {
 
     const { quizzes } = useSelector((state: any) => state.quizzesReducer);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
+
+    const loadQuizzes = async () => {
+        const list = await quizzesClient.findQuizzesForCourse(cid);
+        dispatch(setQuizzes(list));
+    };
+    useEffect(() => {
+        loadQuizzes();
+    }, [cid]);
 
     // Filter quizzes for current course
     const courseQuizzes = quizzes
@@ -52,20 +61,23 @@ export default function Quizzes() {
         setShowModal(true);
     };
 
-    const handleDeleteClick = (quizId: string) => {
+    const handleDeleteClick = async (quizId: string) => {
         if (window.confirm("Are you sure you want to delete this quiz?")) {
+            await quizzesClient.deleteQuiz(quizId);
             dispatch(deleteQuiz(quizId));
         }
     };
 
-    const handleSave = (quizData: any) => {
+    const handleSave = async (quizData: any) => {
         if (editMode) {
+            await quizzesClient.updateQuiz(quizData);
             dispatch(updateQuiz(quizData));
         } else {
-            dispatch(addQuiz({
+            const created = await quizzesClient.createQuiz(cid, {
                 ...quizData,
                 course: cid,
-            }));
+            });
+            dispatch(addQuiz(created));
         }
         setShowModal(false);
         setEditingQuiz(null);
