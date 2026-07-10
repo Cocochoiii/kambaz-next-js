@@ -83,6 +83,15 @@ export default function ModulesPage() {
         setEditingLessonId(null);
     };
 
+    // Bulk publish/unpublish every module in this course
+    const bulkPublish = async (published: boolean, includeItems: boolean) => {
+        const mods = modules.filter((m: any) => m.course === cid);
+        for (const m of mods) {
+            const lessons = includeItems ? (m.lessons || []).map((l: any) => ({ ...l, published })) : m.lessons;
+            await saveModule({ ...m, published, lessons });
+        }
+    };
+
     const courseModules = modules.filter((m: any) => m.course === cid);
     const [collapsed, setCollapsed] = useState<boolean[]>(() => courseModules.map(() => false));
     const allCollapsed = collapsed.every(Boolean);
@@ -100,6 +109,7 @@ export default function ModulesPage() {
                     moduleName={moduleName}
                     setModuleName={setModuleName}
                     addModule={createModule}
+                    bulkPublish={bulkPublish}
                 />
             ) : (
                 <div id="wd-modules-toolbar" className="btn-toolbar gap-2 mb-3">

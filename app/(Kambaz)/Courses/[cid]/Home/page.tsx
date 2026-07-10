@@ -73,6 +73,15 @@ export default function HomePage() {
         saveModule({ ...m, lessons: [...(m.lessons || []), lesson] });
     };
 
+    // Bulk publish/unpublish every module in this course (optionally its lessons too).
+    const bulkPublish = async (published: boolean, includeItems: boolean) => {
+        const mods = modules.filter((m: any) => m.course === cid);
+        for (const m of mods) {
+            const lessons = includeItems ? (m.lessons || []).map((l: any) => ({ ...l, published })) : m.lessons;
+            await saveModule({ ...m, published, lessons });
+        }
+    };
+
     if (!course) return <div>Course not found</div>;
 
     const role = (currentUser?.role ?? "").toString().toUpperCase();
@@ -97,7 +106,7 @@ export default function HomePage() {
                                 <button className="btn btn-secondary" id="wd-home-view-progress">
                                     View Progress
                                 </button>
-                                <PublishAllMenu idPrefix="wd-home" label="Publish All" />
+                                <PublishAllMenu idPrefix="wd-home" label="Publish All" onBulkPublish={bulkPublish} />
                                 <button
                                     className="btn btn-danger"
                                     id="wd-home-new-module"
