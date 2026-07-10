@@ -12,11 +12,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { setModules, addModule, deleteModule, updateModule, editModule } from "./reducer";
 import * as coursesClient from "../../client";
 import * as modulesClient from "./client";
+import { useIsFaculty } from "../../../Account/roles";
 
 export default function ModulesPage() {
     const { cid } = useParams<{ cid: string }>();
     const { modules } = useSelector((state: any) => state.modulesReducer);
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const isFaculty = useIsFaculty();
     const dispatch = useDispatch();
     const [moduleName, setModuleName] = useState("");
     // Track which lesson is being renamed inline.
@@ -93,12 +94,14 @@ export default function ModulesPage() {
     };
 
     const courseModules = modules.filter((m: any) => m.course === cid);
+    // Students only see published modules; faculty see everything.
+    const visibleModules = isFaculty
+        ? courseModules
+        : courseModules.filter((m: any) => m.published !== false);
     const [collapsed, setCollapsed] = useState<boolean[]>(() => courseModules.map(() => false));
     const allCollapsed = collapsed.every(Boolean);
     const toggleAll = () => setCollapsed(collapsed.map(() => !allCollapsed));
     const toggleOne = (i: number) => setCollapsed((prev) => prev.map((c, idx) => (idx === i ? !c : c)));
-
-    const isFaculty = (currentUser?.role ?? "").toString().toUpperCase() === "FACULTY";
 
     return (
         <div id="wd-courses-modules">
@@ -120,7 +123,7 @@ export default function ModulesPage() {
             )}
 
             <ListGroup id="wd-modules" className="rounded-0">
-                {courseModules.map((module: any, i: number) => (
+                {visibleModules.map((module: any, i: number) => (
                     <ListGroup.Item key={module._id} className="wd-module p-0 mb-5 fs-5 border-gray">
                         <button
                             className="w-100 text-start border-0 p-0"
@@ -163,7 +166,9 @@ export default function ModulesPage() {
                                         <span className="wd-title ms-2">LEARNING OBJECTIVES</span>
                                     </ListGroup.Item>
 
-                                    {module.lessons.map((lesson: any) => (
+                                    {module.lessons
+                                        .filter((l: any) => isFaculty || l.published !== false)
+                                        .map((lesson: any) => (
                                         <ListGroup.Item key={lesson._id} className="wd-lesson p-3 ps-1 d-flex align-items-center">
                                             <BsGripVertical className="me-2 wd-grip" />
                                             {editingLessonId === lesson._id ? (

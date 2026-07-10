@@ -13,13 +13,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { setModules, addModule, deleteModule, updateModule, editModule } from "../Modules/reducer";
 import * as coursesClient from "../../client";
 import * as modulesClient from "../Modules/client";
+import { useIsFaculty } from "../../../Account/roles";
 
 export default function HomePage() {
     const { cid } = useParams<{ cid: string }>();
     const dispatch = useDispatch();
     const { modules } = useSelector((state: any) => state.modulesReducer);
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
     const { courses } = useSelector((state: any) => state.coursesReducer);
+    const isFaculty = useIsFaculty();
 
     const course = courses.find((c: any) => c._id === cid);
 
@@ -35,7 +36,10 @@ export default function HomePage() {
         loadModules();
     }, [cid]);
 
-    const displayModules = modules.filter((m: any) => m.course === cid);
+    // Students only see published modules; faculty see everything.
+    const displayModules = modules.filter(
+        (m: any) => m.course === cid && (isFaculty || m.published !== false)
+    );
 
     const [collapsed, setCollapsed] = useState<boolean[]>(() => displayModules.map(() => false));
     const allCollapsed = collapsed.every(Boolean);
@@ -83,9 +87,6 @@ export default function HomePage() {
     };
 
     if (!course) return <div>Course not found</div>;
-
-    const role = (currentUser?.role ?? "").toString().toUpperCase();
-    const isFaculty = role === "FACULTY";
 
     return (
         <div id="wd-courses-home">
@@ -175,10 +176,12 @@ export default function HomePage() {
                     ))}
                 </div>
 
-                {/* right status column */}
-                <div id="wd-course-status-col" className="d-none d-xl-block" style={{ width: 340 }}>
-                    <Status />
-                </div>
+                {/* right status column (faculty only, like Canvas) */}
+                {isFaculty && (
+                    <div id="wd-course-status-col" className="d-none d-xl-block" style={{ width: 340 }}>
+                        <Status />
+                    </div>
+                )}
             </div>
 
             <ModuleEditor

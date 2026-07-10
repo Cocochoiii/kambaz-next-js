@@ -6,6 +6,7 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { addAssignment, updateAssignment } from "../reducer";
 import * as assignmentsClient from "../client";
+import { useIsFaculty } from "../../../../Account/roles";
 
 export default function AssignmentEditor() {
     const { cid, aid } = useParams<{ cid: string; aid: string }>();
@@ -32,6 +33,29 @@ export default function AssignmentEditor() {
             setAssignment(existingAssignment);
         }
     }, [existingAssignment, isNew]);
+
+    const isFaculty = useIsFaculty();
+
+    // Students see a read-only detail page; only faculty get the editor.
+    if (!isFaculty) {
+        return (
+            <div id="wd-assignment-details" className="container-fluid">
+                <h2 className="text-danger">{assignment.title}</h2>
+                <hr />
+                <p style={{ whiteSpace: "pre-wrap" }}>{assignment.description}</p>
+                <ul className="list-unstyled">
+                    <li className="mb-1"><b>Points:</b> {assignment.points}</li>
+                    <li className="mb-1">
+                        <b>Due:</b>{" "}
+                        {assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString() : "-"}
+                    </li>
+                </ul>
+                <Button variant="secondary" onClick={() => router.push(`/Courses/${cid}/Assignments`)}>
+                    Back to Assignments
+                </Button>
+            </div>
+        );
+    }
 
     const handleSave = async () => {
         if (isNew) {

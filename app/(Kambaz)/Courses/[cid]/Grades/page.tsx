@@ -15,6 +15,7 @@ import {
 import { BsThreeDots } from "react-icons/bs";
 import GradeEditor from "./GradeEditor";
 import * as db from "../../../Database";
+import { useIsFaculty } from "../../../Account/roles";
 
 // Escape one value for a CSV cell.
 const csvCell = (value: any) => {
@@ -60,7 +61,7 @@ export default function Grades() {
     const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
     const [selectedAssignment, setSelectedAssignment] = useState<string | null>(null);
 
-    const isFaculty = currentUser?.role === "FACULTY";
+    const isFaculty = useIsFaculty();
 
     // Course assignments, sorted by the selected "Arrange By" option.
     const courseAssignments = [...assignments.filter((a: any) => a.course === cid)].sort((a: any, b: any) => {

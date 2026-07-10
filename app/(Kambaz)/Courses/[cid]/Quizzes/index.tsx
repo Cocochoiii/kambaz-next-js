@@ -2,13 +2,14 @@
 
 import { useParams } from "next/navigation";
 import { BsRocket, BsRocketFill } from "react-icons/bs";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaPlus, FaTrash, FaCheckCircle, FaBan } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { setQuizzes, addQuiz, deleteQuiz, updateQuiz } from "./reducer";
 import * as quizzesClient from "./client";
 import QuizModal from "./QuizModal";
 import KebabMenu from "@/app/(Kambaz)/KebabMenu";
+import { useIsFaculty } from "../../../Account/roles";
 
 export default function Quizzes() {
     const { cid } = useParams<{ cid: string }>();
@@ -19,7 +20,7 @@ export default function Quizzes() {
     const [searchTerm, setSearchTerm] = useState("");
 
     const { quizzes } = useSelector((state: any) => state.quizzesReducer);
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const isFaculty = useIsFaculty();
 
     const loadQuizzes = async () => {
         const list = await quizzesClient.findQuizzesForCourse(cid);
@@ -34,10 +35,16 @@ export default function Quizzes() {
         .filter((quiz: any) => quiz.course === cid)
         .filter((quiz: any) =>
             quiz.title.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        )
+        // Students only see published quizzes.
+        .filter((quiz: any) => isFaculty || quiz.published !== false);
 
-    // Check if current user is faculty
-    const isFaculty = currentUser?.role === "FACULTY";
+    // Faculty publish toggle: persists on the server via the update endpoint.
+    const togglePublish = async (quiz: any) => {
+        const updated = { ...quiz, published: !(quiz.published !== false) };
+        await quizzesClient.updateQuiz(updated);
+        dispatch(updateQuiz(updated));
+    };
 
     const handleAddClick = () => {
         setEditingQuiz({
@@ -147,6 +154,18 @@ export default function Quizzes() {
                             </div>
                             {isFaculty && (
                                 <div className="ms-3 d-flex align-items-center gap-2">
+                                    <button
+                                        className="btn btn-link p-0"
+                                        type="button"
+                                        title={quiz.published !== false ? "Published — click to unpublish" : "Unpublished — click to publish"}
+                                        onClick={() => togglePublish(quiz)}
+                                    >
+                                        {quiz.published !== false ? (
+                                            <FaCheckCircle className="text-success" />
+                                        ) : (
+                                            <FaBan className="text-secondary" />
+                                        )}
+                                    </button>
                                     <button
                                         className="btn btn-link text-danger p-0"
                                         type="button"

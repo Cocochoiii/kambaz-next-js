@@ -1,50 +1,91 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { FaAlignJustify } from "react-icons/fa";
+import { Button } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
 import CourseNavigation from "../CourseNavigation";
 import * as db from "../../Database";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import * as enrollmentsClient from "../../Enrollments/client";
+import { setViewAsStudent } from "../../Account/reducer";
 
 export default function CoursesLayout({ children }: { children: ReactNode }) {
     const { cid } = useParams<{ cid: string }>();
     const pathname = usePathname();
     const router = useRouter();
+    const dispatch = useDispatch();
     const course = db.courses.find((c: any) => c._id === cid);
 
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const { currentUser, viewAsStudent } = useSelector((s: any) => s.accountReducer);
+    const realFaculty = (currentUser?.role ?? "").toString().toUpperCase() === "FACULTY";
 
-    // Any signed-in user may open a course; the Dashboard controls enrollment.
-    const canAccess = !!currentUser;
-
+    // Gate access: faculty may open any course; students only their enrolled ones.
+    const [access, setAccess] = useState<"checking" | "ok">("checking");
     useEffect(() => {
-        if (!currentUser) {
-            router.push("/Account/Signin");
-        } else if (!canAccess) {
-            router.push("/Dashboard");
-        }
-    }, [currentUser, canAccess, router]);
+        let active = true;
+        const check = async () => {
+            if (!currentUser) {
+                router.push("/Account/Signin");
+                return;
+            }
+            if (realFaculty) {
+                setAccess("ok");
+                return;
+            }
+            try {
+                const mine = await enrollmentsClient.findCoursesForUser(currentUser._id);
+                const enrolled = mine.some((c: any) => c._id === cid);
+                if (!active) return;
+                if (enrolled) setAccess("ok");
+                else router.push("/Dashboard");
+            } catch {
+                if (active) router.push("/Dashboard");
+            }
+        };
+        setAccess("checking");
+        check();
+        return () => {
+            active = false;
+        };
+    }, [currentUser, realFaculty, cid, router]);
 
-    if (!canAccess) {
+    if (!currentUser || access !== "ok") {
         return null;
     }
 
-    // Extract the section name from the pathname for breadcrumb
-    const pathParts = pathname.split('/');
-    const section = pathParts[pathParts.length - 1] === cid
-        ? "Home"
-        : pathParts[pathParts.length - 1] === "Table"
-            ? "People"
-            : pathParts[pathParts.length - 1];
+    // Section name for the breadcrumb.
+    const parts = pathname.split("/");
+    const last = parts[parts.length - 1];
+    const section = last === cid ? "Home" : last === "Table" ? "People" : last;
 
     return (
         <div id="wd-courses" className="p-2">
-            <h2 className="text-danger">
-                <FaAlignJustify className="me-3 fs-4 mb-1" />
-                {course ? course.name : `Course ${cid}`} &gt; {section}
-            </h2>
+            {realFaculty && viewAsStudent && (
+                <div className="alert alert-warning d-flex justify-content-between align-items-center py-2">
+                    <span>You are viewing this course as a student.</span>
+                    <Button size="sm" variant="dark" onClick={() => dispatch(setViewAsStudent(false))}>
+                        Leave Student View
+                    </Button>
+                </div>
+            )}
+
+            <div className="d-flex justify-content-between align-items-center">
+                <h2 className="text-danger m-0">
+                    <FaAlignJustify className="me-3 fs-4 mb-1" />
+                    {course ? course.name : `Course ${cid}`} &gt; {section}
+                </h2>
+                {realFaculty && !viewAsStudent && (
+                    <Button
+                        size="sm"
+                        variant="outline-secondary"
+                        onClick={() => dispatch(setViewAsStudent(true))}
+                    >
+                        Student View
+                    </Button>
+                )}
+            </div>
             <hr />
             <div className="d-flex">
                 <div className="d-none d-md-block" style={{ minWidth: 200 }}>

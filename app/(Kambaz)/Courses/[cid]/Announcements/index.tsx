@@ -8,6 +8,7 @@ import { setAnnouncements, addAnnouncement, deleteAnnouncement, updateAnnounceme
 import * as announcementsClient from "./client";
 import AnnouncementModal from "./AnnouncementModal";
 import KebabMenu from "@/app/(Kambaz)/KebabMenu";
+import { useIsFaculty } from "../../../Account/roles";
 
 export default function Announcements() {
     const { cid } = useParams<{ cid: string }>();
@@ -40,7 +41,7 @@ export default function Announcements() {
         });
 
     // Check if current user is faculty
-    const isFaculty = currentUser?.role === "FACULTY";
+    const isFaculty = useIsFaculty();
 
     const handleAddClick = () => {
         setEditingAnnouncement({

@@ -11,17 +11,19 @@ import {
     BsSearch
 } from "react-icons/bs";
 import { FaPlus, FaTrash } from "react-icons/fa6";
+import { FaCheckCircle, FaBan } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { setAssignments, deleteAssignment } from "./reducer";
+import { setAssignments, deleteAssignment, updateAssignment } from "./reducer";
 import * as assignmentsClient from "./client";
 import KebabMenu from "@/app/(Kambaz)/KebabMenu";
+import { useIsFaculty } from "../../../Account/roles";
 
 export default function Assignments() {
     const { cid } = useParams<{ cid: string }>();
     const router = useRouter();
     const dispatch = useDispatch();
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const isFaculty = useIsFaculty();
 
     const loadAssignments = async () => {
         const list = await assignmentsClient.findAssignmentsForCourse(cid);
@@ -34,8 +36,16 @@ export default function Assignments() {
     const [searchTerm, setSearchTerm] = useState("");
     const courseAssignments = assignments
         .filter((a: any) => a.course === cid)
-        .filter((a: any) => a.title.toLowerCase().includes(searchTerm.toLowerCase()));
-    const isFaculty = (currentUser?.role ?? "").toString().toUpperCase() === "FACULTY";
+        .filter((a: any) => a.title.toLowerCase().includes(searchTerm.toLowerCase()))
+        // Students only see published assignments.
+        .filter((a: any) => isFaculty || a.published !== false);
+
+    // Faculty publish toggle: persists on the server via the update endpoint.
+    const togglePublish = async (a: any) => {
+        const updated = { ...a, published: !(a.published !== false) };
+        await assignmentsClient.updateAssignment(updated);
+        dispatch(updateAssignment(updated));
+    };
 
     const handleDelete = async (assignmentId: string) => {
         if (window.confirm("Are you sure you want to delete this assignment?")) {
@@ -120,6 +130,18 @@ export default function Assignments() {
                                 {/* Students see no controls; faculty can delete or edit */}
                                 {isFaculty && (
                                     <>
+                                        <Button
+                                            variant="link"
+                                            className="p-0"
+                                            title={assignment.published !== false ? "Published — click to unpublish" : "Unpublished — click to publish"}
+                                            onClick={() => togglePublish(assignment)}
+                                        >
+                                            {assignment.published !== false ? (
+                                                <FaCheckCircle className="text-success" />
+                                            ) : (
+                                                <FaBan className="text-secondary" />
+                                            )}
+                                        </Button>
                                         <Button
                                             variant="link"
                                             className="text-danger p-0"
