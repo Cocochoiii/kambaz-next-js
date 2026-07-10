@@ -63,7 +63,7 @@ interface GradesState {
 // Import data - use dynamic imports to avoid circular dependencies
 const getInitialData = () => {
     try {
-        const db = require("@/app/Database");
+        const db = require("../../../Database");
         return {
             grades: db.grades || [],
             gradeCategories: db.gradeCategories || [],

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { FormControl, FormSelect, Button } from "react-bootstrap";
-import { FaUserCircle, FaPencil, FaCheck } from "react-icons/fa6";
+import { FaUserCircle } from "react-icons/fa";
+import { FaPencil, FaCheck } from "react-icons/fa6";
 import { useDispatch } from "react-redux";
 import * as client from "../client";
 import {
