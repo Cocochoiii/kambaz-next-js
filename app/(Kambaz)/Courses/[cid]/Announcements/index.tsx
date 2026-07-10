@@ -2,12 +2,12 @@
 
 import { useParams } from "next/navigation";
 import { FaUserCircle, FaPlus, FaTrash } from "react-icons/fa";
-import { BsThreeDots } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { setAnnouncements, addAnnouncement, deleteAnnouncement, updateAnnouncement } from "./reducer";
 import * as announcementsClient from "./client";
 import AnnouncementModal from "./AnnouncementModal";
+import KebabMenu from "@/app/(Kambaz)/KebabMenu";
 
 export default function Announcements() {
     const { cid } = useParams<{ cid: string }>();
@@ -28,7 +28,16 @@ export default function Announcements() {
     }, [cid]);
 
     // Filter announcements for current course
-    const courseAnnouncements = announcements.filter((a: any) => a.course === cid);
+    const [searchTerm, setSearchTerm] = useState("");
+    const courseAnnouncements = announcements
+        .filter((a: any) => a.course === cid)
+        .filter((a: any) => {
+            const q = searchTerm.toLowerCase();
+            return (
+                (a.title || "").toLowerCase().includes(q) ||
+                (a.content || "").toLowerCase().includes(q)
+            );
+        });
 
     // Check if current user is faculty
     const isFaculty = currentUser?.role === "FACULTY";
@@ -81,6 +90,8 @@ export default function Announcements() {
                         type="text"
                         className="form-control w-50"
                         placeholder="Search..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     {isFaculty && (
                         <button
@@ -134,26 +145,7 @@ export default function Announcements() {
                                                     >
                                                         <FaTrash />
                                                     </button>
-                                                    <div className="dropdown">
-                                                        <button
-                                                            className="btn btn-link text-muted p-0"
-                                                            type="button"
-                                                            data-bs-toggle="dropdown"
-                                                            aria-expanded="false"
-                                                        >
-                                                            <BsThreeDots />
-                                                        </button>
-                                                        <ul className="dropdown-menu">
-                                                            <li>
-                                                                <button
-                                                                    className="dropdown-item"
-                                                                    onClick={() => handleEditClick(announcement)}
-                                                                >
-                                                                    Edit
-                                                                </button>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
+                                                    <KebabMenu items={[{ label: "Edit", onClick: () => handleEditClick(announcement) }]} />
                                                 </div>
                                             )}
                                         </div>

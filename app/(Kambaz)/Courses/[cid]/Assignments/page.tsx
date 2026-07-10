@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ListGroup, Badge, Button, Form, InputGroup } from "react-bootstrap";
 import {
     BsGripVertical,
     BsFileEarmarkText,
-    BsThreeDotsVertical,
     BsPlus,
     BsSearch
 } from "react-icons/bs";
@@ -15,6 +14,7 @@ import { FaPlus, FaTrash } from "react-icons/fa6";
 import { useSelector, useDispatch } from "react-redux";
 import { setAssignments, deleteAssignment } from "./reducer";
 import * as assignmentsClient from "./client";
+import KebabMenu from "@/app/(Kambaz)/KebabMenu";
 
 export default function Assignments() {
     const { cid } = useParams<{ cid: string }>();
@@ -31,7 +31,10 @@ export default function Assignments() {
         loadAssignments();
     }, [cid]);
 
-    const courseAssignments = assignments.filter((a: any) => a.course === cid);
+    const [searchTerm, setSearchTerm] = useState("");
+    const courseAssignments = assignments
+        .filter((a: any) => a.course === cid)
+        .filter((a: any) => a.title.toLowerCase().includes(searchTerm.toLowerCase()));
     const isFaculty = (currentUser?.role ?? "").toString().toUpperCase() === "FACULTY";
 
     const handleDelete = async (assignmentId: string) => {
@@ -48,11 +51,16 @@ export default function Assignments() {
             <div className="d-flex align-items-center gap-2 mb-3">
                 <InputGroup style={{ maxWidth: 380 }}>
                     <InputGroup.Text><BsSearch /></InputGroup.Text>
-                    <Form.Control id="wd-search-assignment" placeholder="Search for Assignments" />
+                    <Form.Control
+                        id="wd-search-assignment"
+                        placeholder="Search for Assignments"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                 </InputGroup>
                 {isFaculty && (
                     <>
-                        <Button id="wd-add-assignment-group" variant="secondary" className="ms-auto">
+                        <Button id="wd-add-assignment-group" variant="secondary" className="ms-auto" onClick={handleAddAssignment}>
                             <FaPlus className="me-1" /> Group
                         </Button>
                         <Button id="wd-add-assignment" variant="danger" onClick={handleAddAssignment}>
@@ -73,7 +81,7 @@ export default function Assignments() {
                         {isFaculty && (
                             <>
                                 <Button size="sm" variant="light" onClick={handleAddAssignment}><BsPlus /></Button>
-                                <Button size="sm" variant="light"><BsThreeDotsVertical /></Button>
+                                <KebabMenu items={[{ label: "New Assignment", onClick: handleAddAssignment }]} />
                             </>
                         )}
                     </div>
@@ -109,17 +117,27 @@ export default function Assignments() {
                             </div>
 
                             <div className="ms-3 d-flex align-items-center gap-2">
-                                {/* No green check for students; faculty can delete */}
+                                {/* Students see no controls; faculty can delete or edit */}
                                 {isFaculty && (
-                                    <Button
-                                        variant="link"
-                                        className="text-danger p-0"
-                                        onClick={() => handleDelete(assignment._id)}
-                                    >
-                                        <FaTrash />
-                                    </Button>
+                                    <>
+                                        <Button
+                                            variant="link"
+                                            className="text-danger p-0"
+                                            onClick={() => handleDelete(assignment._id)}
+                                        >
+                                            <FaTrash />
+                                        </Button>
+                                        <KebabMenu
+                                            items={[
+                                                {
+                                                    label: "Edit",
+                                                    onClick: () =>
+                                                        router.push(`/Courses/${cid}/Assignments/${assignment._id}`),
+                                                },
+                                            ]}
+                                        />
+                                    </>
                                 )}
-                                <BsThreeDotsVertical className="text-secondary" />
                             </div>
                         </ListGroup.Item>
                     ))}

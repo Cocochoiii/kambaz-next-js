@@ -1,13 +1,14 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { BsRocket, BsRocketFill, BsThreeDots } from "react-icons/bs";
+import { BsRocket, BsRocketFill } from "react-icons/bs";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { setQuizzes, addQuiz, deleteQuiz, updateQuiz } from "./reducer";
 import * as quizzesClient from "./client";
 import QuizModal from "./QuizModal";
+import KebabMenu from "@/app/(Kambaz)/KebabMenu";
 
 export default function Quizzes() {
     const { cid } = useParams<{ cid: string }>();
@@ -153,26 +154,7 @@ export default function Quizzes() {
                                     >
                                         <FaTrash />
                                     </button>
-                                    <div className="dropdown">
-                                        <button
-                                            className="btn btn-link text-muted p-0"
-                                            type="button"
-                                            data-bs-toggle="dropdown"
-                                            aria-expanded="false"
-                                        >
-                                            <BsThreeDots />
-                                        </button>
-                                        <ul className="dropdown-menu">
-                                            <li>
-                                                <button
-                                                    className="dropdown-item"
-                                                    onClick={() => handleEditClick(quiz)}
-                                                >
-                                                    Edit
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    <KebabMenu items={[{ label: "Edit", onClick: () => handleEditClick(quiz) }]} />
                                 </div>
                             )}
                         </div>

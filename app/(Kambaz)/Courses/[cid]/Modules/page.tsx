@@ -19,6 +19,9 @@ export default function ModulesPage() {
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const dispatch = useDispatch();
     const [moduleName, setModuleName] = useState("");
+    // Track which lesson is being renamed inline.
+    const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
+    const [editingLessonName, setEditingLessonName] = useState("");
 
     // Load this course's modules from the server when the course changes.
     const loadModules = async () => {
@@ -41,6 +44,43 @@ export default function ModulesPage() {
     const saveModule = async (module: any) => {
         await modulesClient.updateModule(module);
         dispatch(updateModule(module));
+    };
+
+    // Module publish is the parent switch: toggling it sets every lesson to match.
+    const findModule = (moduleId: string) => modules.find((m: any) => m._id === moduleId);
+    const togglePublish = (moduleId: string) => {
+        const m = findModule(moduleId);
+        const next = !(m.published !== false);
+        const lessons = (m.lessons || []).map((l: any) => ({ ...l, published: next }));
+        saveModule({ ...m, published: next, lessons });
+    };
+    const addLesson = (moduleId: string) => {
+        const m = findModule(moduleId);
+        const lesson = { _id: crypto.randomUUID(), name: "New Lesson", published: true };
+        saveModule({ ...m, lessons: [...(m.lessons || []), lesson] });
+    };
+    const toggleLessonPublish = (moduleId: string, lessonId: string) => {
+        const m = findModule(moduleId);
+        const lessons = m.lessons.map((l: any) =>
+            l._id === lessonId ? { ...l, published: !(l.published !== false) } : l
+        );
+        saveModule({ ...m, lessons });
+    };
+    const deleteLesson = (moduleId: string, lessonId: string) => {
+        const m = findModule(moduleId);
+        saveModule({ ...m, lessons: m.lessons.filter((l: any) => l._id !== lessonId) });
+    };
+    const startEditLesson = (lesson: any) => {
+        setEditingLessonId(lesson._id);
+        setEditingLessonName(lesson.name);
+    };
+    const saveEditLesson = (moduleId: string) => {
+        const m = findModule(moduleId);
+        const lessons = m.lessons.map((l: any) =>
+            l._id === editingLessonId ? { ...l, name: editingLessonName } : l
+        );
+        saveModule({ ...m, lessons });
+        setEditingLessonId(null);
     };
 
     const courseModules = modules.filter((m: any) => m.course === cid);
@@ -95,8 +135,11 @@ export default function ModulesPage() {
                                 {isFaculty && (
                                     <ModuleControlButtons
                                         moduleId={module._id}
+                                        published={module.published !== false}
                                         deleteModule={(moduleId) => removeModule(moduleId)}
                                         editModule={(moduleId) => dispatch(editModule(moduleId))}
+                                        togglePublish={(moduleId) => togglePublish(moduleId)}
+                                        addLesson={(moduleId) => addLesson(moduleId)}
                                     />
                                 )}
                             </div>
@@ -108,14 +151,33 @@ export default function ModulesPage() {
                                     <ListGroup.Item className="wd-lesson p-3 ps-1 d-flex align-items-center">
                                         <BsGripVertical className="me-2 wd-grip" />
                                         <span className="wd-title ms-2">LEARNING OBJECTIVES</span>
-                                        {isFaculty && <LessonControlButtons />}
                                     </ListGroup.Item>
 
                                     {module.lessons.map((lesson: any) => (
                                         <ListGroup.Item key={lesson._id} className="wd-lesson p-3 ps-1 d-flex align-items-center">
                                             <BsGripVertical className="me-2 wd-grip" />
-                                            {lesson.name}
-                                            {isFaculty && <LessonControlButtons />}
+                                            {editingLessonId === lesson._id ? (
+                                                <Form.Control
+                                                    className="w-50 d-inline-block"
+                                                    autoFocus
+                                                    value={editingLessonName}
+                                                    onChange={(e) => setEditingLessonName(e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter") saveEditLesson(module._id);
+                                                    }}
+                                                    onBlur={() => saveEditLesson(module._id)}
+                                                />
+                                            ) : (
+                                                lesson.name
+                                            )}
+                                            {isFaculty && (
+                                                <LessonControlButtons
+                                                    published={lesson.published !== false}
+                                                    onTogglePublish={() => toggleLessonPublish(module._id, lesson._id)}
+                                                    onEdit={() => startEditLesson(lesson)}
+                                                    onDelete={() => deleteLesson(module._id, lesson._id)}
+                                                />
+                                            )}
                                         </ListGroup.Item>
                                     ))}
                                 </ListGroup>

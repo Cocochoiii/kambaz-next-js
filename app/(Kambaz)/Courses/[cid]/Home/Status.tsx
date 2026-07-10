@@ -8,12 +8,14 @@ import { FaCheckCircle } from "react-icons/fa";
 import { BiImport } from "react-icons/bi";
 import { LiaFileImportSolid } from "react-icons/lia";
 import { FaHouse, FaBullhorn, FaChartLine, FaBell } from "react-icons/fa6";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import * as coursesClient from "../../client";
+import { updateCourse } from "../../reducer";
 
 export default function CourseStatus() {
     const { cid } = useParams<{ cid: string }>();
     const router = useRouter();
-    const [isPublished, setIsPublished] = useState(true);
+    const dispatch = useDispatch();
     const [showImportModal, setShowImportModal] = useState(false);
     const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
     const [showHomePageModal, setShowHomePageModal] = useState(false);
@@ -24,10 +26,17 @@ export default function CourseStatus() {
     const { courses } = useSelector((state: any) => state.coursesReducer);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
 
+    // Course publish state comes from the course record and is saved to the server.
+    const course = courses.find((c: any) => c._id === cid);
+    const isPublished = course?.published !== false;
 
-    // Toggle publish status
-    const handlePublishToggle = () => {
-        setIsPublished(!isPublished);
+
+    // Toggle publish status (persisted to the server)
+    const handlePublishToggle = async () => {
+        if (!course) return;
+        const updated = { ...course, published: !isPublished };
+        await coursesClient.updateCourse(updated);
+        dispatch(updateCourse(updated));
         setShowSuccessAlert(
             isPublished ? "Course unpublished successfully" : "Course published successfully"
         );
