@@ -83,7 +83,7 @@ export default function ModulesPage() {
         setEditingLessonId(null);
     };
 
-    // Bulk publish/unpublish every module in this course
+    // Bulk publish/unpublish every module in this course (optionally its lessons too).
     const bulkPublish = async (published: boolean, includeItems: boolean) => {
         const mods = modules.filter((m: any) => m.course === cid);
         for (const m of mods) {

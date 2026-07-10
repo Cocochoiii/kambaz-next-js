@@ -16,6 +16,23 @@ import { BsThreeDots } from "react-icons/bs";
 import GradeEditor from "./GradeEditor";
 import * as db from "../../../Database";
 
+// Escape one value for a CSV cell.
+const csvCell = (value: any) => {
+    const s = String(value ?? "");
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+};
+
+// Trigger a client-side CSV file download.
+const downloadCsv = (text: string, filename: string) => {
+    const blob = new Blob([text], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+};
+
 export default function Grades() {
     const { cid } = useParams<{ cid: string }>();
     const dispatch = useDispatch();
@@ -45,8 +62,12 @@ export default function Grades() {
 
     const isFaculty = currentUser?.role === "FACULTY";
 
-    // Get course assignments
-    const courseAssignments = assignments.filter((a: any) => a.course === cid);
+    // Course assignments, sorted by the selected "Arrange By" option.
+    const courseAssignments = [...assignments.filter((a: any) => a.course === cid)].sort((a: any, b: any) => {
+        if (arrangeBy === "Title") return a.title.localeCompare(b.title);
+        if (arrangeBy === "Points") return Number(a.points || 0) - Number(b.points || 0);
+        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    });
 
     // Get enrolled students for faculty view
     const enrolledStudents = isFaculty
@@ -141,6 +162,26 @@ export default function Grades() {
         setShowEditor(false);
     };
 
+    // Export the gradebook as a CSV file (faculty).
+    const handleExport = () => {
+        const header = ["Student", "ID", ...courseAssignments.map((a: any) => a.title), "Total"];
+        const rows = enrolledStudents.map((student: any) => {
+            const scores = courseAssignments.map((a: any) => {
+                const grade = getGradeForAssignment(a._id, student._id);
+                return grade && grade.score !== null && grade.score !== undefined ? grade.score : "";
+            });
+            const total = calculateTotalGrade(student._id);
+            return [
+                `${student.firstName} ${student.lastName}`,
+                student._id,
+                ...scores,
+                `${total.percentage}% (${total.letter})`,
+            ];
+        });
+        const csv = [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+        downloadCsv(csv, `${cid}-grades.csv`);
+    };
+
     const { percentage, letter } = calculateTotalGrade(isFaculty ? null : currentUser._id);
     const hasUnreleasedGrades = grades.some((g: any) => g.course === cid && !g.released);
 
@@ -193,7 +234,7 @@ export default function Grades() {
                     </div>
                     <div className="d-flex gap-2">
                         {!isFaculty && (
-                            <button className="btn btn-outline-secondary">
+                            <button className="btn btn-outline-secondary" onClick={() => window.print()}>
                                 <FaPrint className="me-2" />
                                 Print Grades
                             </button>
@@ -214,7 +255,7 @@ export default function Grades() {
                                     <FaCheckCircle className="me-2" />
                                     {hasUnreleasedGrades ? 'Release Grades' : 'Grades Released'}
                                 </button>
-                                <button className="btn btn-primary">
+                                <button className="btn btn-primary" onClick={handleExport}>
                                     <FaFileExport className="me-2" />
                                     Export
                                 </button>
@@ -227,7 +268,7 @@ export default function Grades() {
             {/* Canvas Filter Bar */}
             <div className="bg-light p-3 mb-4 border rounded">
                 <div className="row align-items-end g-3">
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                         <label className="form-label fw-bold small">Course</label>
                         <select
                             className="form-select"
@@ -237,7 +278,7 @@ export default function Grades() {
                             <option>{currentCourse?.number} {currentCourse?.name}</option>
                         </select>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                         <label className="form-label fw-bold small">Arrange By</label>
                         <select
                             className="form-select"
@@ -247,11 +288,7 @@ export default function Grades() {
                             <option>Due Date</option>
                             <option>Title</option>
                             <option>Points</option>
-                            <option>Module</option>
                         </select>
-                    </div>
-                    <div className="col-md-4">
-                        <button className="btn btn-danger w-100">Apply</button>
                     </div>
                 </div>
             </div>

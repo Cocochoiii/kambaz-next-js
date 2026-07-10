@@ -11,6 +11,8 @@ import { FaHouse, FaBullhorn, FaChartLine, FaBell } from "react-icons/fa6";
 import { useSelector, useDispatch } from "react-redux";
 import * as coursesClient from "../../client";
 import { updateCourse } from "../../reducer";
+import * as announcementsClient from "../Announcements/client";
+import { addAnnouncement } from "../Announcements/reducer";
 
 export default function CourseStatus() {
     const { cid } = useParams<{ cid: string }>();
@@ -50,9 +52,11 @@ export default function CourseStatus() {
         setTimeout(() => setShowSuccessAlert(""), 3000);
     };
 
-    // Create new announcement
-    const handleCreateAnnouncement = () => {
+    // Create a new announcement (saved to the server)
+    const handleCreateAnnouncement = async () => {
         if (announcement.title && announcement.content) {
+            const created = await announcementsClient.createAnnouncement(cid, announcement);
+            dispatch(addAnnouncement(created));
             setShowAnnouncementModal(false);
             setAnnouncement({ title: "", content: "" });
             setShowSuccessAlert("Announcement posted successfully");

@@ -3,6 +3,7 @@
 import { Dropdown } from "react-bootstrap";
 import { FaCheckCircle, FaBan } from "react-icons/fa";
 
+// Bulk publish/unpublish menu. includeItems=true also sets every lesson to match.
 export default function PublishAllMenu({
     idPrefix = "wd",
     label = "Publish All",
