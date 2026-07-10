@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 export default function SettingsPage() {
-    // Local demo state (purely client-side placeholders)
+    // demo state only
     const [displayName, setDisplayName] = useState("Your Name");
     const [email, setEmail] = useState("you@example.com");
     const [darkMode, setDarkMode] = useState(false);

@@ -107,10 +107,10 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
 /* Keep the Go button at the bottom-right of the card */
 .card .btn-go{ position:absolute; right:12px; bottom:12px; z-index:2; }
 
-/* Slightly lighter hover than default (already have .hover-lift) */
+/* Card hover shadow */
 .wd-course-card:hover{ box-shadow: 0 10px 28px rgba(0,0,0,.10); }
 
-/* tighten gutters on very wide screens so more cards fit like Canvas */
+/* Tighter gutters on very wide screens */
 @media (min-width: 1600px){
   #wd-dashboard .row.g-4{ --bs-gutter-x:1.25rem; --bs-gutter-y:1.25rem; }
 }
@@ -127,7 +127,7 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
 .card .card-body { padding-bottom: 3rem; }
 .card .btn-go { position: absolute; right: 12px; bottom: 12px; z-index: 2; }
 
-/* Dashboard card icon buttons - hover effects */
+/* Dashboard card icon buttons */
 .dashboard-icon-btn {
   color: #6c757d;
   transition: color 0.2s ease;
@@ -151,7 +151,7 @@ html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height);
 
 #wd-account-navigation .vr { height: 68px; }
 
-/* keep forms comfortably narrow on wide monitors */
+/* Narrow forms on wide monitors */
 #wd-account .form-control, #wd-account .form-select { font-size: 14px; }
 
 #wd-calendar .btn.border { border-color: #d1d5db !important; background: #fff; }

@@ -9,9 +9,8 @@ export const metadata = {
 export default function AccountLayout({ children }: { children: ReactNode }) {
     return (
         <div id="wd-account" className="container-fluid py-3">
-            <div className="row align-items-start" style={{ // tighter than g-4
-                ["--bs-gutter-x" as any]: "0.5rem"
-            }}>
+            {/* smaller gutter than the default */}
+            <div className="row align-items-start" style={{ ["--bs-gutter-x" as any]: "0.5rem" }}>
                 <aside className="col-8 col-md-2 pe-md-2">
                     <AccountNavigation />
                 </aside>

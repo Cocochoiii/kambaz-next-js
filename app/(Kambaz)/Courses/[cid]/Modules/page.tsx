@@ -33,7 +33,7 @@ export default function ModulesPage() {
                         key={module._id}
                         className="wd-module p-0 mb-5 fs-5 border-gray"
                     >
-                        {/* Module Header - Clickable */}
+                        {/* header toggles the panel */}
                         <button
                             className="w-100 text-start border-0 p-0"
                             onClick={() => toggleOne(i)}
@@ -47,11 +47,11 @@ export default function ModulesPage() {
                             </div>
                         </button>
 
-                        {/* Module Lessons - Collapsible */}
+                        {/* collapsible lessons */}
                         {module.lessons && (
                             <div id={`wd-module-panel-${i}`} hidden={collapsed[i]}>
                                 <ListGroup className="wd-lessons rounded-0">
-                                    {/* LEARNING OBJECTIVES item - just a single row */}
+                                    {/* learning objectives row */}
                                     <ListGroup.Item className="wd-lesson p-3 ps-1">
                                         <BsGripVertical className="me-2 wd-grip" />
                                         <GreenCheckmark />
@@ -59,7 +59,7 @@ export default function ModulesPage() {
                                         <LessonControlButtons />
                                     </ListGroup.Item>
 
-                                    {/* Individual Lesson Items */}
+                                    {/* lessons */}
                                     {module.lessons.map((lesson: any) => (
                                         <ListGroup.Item
                                             key={lesson._id}

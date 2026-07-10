@@ -8,7 +8,7 @@ import {
     IoCalendarClearOutline,
 } from "react-icons/io5";
 
-/** ---------- helpers ---------- */
+// types
 type CalEvent = {
     id: string;
     title: string;
@@ -45,7 +45,7 @@ function monthMatrix(anchor: Date): Date[][] {
     return weeks;
 }
 
-/** ---------- sample events (replace with your data later) ---------- */
+// sample events
 const demoEvents: CalEvent[] = [
     { id: "e1", title: "HW1 Due",            date: "2025-09-08", course: "CS5610", color: "#3b82f6" },
     { id: "e2", title: "Quiz 1",             date: "2025-09-12", course: "CS5200", color: "#06b6d4" },
@@ -53,7 +53,6 @@ const demoEvents: CalEvent[] = [
     { id: "e4", title: "Project Milestone",  date: "2025-09-25", course: "CS6510", color: "#10b981" },
 ];
 
-/** ---------- components ---------- */
 export default function CalendarPage() {
     const [view, setView] = useState<"week" | "month" | "agenda">("month");
     const [cursor, setCursor] = useState<Date>(new Date());       // month currently shown
@@ -165,7 +164,7 @@ export default function CalendarPage() {
                         </div>
                     )}
 
-                    {/* (Optional) Simple Agenda placeholder */}
+                    {/* agenda placeholder */}
                     {view === "agenda" && (
                         <div className="border rounded p-3 bg-white">
                             <div className="small text-muted mb-2">Agenda (demo)</div>
@@ -187,7 +186,7 @@ export default function CalendarPage() {
                         </div>
                     )}
 
-                    {/* (Optional) Week view placeholder */}
+                    {/* week view placeholder */}
                     {view === "week" && (
                         <div className="border rounded p-4 bg-white text-muted">
                             Week view not implemented (month is fully working).
