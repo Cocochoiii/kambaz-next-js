@@ -2,17 +2,55 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row, Table } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { addAssignment, updateAssignment } from "../reducer";
 import * as assignmentsClient from "../client";
+import * as submissionsClient from "../../../../Submissions/client";
 import { useIsFaculty } from "../../../../Account/roles";
+
+// One row of the faculty grading table, with its own grade/feedback inputs.
+function GradeRow({ submission, maxPoints, onGrade }: any) {
+    const [grade, setGrade] = useState<string>(submission.grade ?? "");
+    const [feedback, setFeedback] = useState<string>(submission.feedback ?? "");
+    return (
+        <tr>
+            <td className="align-middle">{submission.user}</td>
+            <td className="align-middle text-truncate" style={{ maxWidth: 260 }}>{submission.text}</td>
+            <td className="align-middle">
+                <div className="d-flex align-items-center gap-1">
+                    <Form.Control
+                        type="number"
+                        size="sm"
+                        value={grade}
+                        onChange={(e) => setGrade(e.target.value)}
+                        style={{ width: 80 }}
+                    />
+                    <span className="text-muted small">/ {maxPoints}</span>
+                </div>
+            </td>
+            <td className="align-middle">
+                <Form.Control size="sm" value={feedback} onChange={(e) => setFeedback(e.target.value)} />
+            </td>
+            <td className="align-middle">
+                <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => onGrade(submission._id, grade === "" ? 0 : Number(grade), feedback)}
+                >
+                    Save
+                </Button>
+            </td>
+        </tr>
+    );
+}
 
 export default function AssignmentEditor() {
     const { cid, aid } = useParams<{ cid: string; aid: string }>();
     const router = useRouter();
     const dispatch = useDispatch();
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
 
     const isNew = aid === "new";
     const existingAssignment = assignments.find((a: any) => a._id === aid);
@@ -36,7 +74,47 @@ export default function AssignmentEditor() {
 
     const isFaculty = useIsFaculty();
 
-    // Students see a read-only detail page; only faculty get the editor.
+    // Student side: the current user's own submission for this assignment.
+    const [mySubmission, setMySubmission] = useState<any>(null);
+    const [submissionText, setSubmissionText] = useState("");
+    // Faculty side: every submission for this assignment (for grading).
+    const [submissions, setSubmissions] = useState<any[]>([]);
+
+    useEffect(() => {
+        const load = async () => {
+            if (isNew) return;
+            try {
+                if (isFaculty) {
+                    setSubmissions(await submissionsClient.findSubmissionsForAssignment(aid));
+                } else if (currentUser) {
+                    const mine = await submissionsClient.findSubmissionsForUser(currentUser._id);
+                    const found = mine.find((s: any) => s.assignment === aid);
+                    if (found) {
+                        setMySubmission(found);
+                        setSubmissionText(found.text || "");
+                    }
+                }
+            } catch {
+                // ignore load errors and show the empty state
+            }
+        };
+        load();
+    }, [isFaculty, isNew, aid, currentUser]);
+
+    // Student submits (or resubmits) their work.
+    const handleSubmit = async () => {
+        if (!currentUser) return;
+        const saved = await submissionsClient.submitAssignment(aid, {
+            user: currentUser._id,
+            course: cid,
+            title: assignment.title,
+            points: assignment.points,
+            text: submissionText,
+        });
+        setMySubmission(saved);
+    };
+
+    // Students see a read-only detail page plus their submission box.
     if (!isFaculty) {
         return (
             <div id="wd-assignment-details" className="container-fluid">
@@ -50,9 +128,38 @@ export default function AssignmentEditor() {
                         {assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString() : "-"}
                     </li>
                 </ul>
-                <Button variant="secondary" onClick={() => router.push(`/Courses/${cid}/Assignments`)}>
-                    Back to Assignments
-                </Button>
+
+                <hr />
+                <h4>Your Submission</h4>
+                {mySubmission?.status === "graded" && (
+                    <div className="alert alert-success">
+                        <b>Grade:</b> {mySubmission.grade} / {assignment.points}
+                        {mySubmission.feedback && (
+                            <div className="mt-1"><b>Feedback:</b> {mySubmission.feedback}</div>
+                        )}
+                    </div>
+                )}
+                {mySubmission && mySubmission.status !== "graded" && (
+                    <p className="text-muted small">
+                        Submitted {new Date(mySubmission.submittedAt).toLocaleString()} — waiting for a grade.
+                    </p>
+                )}
+                <Form.Control
+                    as="textarea"
+                    rows={4}
+                    className="mb-2"
+                    value={submissionText}
+                    onChange={(e) => setSubmissionText(e.target.value)}
+                    placeholder="Type your submission here"
+                />
+                <div className="d-flex gap-2">
+                    <Button variant="danger" onClick={handleSubmit}>
+                        {mySubmission ? "Resubmit" : "Submit"}
+                    </Button>
+                    <Button variant="secondary" onClick={() => router.push(`/Courses/${cid}/Assignments`)}>
+                        Back to Assignments
+                    </Button>
+                </div>
             </div>
         );
     }
@@ -69,6 +176,12 @@ export default function AssignmentEditor() {
     };
 
     const handleCancel = () => router.push(`/Courses/${cid}/Assignments`);
+
+    // Faculty grades one submission, then refreshes that row in place.
+    const handleGrade = async (sid: string, grade: number, feedback: string) => {
+        const updated = await submissionsClient.gradeSubmission(sid, { grade, feedback });
+        setSubmissions((prev) => prev.map((s) => (s._id === sid ? updated : s)));
+    };
 
     // one label/field pair per row: label on the left, field on the right
     const field = (labelId: string, label: string, control: React.ReactNode) => (
@@ -189,6 +302,33 @@ export default function AssignmentEditor() {
                     <Button variant="danger" onClick={handleSave}>Save</Button>
                 </div>
             </Form>
+
+            {!isNew && (
+                <div className="mt-5">
+                    <h4>Submissions ({submissions.length})</h4>
+                    <hr />
+                    {submissions.length === 0 ? (
+                        <p className="text-muted">No submissions yet.</p>
+                    ) : (
+                        <Table hover responsive>
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Submission</th>
+                                    <th>Grade</th>
+                                    <th>Feedback</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {submissions.map((s) => (
+                                    <GradeRow key={s._id} submission={s} maxPoints={assignment.points} onGrade={handleGrade} />
+                                ))}
+                            </tbody>
+                        </Table>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

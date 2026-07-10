@@ -30,9 +30,11 @@ DotsToggle.displayName = "DotsToggle";
 // Small reusable three-dots menu. Pass the actions you want in the list.
 export default function KebabMenu({ items }: { items: KebabItem[] }) {
     return (
-        <Dropdown onClick={(e) => e.stopPropagation()}>
+        // align="end" opens the menu leftward; fixed strategy + high z-index keep it
+        // floating above every card so a neighboring card can never clip it.
+        <Dropdown align="end" onClick={(e) => e.stopPropagation()}>
             <Dropdown.Toggle as={DotsToggle} />
-            <Dropdown.Menu>
+            <Dropdown.Menu renderOnMount popperConfig={{ strategy: "fixed" }} style={{ zIndex: 2000 }}>
                 {items.map((item, i) => (
                     <Dropdown.Item
                         key={i}
