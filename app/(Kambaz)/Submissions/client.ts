@@ -2,6 +2,7 @@ import axios from "axios";
 import { HTTP_SERVER } from "@/app/env";
 
 const ASSIGNMENTS_API = `${HTTP_SERVER}/api/assignments`;
+const COURSES_API = `${HTTP_SERVER}/api/courses`;
 const USERS_API = `${HTTP_SERVER}/api/users`;
 const SUBMISSIONS_API = `${HTTP_SERVER}/api/submissions`;
 
@@ -16,6 +17,10 @@ export const findSubmissionsForAssignment = async (assignmentId: string) => {
 };
 export const findSubmissionsForUser = async (userId: string) => {
     const { data } = await axios.get(`${USERS_API}/${userId}/submissions`);
+    return data;
+};
+export const findSubmissionsForCourse = async (courseId: string) => {
+    const { data } = await axios.get(`${COURSES_API}/${courseId}/submissions`);
     return data;
 };
 export const findAllSubmissions = async () => {

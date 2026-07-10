@@ -380,7 +380,7 @@ export default function Dashboard() {
                                         <Link href={`/Courses/${s.course}/Assignments/${s.assignment}`} className="text-decoration-none fw-semibold">
                                             {s.title || "Assignment"}
                                         </Link>
-                                        <div className="text-muted small">{s.user} · {courseName(s.course)}</div>
+                                        <div className="text-muted small">{s.userName || s.user} · {courseName(s.course)}</div>
                                     </div>
                                 ))
                             )}

@@ -56,6 +56,21 @@ export default function Assignments() {
 
     const handleAddAssignment = () => router.push(`/Courses/${cid}/Assignments/new`);
 
+    // Availability status shown per assignment (changes with the current date).
+    const availabilityLabel = (a: any) => {
+        const now = Date.now();
+        if (a.availableFrom && now < new Date(a.availableFrom).getTime()) {
+            return `Not available until ${new Date(a.availableFrom).toLocaleDateString()}`;
+        }
+        if (a.availableUntil && now > new Date(a.availableUntil).getTime()) {
+            return "Closed";
+        }
+        if (a.availableUntil) {
+            return `Available until ${new Date(a.availableUntil).toLocaleDateString()}`;
+        }
+        return "Available";
+    };
+
     return (
         <div id="wd-assignments" className="mt-2">
             <div className="d-flex align-items-center gap-2 mb-3">
@@ -112,10 +127,7 @@ export default function Assignments() {
                                 </Link>
                                 <div className="text-muted small">
                                     Multiple Modules <span className="mx-2">|</span>
-                                    {assignment.availableFrom
-                                        ? <>Not available until {new Date(assignment.availableFrom).toLocaleDateString()} at 12:00am</>
-                                        : <>Not available yet</>
-                                    }
+                                    {availabilityLabel(assignment)}
                                     <span className="mx-2">|</span>
                                     {assignment.dueDate
                                         ? <>Due {new Date(assignment.dueDate).toLocaleDateString()} at 11:59pm</>

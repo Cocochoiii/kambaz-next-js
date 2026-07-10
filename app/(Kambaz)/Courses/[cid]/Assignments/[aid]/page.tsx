@@ -15,7 +15,7 @@ function GradeRow({ submission, maxPoints, onGrade }: any) {
     const [feedback, setFeedback] = useState<string>(submission.feedback ?? "");
     return (
         <tr>
-            <td className="align-middle">{submission.user}</td>
+            <td className="align-middle">{submission.userName || submission.user}</td>
             <td className="align-middle text-truncate" style={{ maxWidth: 260 }}>{submission.text}</td>
             <td className="align-middle">
                 <div className="d-flex align-items-center gap-1">
@@ -101,11 +101,18 @@ export default function AssignmentEditor() {
         load();
     }, [isFaculty, isNew, aid, currentUser]);
 
+    // Submission window for the student view (based on available dates).
+    const nowMs = Date.now();
+    const notYetOpen = !!assignment.availableFrom && nowMs < new Date(assignment.availableFrom).getTime();
+    const closed = !!assignment.availableUntil && nowMs > new Date(assignment.availableUntil).getTime();
+
     // Student submits (or resubmits) their work.
     const handleSubmit = async () => {
         if (!currentUser) return;
+        const displayName = [currentUser.firstName, currentUser.lastName].filter(Boolean).join(" ") || currentUser.username || currentUser._id;
         const saved = await submissionsClient.submitAssignment(aid, {
             user: currentUser._id,
+            userName: displayName,
             course: cid,
             title: assignment.title,
             points: assignment.points,
@@ -144,22 +151,37 @@ export default function AssignmentEditor() {
                         Submitted {new Date(mySubmission.submittedAt).toLocaleString()} — waiting for a grade.
                     </p>
                 )}
-                <Form.Control
-                    as="textarea"
-                    rows={4}
-                    className="mb-2"
-                    value={submissionText}
-                    onChange={(e) => setSubmissionText(e.target.value)}
-                    placeholder="Type your submission here"
-                />
-                <div className="d-flex gap-2">
-                    <Button variant="danger" onClick={handleSubmit}>
-                        {mySubmission ? "Resubmit" : "Submit"}
-                    </Button>
-                    <Button variant="secondary" onClick={() => router.push(`/Courses/${cid}/Assignments`)}>
-                        Back to Assignments
-                    </Button>
-                </div>
+                {notYetOpen ? (
+                    <p className="text-muted">
+                        Not available until {new Date(assignment.availableFrom).toLocaleDateString()}.
+                    </p>
+                ) : closed ? (
+                    <p className="text-muted">
+                        This assignment is closed
+                        {assignment.availableUntil ? ` (closed ${new Date(assignment.availableUntil).toLocaleDateString()})` : ""}.
+                    </p>
+                ) : (
+                    <>
+                        <Form.Control
+                            as="textarea"
+                            rows={4}
+                            className="mb-2"
+                            value={submissionText}
+                            onChange={(e) => setSubmissionText(e.target.value)}
+                            placeholder="Type your submission here"
+                        />
+                        <Button variant="danger" onClick={handleSubmit}>
+                            {mySubmission ? "Resubmit" : "Submit"}
+                        </Button>
+                    </>
+                )}
+                <Button
+                    variant="secondary"
+                    className="mt-3"
+                    onClick={() => router.push(`/Courses/${cid}/Assignments`)}
+                >
+                    Back to Assignments
+                </Button>
             </div>
         );
     }
