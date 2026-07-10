@@ -31,10 +31,10 @@ export default function BootstrapForms() {
 
             <div id="wd-css-styling-switches" className="mt-3">
                 <h3>Switches</h3>
-                <Form.Check type="switch" checked={false} label="Unchecked switch checkbox input" />
-                <Form.Check type="switch" checked={true} label="Checked switch checkbox input" />
-                <Form.Check type="switch" checked={false} label="Unchecked disabled switch" disabled />
-                <Form.Check type="switch" checked={true} label="Checked disabled switch" disabled />
+                <Form.Check type="switch" label="Unchecked switch checkbox input" />
+                <Form.Check type="switch" defaultChecked label="Checked switch checkbox input" />
+                <Form.Check type="switch" label="Unchecked disabled switch" disabled />
+                <Form.Check type="switch" defaultChecked label="Checked disabled switch" disabled />
             </div>
 
             <div id="wd-css-styling-range-and-sliders" className="mt-3">
@@ -63,7 +63,7 @@ export default function BootstrapForms() {
                 <h3>Responsive forms</h3>
                 <Form.Group as={Row} className="mb-3" controlId="email1">
                     <Form.Label column sm={2}>Email</Form.Label>
-                    <Col sm={10}><Form.Control type="email" value="email@example.com" /></Col>
+                    <Col sm={10}><Form.Control type="email" defaultValue="email@example.com" /></Col>
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3" controlId="password1">
                     <Form.Label column sm={2}>Password</Form.Label>

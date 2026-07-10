@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { assignmentCatalog } from "./catalog";
-import { ListGroup, Badge, Button, Form } from "react-bootstrap";
+import { ListGroup, Badge, Button, Form, InputGroup } from "react-bootstrap";
+import { FaPlus } from "react-icons/fa6";
 import {
     BsGripVertical,
     BsFileEarmarkText,
     BsThreeDotsVertical,
     BsCheckCircleFill,
-    BsPlus
+    BsPlus,
+    BsSearch,
 } from "react-icons/bs";
 
 export default function Assignments() {
@@ -21,16 +23,20 @@ export default function Assignments() {
     return (
         <div id="wd-assignments" className="mt-2">
             <div className="d-flex align-items-center gap-2 mb-3">
-                <Form.Control
-                    id="wd-search-assignment"
-                    placeholder="Search…"
-                    style={{ maxWidth: 380 }}
-                />
-                <Button id="wd-add-assignment-group" variant="light" className="ms-auto">
-                    + Group
+                {/* Search field with a magnifying glass, justified to the left */}
+                <InputGroup style={{ maxWidth: 380 }}>
+                    <InputGroup.Text className="bg-white">
+                        <BsSearch />
+                    </InputGroup.Text>
+                    <Form.Control id="wd-search-assignment" placeholder="Search for Assignments" />
+                </InputGroup>
+
+                {/* Buttons floated right; same colors as Modules (grey + red) */}
+                <Button id="wd-add-assignment-group" variant="secondary" className="ms-auto">
+                    <FaPlus className="me-1" /> Group
                 </Button>
                 <Button id="wd-add-assignment" variant="danger">
-                    + Assignment
+                    <FaPlus className="me-1" /> Assignment
                 </Button>
             </div>
 
@@ -57,7 +63,10 @@ export default function Assignments() {
                     {items.map((a, idx) => {
                         const aid = 100 + idx;
                         return (
-                            <ListGroup.Item key={aid} className="py-3 d-flex align-items-start">
+                            <ListGroup.Item
+                                key={aid}
+                                className="py-3 d-flex align-items-start"
+                            >
                                 <div className="me-2 pt-1">
                                     <BsGripVertical className="text-secondary" />
                                 </div>

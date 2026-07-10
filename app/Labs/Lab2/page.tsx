@@ -1,5 +1,8 @@
 
 import "./index.css";
+import IdSelectors from "./IdSelectors";
+import ClassSelectors from "./ClassSelectors";
+import DocumentStructure from "./DocumentStructure";
 import ForegroundColors from "./ForegroundColors";
 import BackgroundColors from "./BackgroundColors";
 import Borders from "./Borders";
@@ -25,6 +28,9 @@ export default function Lab2(){
       <ScreenSizeLabel/>
       <h2>Lab 2 - Cascading Style Sheets</h2>
       <p style={{ backgroundColor:"blue", color:"white" }}>Style attribute allows configuring look and feel.</p>
+      <IdSelectors/>
+      <ClassSelectors/>
+      <DocumentStructure/>
       <ForegroundColors/>
       <BackgroundColors/>
       <Borders/>

@@ -15,16 +15,16 @@ type ModuleSpec = { title: string; items: string[] };
 export default function HomePage({ params }: { params: { cid: string } }) {
     const { cid } = params;
 
-    // keep per-course data
+    // all modules for this course
     const allModules = useMemo<ModuleSpec[]>(
         () => perCourse[cid] ?? [{ title: "Week 1", items: ["Overview"] }],
         [cid]
     );
 
-    // Home shows a preview (first 2 modules)
+    // preview shows the first 2 modules
     const modules = allModules.slice(0, 2);
 
-    // --- collapse state like Modules ---
+    // track which modules are collapsed
     const [collapsed, setCollapsed] = useState<boolean[]>(
         () => modules.map(() => false)
     );
@@ -41,7 +41,7 @@ export default function HomePage({ params }: { params: { cid: string } }) {
             <div className="d-flex gap-4">
                 {/* center column */}
                 <div className="flex-fill">
-                    {/* toolbar (identical look & feel to Modules) */}
+                    {/* toolbar */}
                     <div className="wd-toolbar btn-toolbar gap-2 my-2">
                         <button
                             className="btn btn-secondary"
@@ -62,11 +62,11 @@ export default function HomePage({ params }: { params: { cid: string } }) {
                         </button>
                     </div>
 
-                    {/* modules preview with per-module toggle just like Modules */}
+                    {/* module preview */}
                     {modules.map((m, i) => (
                         <ListGroup className="rounded-0 mb-4" key={i}>
                             <ListGroup.Item className="p-0 border-gray">
-                                {/* clickable header to collapse/expand */}
+                                {/* header toggles the panel */}
                                 <button
                                     className="w-100 text-start border-0 p-0"
                                     onClick={() => toggleOne(i)}
@@ -79,7 +79,7 @@ export default function HomePage({ params }: { params: { cid: string } }) {
                                     </div>
                                 </button>
 
-                                {/* panel */}
+                                {/* lessons panel */}
                                 <div id={`wd-home-module-panel-${i}`} hidden={collapsed[i]}>
                                     <ListGroup className="wd-lessons rounded-0">
                                         <ListGroup.Item className="wd-lesson p-3 ps-1">
@@ -100,7 +100,7 @@ export default function HomePage({ params }: { params: { cid: string } }) {
                     ))}
                 </div>
 
-                {/* right status column – stays hidden under xl via your CSS */}
+                {/* right status column, hidden below xl */}
                 <div id="wd-course-status-col" className="d-none d-xl-block" style={{ width: 340 }}>
                     <Status />
                 </div>

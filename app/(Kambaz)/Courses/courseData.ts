@@ -8,6 +8,10 @@ export const courseNames: Record<string, string> = {
     "5800": "CS5800 Algorithms",
     "6510": "CS6510 Advanced Software Development",
     "6620": "CS6620 Fundamentals of Cloud Computing",
+    "5700": "CS5700 Computer Networks",
+    "6140": "CS6140 Machine Learning",
+    "5100": "CS5100 Foundations of Artificial Intelligence",
+    "6650": "CS6650 Building Scalable Distributed Systems",
 };
 
 export const homeBlurb: Record<string, string> = {
@@ -18,6 +22,10 @@ export const homeBlurb: Record<string, string> = {
     "5800": "Core algorithms, complexity, and problem solving with proofs and analysis.",
     "6510": "Team-based product development: planning, architecture, quality, and delivery.",
     "6620": "Cloud foundations: virtualization, distributed storage, platforms, and data systems.",
+    "5700": "Internet architecture, transport and routing, applications, and network security with sockets.",
+    "6140": "Supervised and unsupervised machine learning: regression, classification, kernels, and clustering.",
+    "5100": "Artificial intelligence: search, adversarial games, constraint satisfaction, MDPs, and logic.",
+    "6650": "Building scalable distributed systems: concurrency, RPC, messaging, and cloud deployment.",
 };
 
 export const perCourse: Record<string, ModuleSpec[]> = {
@@ -243,6 +251,134 @@ export const perCourse: Record<string, ModuleSpec[]> = {
                 "Multi-tenancy",
                 "Cost/perf tradeoffs",
                 "Project proposal checkpoint",
+            ]},
+    ],
+    "5700": [
+        { title: "Week 1 – Internet Architecture", items: [
+                "Client-server model & packet switching",
+                "Protocol layering (TCP/IP stack)",
+                "Network programming with sockets",
+                "Delay, loss, and throughput",
+            ]},
+        { title: "Week 2 – Transport Layer", items: [
+                "UDP and TCP basics",
+                "Reliable data transfer",
+                "Flow control & sliding window",
+                "TCP congestion control (Tahoe/Reno)",
+            ]},
+        { title: "Week 3 – Network Layer & Routing", items: [
+                "IP addressing & forwarding",
+                "Link-state routing (Dijkstra)",
+                "Distance-vector routing",
+                "Inter-domain routing (BGP) & NAT",
+            ]},
+        { title: "Week 4 – Applications & Naming", items: [
+                "HTTP and the Web",
+                "DNS naming",
+                "Email (SMTP)",
+                "Peer-to-peer & content delivery (CDN)",
+            ]},
+        { title: "Week 5 – Network Security", items: [
+                "Confidentiality & authentication",
+                "TLS and secure channels",
+                "Common network attacks",
+                "Wireless & mobility",
+            ]},
+    ],
+    "6140": [
+        { title: "Week 1 – ML Foundations", items: [
+                "Probability & linear algebra review",
+                "Supervised vs unsupervised learning",
+                "Train / validation / test splits",
+                "Overfitting & the bias-variance tradeoff",
+            ]},
+        { title: "Week 2 – Regression", items: [
+                "Linear regression",
+                "Logistic regression",
+                "Generalized linear models",
+                "Gradient descent",
+            ]},
+        { title: "Week 3 – Classification", items: [
+                "Naive Bayes",
+                "Decision & regression trees",
+                "k-Nearest Neighbors",
+                "Maximum likelihood & Bayesian inference",
+            ]},
+        { title: "Week 4 – Kernels & Dimensionality Reduction", items: [
+                "Support Vector Machines",
+                "Kernel methods",
+                "Principal Component Analysis (PCA)",
+                "Linear Discriminant Analysis (LDA)",
+            ]},
+        { title: "Week 5 – Unsupervised & Deep Learning", items: [
+                "K-means & EM clustering",
+                "Mixture models",
+                "Neural networks (feedforward, CNN)",
+                "Ensembles & boosting",
+            ]},
+    ],
+    "5100": [
+        { title: "Week 1 – Agents & Uninformed Search", items: [
+                "Intelligent agents & environments",
+                "Problem formulation",
+                "BFS, DFS, IDS",
+                "Uniform-cost search",
+            ]},
+        { title: "Week 2 – Informed & Adversarial Search", items: [
+                "Greedy & A* search",
+                "Heuristics & admissibility",
+                "Minimax & alpha-beta pruning",
+                "Expectimax",
+            ]},
+        { title: "Week 3 – Constraint Satisfaction", items: [
+                "CSP formulation",
+                "Backtracking search",
+                "Forward checking",
+                "Arc consistency",
+            ]},
+        { title: "Week 4 – Decision Making Under Uncertainty", items: [
+                "Probability & utility",
+                "Markov Decision Processes (MDPs)",
+                "Value & policy iteration",
+                "Reinforcement learning",
+            ]},
+        { title: "Week 5 – Logic & Learning", items: [
+                "Propositional logic",
+                "First-order logic",
+                "Knowledge representation",
+                "Introduction to machine learning",
+            ]},
+    ],
+    "6650": [
+        { title: "Week 1 – Intro to Scalable Systems", items: [
+                "Internet-scale systems",
+                "Scalability & performance concerns",
+                "Engineering trade-offs",
+                "Quality attributes",
+            ]},
+        { title: "Week 2 – Concurrency", items: [
+                "Multi-threaded programming",
+                "Threads, locks, and synchronization",
+                "Java concurrency in practice",
+                "Thread safety",
+            ]},
+        { title: "Week 3 – Distributed Communication", items: [
+                "Client-server model",
+                "Sockets (TCP/UDP)",
+                "Remote Procedure Calls (RPC)",
+                "Logical clocks",
+            ]},
+        { title: "Week 4 – Async Systems & Microservices", items: [
+                "Message queues (RabbitMQ)",
+                "Messaging patterns",
+                "Monoliths to microservices",
+                "Resilience & fault tolerance",
+            ]},
+        { title: "Week 5 – Data & Cloud Scalability", items: [
+                "Caching strategies",
+                "Distributed data & replication",
+                "Load balancing",
+                "Serverless & cloud deployment",
             ]},
     ],
 };

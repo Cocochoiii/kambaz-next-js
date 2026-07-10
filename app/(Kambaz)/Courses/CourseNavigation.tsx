@@ -1,16 +1,40 @@
-import Link from "next/link";
+"use client";
 
-export default function CourseNavigation({ cid }: { cid: string }){
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+// Course sidebar links. The link for the current page is marked "active",
+// which styles.css renders with black text and a black left border.
+const LINKS = [
+    { id: "wd-course-home-link",        label: "Home",        path: "Home" },
+    { id: "wd-course-modules-link",     label: "Modules",     path: "Modules" },
+    { id: "wd-course-piazza-link",      label: "Piazza",      path: "Piazza" },
+    { id: "wd-course-zoom-link",        label: "Zoom",        path: "Zoom" },
+    { id: "wd-course-assignments-link", label: "Assignments", path: "Assignments" },
+    { id: "wd-course-quizzes-link",     label: "Quizzes",     path: "Quizzes" },
+    { id: "wd-course-grades-link",      label: "Grades",      path: "Grades" },
+    { id: "wd-course-people-link",      label: "People",      path: "People/Table" },
+];
+
+export default function CourseNavigation({ cid }: { cid: string }) {
+    const pathname = usePathname();
+
     return (
-        <div id="wd-courses-navigation">
-            <Link id="wd-course-home-link" href={`/Courses/${cid}/Home`}>Home</Link><br/>
-            <Link id="wd-course-modules-link" href={`/Courses/${cid}/Modules`}>Modules</Link><br/>
-            <Link id="wd-course-piazza-link" href={`/Courses/${cid}/Piazza`}>Piazza</Link><br/>
-            <Link id="wd-course-zoom-link" href={`/Courses/${cid}/Zoom`}>Zoom</Link><br/>
-            <Link id="wd-course-assignments-link" href={`/Courses/${cid}/Assignments`}>Assignments</Link><br/>
-            <Link id="wd-course-quizzes-link" href={`/Courses/${cid}/Quizzes`}>Quizzes</Link><br/>
-            <Link id="wd-course-grades-link" href={`/Courses/${cid}/Grades`}>Grades</Link><br/>
-            <Link id="wd-course-people-link" href={`/Courses/${cid}/People/Table`}>People</Link><br/>
+        <div id="wd-courses-navigation" className="list-group rounded-0">
+            {LINKS.map(({ id, label, path }) => {
+                const href = `/Courses/${cid}/${path}`;
+                const active = pathname === href || pathname.startsWith(`${href}/`);
+                return (
+                    <Link
+                        key={id}
+                        id={id}
+                        href={href}
+                        className={`list-group-item text-decoration-none ${active ? "active" : ""}`}
+                    >
+                        {label}
+                    </Link>
+                );
+            })}
         </div>
     );
 }

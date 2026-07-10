@@ -4,6 +4,14 @@
 .wd-fg-color-blue{ color:#7070ff; } .wd-fg-color-red{ color:#ff7070; } .wd-fg-color-green{ color:green; }
 .wd-bg-color-yellow{ background-color:#ffff07; } .wd-bg-color-blue{ background-color:#7070ff; }
 .wd-bg-color-red{ background-color:#ff7070; } .wd-bg-color-green{ background-color:green; } .wd-bg-color-gray{ background-color:lightgray; }
+/* ID selectors */
+#wd-id-selector-1{ background-color:#ff7070; color:white; }
+#wd-id-selector-2{ background-color:#ffff07; color:black; }
+/* Class selector: blue text on a yellow background (used on a paragraph and a heading) */
+.wd-class-selector{ background-color:#ffff07; color:#7070ff; }
+/* Document structure: a red DIV that contains a blue-on-yellow small span */
+#wd-doc-structure{ background-color:#ff7070; color:white; }
+#wd-doc-structure small{ background-color:#ffff07; color:#7070ff; }
 /* Borders */
 .wd-border-fat{ border-width:20px 30px 20px 30px; } .wd-border-thin{ border-width:4px; }
 .wd-border-solid{ border-style:solid; } .wd-border-dashed{ border-style:dashed; }

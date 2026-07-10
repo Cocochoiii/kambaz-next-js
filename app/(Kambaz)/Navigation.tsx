@@ -3,24 +3,25 @@
 import { AiOutlineDashboard } from "react-icons/ai";
 import { IoCalendarOutline } from "react-icons/io5";
 import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
-import { FaInbox, FaRegCircleUser } from "react-icons/fa6";
+import { FaInbox, FaRegCircleUser, FaBook } from "react-icons/fa6";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// `match` is the path prefix used to decide the active (highlighted) item.
+// Courses links to the Dashboard but stays highlighted while viewing a course.
+const links = [
+    { href: "/Account",   label: "Account",   icon: FaRegCircleUser,   match: "/Account" },
+    { href: "/Dashboard", label: "Dashboard", icon: AiOutlineDashboard, match: "/Dashboard" },
+    { href: "/Dashboard", label: "Courses",   icon: FaBook,            match: "/Courses" },
+    { href: "/Calendar",  label: "Calendar",  icon: IoCalendarOutline,  match: "/Calendar" },
+    { href: "/Inbox",     label: "Inbox",     icon: FaInbox,           match: "/Inbox" },
+    { href: "/Labs",      label: "Labs",      icon: LiaBookSolid,       match: "/Labs" },
+    { href: "/Settings",  label: "Settings",  icon: LiaCogSolid,        match: "/Settings" },
+];
+
 export default function KambazNavigation() {
     const pathname = usePathname();
-
-    const links = [
-        { href: "/Account",   label: "Account",   icon: FaRegCircleUser },
-        { href: "/Dashboard", label: "Dashboard", icon: AiOutlineDashboard },
-        { href: "/Calendar",  label: "Calendar",  icon: IoCalendarOutline },
-        { href: "/Inbox",     label: "Inbox",     icon: FaInbox },
-        { href: "/Labs",      label: "Labs",      icon: LiaBookSolid },
-        { href: "/Settings",  label: "Settings",  icon: LiaCogSolid },
-    ];
-
-    const isActive = (href: string) =>
-        pathname === href || pathname.startsWith(`${href}/`);
+    const isActive = (m: string) => pathname === m || pathname.startsWith(`${m}/`);
 
     return (
         <ul
@@ -35,20 +36,20 @@ export default function KambazNavigation() {
             </li>
             <br />
 
-            {links.map(({ href, label, icon: Icon }) => {
-                const active = isActive(href);
+            {links.map(({ href, label, icon: Icon, match }) => {
+                const active = isActive(match);
+                // Account shows a white icon; every other item shows a red icon.
+                const iconColor = label === "Account" && !active ? "text-white" : "text-danger";
                 return (
                     <li
-                        key={href}
-                        className={`list-group-item border-0 text-center ${
-                            active ? "bg-white" : "bg-black"
-                        }`}
+                        key={label}
+                        className={`list-group-item border-0 text-center ${active ? "bg-white" : "bg-black"}`}
                     >
                         <Link
                             href={href}
                             className={`text-decoration-none ${active ? "text-danger" : "text-white"}`}
                         >
-                            <Icon className={`fs-1 ${active ? "text-danger" : "text-white"}`} />
+                            <Icon className={`fs-1 ${iconColor}`} />
                             <br />
                             {label}
                         </Link>

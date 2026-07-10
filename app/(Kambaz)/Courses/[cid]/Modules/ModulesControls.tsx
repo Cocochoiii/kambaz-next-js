@@ -24,7 +24,7 @@ export default function ModulesControls({
                 View Progress
             </button>
 
-            {/* Same dropdown component used everywhere */}
+            {/* shared publish-all menu */}
             <PublishAllMenu idPrefix="wd" label="Publish All" />
 
             <button id="wd-modules-new-module" className="btn btn-danger">
