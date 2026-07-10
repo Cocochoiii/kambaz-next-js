@@ -1,4 +1,3 @@
-// app/(Kambaz)/layout.tsx
 "use client";
 
 import type { ReactNode } from "react";
@@ -6,6 +5,7 @@ import KambazNavigation from "./Navigation";
 import { Provider } from "react-redux";
 import store from "./store";
 import ProtectedRoute from "./Account/ProtectedRoute";
+import Session from "./Account/Session";
 import { usePathname } from "next/navigation";
 import "./styles.css";
 
@@ -39,7 +39,9 @@ function KambazContent({ children }: { children: ReactNode }) {
 export default function KambazLayout({ children }: { children: ReactNode }) {
     return (
         <Provider store={store}>
-            <KambazContent>{children}</KambazContent>
+            <Session>
+                <KambazContent>{children}</KambazContent>
+            </Session>
         </Provider>
     );
 }

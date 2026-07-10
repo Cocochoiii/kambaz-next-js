@@ -1,4 +1,3 @@
-// app/Labs/Lab4/page.tsx
 "use client";
 
 import ClickEvent from "./ClickEvent";

@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { announcements } from "../../../Database";
-import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
     announcements: announcements,
@@ -10,17 +9,11 @@ const announcementsSlice = createSlice({
     name: "announcements",
     initialState,
     reducers: {
+        setAnnouncements: (state, { payload: announcements }) => {
+            state.announcements = announcements;
+        },
         addAnnouncement: (state, { payload: announcement }) => {
-            const newAnnouncement: any = {
-                _id: uuidv4(),
-                title: announcement.title,
-                content: announcement.content,
-                course: announcement.course,
-                section: announcement.section || "All Sections",
-                author: announcement.author,
-                date: new Date().toISOString(),
-            };
-            state.announcements = [...state.announcements, newAnnouncement] as any;
+            state.announcements = [...state.announcements, announcement] as any;
         },
         deleteAnnouncement: (state, { payload: announcementId }) => {
             state.announcements = state.announcements.filter(
@@ -35,6 +28,6 @@ const announcementsSlice = createSlice({
     },
 });
 
-export const { addAnnouncement, deleteAnnouncement, updateAnnouncement } =
+export const { setAnnouncements, addAnnouncement, deleteAnnouncement, updateAnnouncement } =
     announcementsSlice.actions;
 export default announcementsSlice.reducer;

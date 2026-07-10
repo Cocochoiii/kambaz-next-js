@@ -1,4 +1,3 @@
-// app/Labs/Lab4/ObjectStateVariable.tsx
 "use client";
 
 import { useState } from "react";

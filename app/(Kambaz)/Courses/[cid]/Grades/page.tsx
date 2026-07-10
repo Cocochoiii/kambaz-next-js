@@ -2,8 +2,9 @@
 
 import { useParams } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
-import { releaseGrades, updateGrade } from "./reducer";
+import { useState, useEffect } from "react";
+import { setGrades, releaseGrades, updateGrade } from "./reducer";
+import * as gradesClient from "./client";
 import {
     FaPrint,
     FaCheckCircle,
@@ -15,6 +16,23 @@ import { BsThreeDots } from "react-icons/bs";
 import GradeEditor from "./GradeEditor";
 import * as db from "../../../Database";
 
+// Escape one value for a CSV cell.
+const csvCell = (value: any) => {
+    const s = String(value ?? "");
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+};
+
+// Trigger a client-side CSV file download.
+const downloadCsv = (text: string, filename: string) => {
+    const blob = new Blob([text], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+};
+
 export default function Grades() {
     const { cid } = useParams<{ cid: string }>();
     const dispatch = useDispatch();
@@ -24,6 +42,14 @@ export default function Grades() {
     const { grades } = useSelector((state: any) => state.gradesReducer);
     const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
     const { courses } = useSelector((state: any) => state.coursesReducer);
+
+    const loadGrades = async () => {
+        const list = await gradesClient.findGradesForCourse(cid);
+        dispatch(setGrades(list));
+    };
+    useEffect(() => {
+        loadGrades();
+    }, [cid]);
 
     const users = db.users;
     const currentCourse = courses.find((c: any) => c._id === cid);
@@ -36,8 +62,12 @@ export default function Grades() {
 
     const isFaculty = currentUser?.role === "FACULTY";
 
-    // Get course assignments
-    const courseAssignments = assignments.filter((a: any) => a.course === cid);
+    // Course assignments, sorted by the selected "Arrange By" option.
+    const courseAssignments = [...assignments.filter((a: any) => a.course === cid)].sort((a: any, b: any) => {
+        if (arrangeBy === "Title") return a.title.localeCompare(b.title);
+        if (arrangeBy === "Points") return Number(a.points || 0) - Number(b.points || 0);
+        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    });
 
     // Get enrolled students for faculty view
     const enrolledStudents = isFaculty
@@ -100,8 +130,9 @@ export default function Grades() {
         );
     };
 
-    const handleReleaseGrades = () => {
+    const handleReleaseGrades = async () => {
         if (window.confirm("Are you sure you want to release all grades for this course?")) {
+            await gradesClient.releaseGrades(cid);
             dispatch(releaseGrades(cid));
             alert("Grades have been released successfully!");
         }
@@ -113,15 +144,42 @@ export default function Grades() {
         setShowEditor(true);
     };
 
-    const handleSaveGrade = (score: number) => {
+    const handleSaveGrade = async (score: number) => {
+        const submitted = new Date().toISOString();
+        await gradesClient.saveGrade(cid, {
+            student: selectedStudent,
+            assignment: selectedAssignment,
+            score: score,
+            submitted: submitted,
+        });
         dispatch(updateGrade({
             studentId: selectedStudent,
             assignmentId: selectedAssignment,
             courseId: cid,
             score: score,
-            submitted: new Date().toISOString()
+            submitted: submitted,
         }));
         setShowEditor(false);
+    };
+
+    // Export the gradebook as a CSV file (faculty).
+    const handleExport = () => {
+        const header = ["Student", "ID", ...courseAssignments.map((a: any) => a.title), "Total"];
+        const rows = enrolledStudents.map((student: any) => {
+            const scores = courseAssignments.map((a: any) => {
+                const grade = getGradeForAssignment(a._id, student._id);
+                return grade && grade.score !== null && grade.score !== undefined ? grade.score : "";
+            });
+            const total = calculateTotalGrade(student._id);
+            return [
+                `${student.firstName} ${student.lastName}`,
+                student._id,
+                ...scores,
+                `${total.percentage}% (${total.letter})`,
+            ];
+        });
+        const csv = [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+        downloadCsv(csv, `${cid}-grades.csv`);
     };
 
     const { percentage, letter } = calculateTotalGrade(isFaculty ? null : currentUser._id);
@@ -176,7 +234,7 @@ export default function Grades() {
                     </div>
                     <div className="d-flex gap-2">
                         {!isFaculty && (
-                            <button className="btn btn-outline-secondary">
+                            <button className="btn btn-outline-secondary" onClick={() => window.print()}>
                                 <FaPrint className="me-2" />
                                 Print Grades
                             </button>
@@ -197,7 +255,7 @@ export default function Grades() {
                                     <FaCheckCircle className="me-2" />
                                     {hasUnreleasedGrades ? 'Release Grades' : 'Grades Released'}
                                 </button>
-                                <button className="btn btn-primary">
+                                <button className="btn btn-primary" onClick={handleExport}>
                                     <FaFileExport className="me-2" />
                                     Export
                                 </button>
@@ -210,7 +268,7 @@ export default function Grades() {
             {/* Canvas Filter Bar */}
             <div className="bg-light p-3 mb-4 border rounded">
                 <div className="row align-items-end g-3">
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                         <label className="form-label fw-bold small">Course</label>
                         <select
                             className="form-select"
@@ -220,7 +278,7 @@ export default function Grades() {
                             <option>{currentCourse?.number} {currentCourse?.name}</option>
                         </select>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                         <label className="form-label fw-bold small">Arrange By</label>
                         <select
                             className="form-select"
@@ -230,11 +288,7 @@ export default function Grades() {
                             <option>Due Date</option>
                             <option>Title</option>
                             <option>Points</option>
-                            <option>Module</option>
                         </select>
-                    </div>
-                    <div className="col-md-4">
-                        <button className="btn btn-danger w-100">Apply</button>
                     </div>
                 </div>
             </div>
@@ -354,7 +408,7 @@ export default function Grades() {
 
                             <div className="d-grid gap-2 mb-4">
                                 <button className="btn btn-outline-secondary text-start">
-                                    📊 Show Saved "What-If" Scores
+                                     Show Saved "What-If" Scores
                                 </button>
                                 <button className="btn btn-outline-secondary text-start">
                                     Show All Details
@@ -384,22 +438,39 @@ export default function Grades() {
                 </div>
             )}
 
-            {/* Faculty View - Grade Grid */}
+            {/* Faculty View - compact gradebook. Short column codes keep it narrow; the Student column and header stay pinned while scrolling. */}
             {isFaculty && (
-                <div className="bg-white border rounded p-0 overflow-auto">
-                    <table className="table table-hover table-bordered mb-0">
-                        <thead className="sticky-top bg-light">
+                <div className="border rounded" style={{ overflow: "auto", maxHeight: "70vh" }}>
+                    <table className="table table-sm table-hover table-striped align-middle mb-0">
+                        <thead>
                         <tr>
-                            <th className="bg-light" style={{ minWidth: "200px" }}>Student</th>
-                            {courseAssignments.map((assignment: any) => (
-                                <th key={assignment._id} className="text-center" style={{ minWidth: "100px" }}>
-                                    <div className="text-truncate" title={assignment.title}>
-                                        {assignment.title}
-                                    </div>
-                                    <small className="text-muted">{assignment.points} pts</small>
-                                </th>
-                            ))}
-                            <th className="text-center bg-light">Total</th>
+                            <th
+                                className="bg-light text-nowrap"
+                                style={{ position: "sticky", left: 0, top: 0, zIndex: 3, minWidth: "180px" }}
+                            >
+                                Student
+                            </th>
+                            {courseAssignments.map((assignment: any) => {
+                                // Show the short code (text before ":") to keep columns narrow; full title on hover.
+                                const code = assignment.title.split(":")[0].trim();
+                                return (
+                                    <th
+                                        key={assignment._id}
+                                        className="text-center bg-light"
+                                        style={{ position: "sticky", top: 0, zIndex: 1, minWidth: "64px" }}
+                                        title={assignment.title}
+                                    >
+                                        <div className="fw-semibold">{code}</div>
+                                        <small className="text-muted">{assignment.points}</small>
+                                    </th>
+                                );
+                            })}
+                            <th
+                                className="text-center bg-light"
+                                style={{ position: "sticky", top: 0, zIndex: 1, minWidth: "90px" }}
+                            >
+                                Total
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -407,7 +478,10 @@ export default function Grades() {
                             const studentTotal = calculateTotalGrade(student._id);
                             return (
                                 <tr key={student._id}>
-                                    <td className="bg-light">
+                                    <td
+                                        className="bg-white text-nowrap"
+                                        style={{ position: "sticky", left: 0, zIndex: 2 }}
+                                    >
                                         <strong>{student.firstName} {student.lastName}</strong>
                                         <div className="text-muted small">{student._id}</div>
                                     </td>
@@ -421,21 +495,21 @@ export default function Grades() {
                                                 onClick={() => handleEditGrade(student._id, assignment._id)}
                                             >
                                                 {grade?.score !== undefined && grade?.score !== null ? (
-                                                    <div>
-                                                        <span className="fw-bold">{grade.score}</span>
+                                                    <span className="fw-bold">
+                                                        {grade.score}
                                                         {!grade.released && (
                                                             <FaEyeSlash className="text-warning ms-1 small" />
                                                         )}
-                                                    </div>
+                                                    </span>
                                                 ) : (
                                                     <span className="text-muted">-</span>
                                                 )}
                                             </td>
                                         );
                                     })}
-                                    <td className="text-center bg-light">
-                                        <strong>{studentTotal.percentage}%</strong>
-                                        <div className="small text-muted">{studentTotal.letter}</div>
+                                    <td className="text-center bg-light fw-bold">
+                                        {studentTotal.percentage}%
+                                        <div className="small text-muted fw-normal">{studentTotal.letter}</div>
                                     </td>
                                 </tr>
                             );

@@ -1,21 +1,22 @@
-// app/(Kambaz)/Courses/[cid]/People/Table/page.tsx
 "use client";
 
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
-import * as db from "../../../../Database";
+import * as client from "../../../../Account/client";
 
 export default function PeopleTable() {
     const { cid } = useParams<{ cid: string }>();
-    const { users, enrollments } = db;
+    const [users, setUsers] = useState<any[]>([]);
 
-    // Filter users enrolled in the current course
-    const courseUsers = users.filter((user: any) =>
-        enrollments.some(
-            (enrollment: any) => enrollment.user === user._id && enrollment.course === cid
-        )
-    );
+    // Load users enrolled in this course from the server.
+    const load = async () => {
+        setUsers(await client.findUsersForCourse(cid));
+    };
+    useEffect(() => {
+        load();
+    }, [cid]);
 
     return (
         <div id="wd-people-table">
@@ -31,7 +32,7 @@ export default function PeopleTable() {
                 </tr>
                 </thead>
                 <tbody>
-                {courseUsers.map((user: any) => (
+                {users.map((user: any) => (
                     <tr key={user._id}>
                         <td className="wd-full-name text-nowrap">
                             <FaUserCircle className="me-2 fs-1 text-secondary" />

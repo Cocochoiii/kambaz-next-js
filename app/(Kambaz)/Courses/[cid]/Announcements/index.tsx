@@ -1,12 +1,13 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { FaUserCircle, FaPlus } from "react-icons/fa";
-import { BsThreeDots } from "react-icons/bs";
+import { FaUserCircle, FaPlus, FaTrash } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
-import { addAnnouncement, deleteAnnouncement, updateAnnouncement } from "./reducer";
+import { useState, useEffect } from "react";
+import { setAnnouncements, addAnnouncement, deleteAnnouncement, updateAnnouncement } from "./reducer";
+import * as announcementsClient from "./client";
 import AnnouncementModal from "./AnnouncementModal";
+import KebabMenu from "@/app/(Kambaz)/KebabMenu";
 
 export default function Announcements() {
     const { cid } = useParams<{ cid: string }>();
@@ -18,8 +19,25 @@ export default function Announcements() {
     const { announcements } = useSelector((state: any) => state.announcementsReducer);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
 
+    const loadAnnouncements = async () => {
+        const list = await announcementsClient.findAnnouncementsForCourse(cid);
+        dispatch(setAnnouncements(list));
+    };
+    useEffect(() => {
+        loadAnnouncements();
+    }, [cid]);
+
     // Filter announcements for current course
-    const courseAnnouncements = announcements.filter((a: any) => a.course === cid);
+    const [searchTerm, setSearchTerm] = useState("");
+    const courseAnnouncements = announcements
+        .filter((a: any) => a.course === cid)
+        .filter((a: any) => {
+            const q = searchTerm.toLowerCase();
+            return (
+                (a.title || "").toLowerCase().includes(q) ||
+                (a.content || "").toLowerCase().includes(q)
+            );
+        });
 
     // Check if current user is faculty
     const isFaculty = currentUser?.role === "FACULTY";
@@ -40,21 +58,25 @@ export default function Announcements() {
         setShowModal(true);
     };
 
-    const handleDeleteClick = (announcementId: string) => {
+    const handleDeleteClick = async (announcementId: string) => {
         if (window.confirm("Are you sure you want to delete this announcement?")) {
+            await announcementsClient.deleteAnnouncement(announcementId);
             dispatch(deleteAnnouncement(announcementId));
         }
     };
 
-    const handleSave = (announcementData: any) => {
+    const handleSave = async (announcementData: any) => {
         if (editMode) {
+            await announcementsClient.updateAnnouncement(announcementData);
             dispatch(updateAnnouncement(announcementData));
         } else {
-            dispatch(addAnnouncement({
+            const created = await announcementsClient.createAnnouncement(cid, {
                 ...announcementData,
                 course: cid,
                 author: currentUser?.username || "Unknown",
-            }));
+                date: new Date().toISOString(),
+            });
+            dispatch(addAnnouncement(created));
         }
         setShowModal(false);
         setEditingAnnouncement(null);
@@ -68,6 +90,8 @@ export default function Announcements() {
                         type="text"
                         className="form-control w-50"
                         placeholder="Search..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     {isFaculty && (
                         <button
@@ -98,7 +122,7 @@ export default function Announcements() {
                                         <div>
                                             <h5 className="mb-1">{announcement.title}</h5>
                                             <p className="text-muted small mb-2">
-                                                {announcement.author} • {announcement.section}
+                                                {announcement.author} - {announcement.section}
                                             </p>
                                         </div>
                                         <div className="text-end">
@@ -113,33 +137,15 @@ export default function Announcements() {
                                                 })}
                                             </p>
                                             {isFaculty && (
-                                                <div className="dropdown">
+                                                <div className="d-flex justify-content-end align-items-center gap-2 mt-1">
                                                     <button
-                                                        className="btn btn-link text-muted p-0"
+                                                        className="btn btn-link text-danger p-0"
                                                         type="button"
-                                                        data-bs-toggle="dropdown"
-                                                        aria-expanded="false"
+                                                        onClick={() => handleDeleteClick(announcement._id)}
                                                     >
-                                                        <BsThreeDots />
+                                                        <FaTrash />
                                                     </button>
-                                                    <ul className="dropdown-menu">
-                                                        <li>
-                                                            <button
-                                                                className="dropdown-item"
-                                                                onClick={() => handleEditClick(announcement)}
-                                                            >
-                                                                Edit
-                                                            </button>
-                                                        </li>
-                                                        <li>
-                                                            <button
-                                                                className="dropdown-item text-danger"
-                                                                onClick={() => handleDeleteClick(announcement._id)}
-                                                            >
-                                                                Delete
-                                                            </button>
-                                                        </li>
-                                                    </ul>
+                                                    <KebabMenu items={[{ label: "Edit", onClick: () => handleEditClick(announcement) }]} />
                                                 </div>
                                             )}
                                         </div>

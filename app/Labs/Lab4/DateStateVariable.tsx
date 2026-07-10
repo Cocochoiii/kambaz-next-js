@@ -1,4 +1,3 @@
-// app/Labs/Lab4/DateStateVariable.tsx
 "use client";
 
 import { useEffect, useState } from "react";

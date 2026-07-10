@@ -1,4 +1,3 @@
-
 import "./index.css";
 import ForegroundColors from "./ForegroundColors";
 import BackgroundColors from "./BackgroundColors";

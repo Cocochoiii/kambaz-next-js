@@ -1,4 +1,3 @@
-// app/Labs/Lab5/client.ts
 "use client";
 
 import axios from "axios";
@@ -13,11 +12,7 @@ if (typeof window !== "undefined") {
     console.log("[Lab5] HTTP baseURL =", baseURL);
 }
 
-/**
- * IMPORTANT:
- * Keep withCredentials: false for Lab 5 so preflight stays simple.
- * (You’ll flip this to true later when wiring cookie-based auth.)
- */
+// keep withCredentials false for Lab 5 to keep preflight simple
 export const http = axios.create({
     baseURL,
     withCredentials: false,

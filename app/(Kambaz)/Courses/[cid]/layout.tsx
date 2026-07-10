@@ -15,13 +15,9 @@ export default function CoursesLayout({ children }: { children: ReactNode }) {
     const course = db.courses.find((c: any) => c._id === cid);
 
     const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
 
-    // Check if user is enrolled or is faculty
-    const isEnrolled = enrollments.some(
-        (e: any) => e.user === currentUser?._id && e.course === cid
-    );
-    const canAccess = isEnrolled || currentUser?.role === "FACULTY";
+    // Any signed-in user may open a course; the Dashboard controls enrollment.
+    const canAccess = !!currentUser;
 
     useEffect(() => {
         if (!currentUser) {

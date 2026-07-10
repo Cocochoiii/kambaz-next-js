@@ -8,12 +8,16 @@ import { FaCheckCircle } from "react-icons/fa";
 import { BiImport } from "react-icons/bi";
 import { LiaFileImportSolid } from "react-icons/lia";
 import { FaHouse, FaBullhorn, FaChartLine, FaBell } from "react-icons/fa6";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import * as coursesClient from "../../client";
+import { updateCourse } from "../../reducer";
+import * as announcementsClient from "../Announcements/client";
+import { addAnnouncement } from "../Announcements/reducer";
 
 export default function CourseStatus() {
     const { cid } = useParams<{ cid: string }>();
     const router = useRouter();
-    const [isPublished, setIsPublished] = useState(true);
+    const dispatch = useDispatch();
     const [showImportModal, setShowImportModal] = useState(false);
     const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
     const [showHomePageModal, setShowHomePageModal] = useState(false);
@@ -24,15 +28,17 @@ export default function CourseStatus() {
     const { courses } = useSelector((state: any) => state.coursesReducer);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
 
-    const role = (currentUser?.role ?? "").toString().toUpperCase();
-    const isFaculty = role === "FACULTY";
+    // Course publish state comes from the course record and is saved to the server.
+    const course = courses.find((c: any) => c._id === cid);
+    const isPublished = course?.published !== false;
 
-    // Hide the entire panel for non-faculty (safety if mounted anywhere)
-    if (!isFaculty) return null;
 
-    // Toggle publish status
-    const handlePublishToggle = () => {
-        setIsPublished(!isPublished);
+    // Toggle publish status (persisted to the server)
+    const handlePublishToggle = async () => {
+        if (!course) return;
+        const updated = { ...course, published: !isPublished };
+        await coursesClient.updateCourse(updated);
+        dispatch(updateCourse(updated));
         setShowSuccessAlert(
             isPublished ? "Course unpublished successfully" : "Course published successfully"
         );
@@ -46,9 +52,11 @@ export default function CourseStatus() {
         setTimeout(() => setShowSuccessAlert(""), 3000);
     };
 
-    // Create new announcement
-    const handleCreateAnnouncement = () => {
+    // Create a new announcement (saved to the server)
+    const handleCreateAnnouncement = async () => {
         if (announcement.title && announcement.content) {
+            const created = await announcementsClient.createAnnouncement(cid, announcement);
+            dispatch(addAnnouncement(created));
             setShowAnnouncementModal(false);
             setAnnouncement({ title: "", content: "" });
             setShowSuccessAlert("Announcement posted successfully");

@@ -1,4 +1,3 @@
-// app/Labs/Lab4/PassingDataOnEvent.tsx
 "use client";
 
 export default function PassingDataOnEvent() {

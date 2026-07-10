@@ -1,9 +1,7 @@
-// app/(Kambaz)/Courses/[cid]/Modules/ModulesControls.tsx
 "use client";
 
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa6";
-import { Button } from "react-bootstrap";
 import ModuleEditor from "./ModuleEditor";
 import PublishAllMenu from "./PublishAllMenu";
 
@@ -12,13 +10,15 @@ export default function ModulesControls({
                                             allCollapsed,
                                             moduleName,
                                             setModuleName,
-                                            addModule
+                                            addModule,
+                                            bulkPublish
                                         }: {
     onToggleAll: () => void;
     allCollapsed: boolean;
     moduleName: string;
     setModuleName: (title: string) => void;
     addModule: () => void;
+    bulkPublish?: (published: boolean, includeItems: boolean) => void;
 }) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -38,7 +38,7 @@ export default function ModulesControls({
                 View Progress
             </button>
 
-            <PublishAllMenu idPrefix="wd" label="Publish All" />
+            <PublishAllMenu idPrefix="wd" label="Publish All" onBulkPublish={bulkPublish} />
 
             <button
                 id="wd-modules-new-module"

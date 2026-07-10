@@ -8,6 +8,7 @@ import announcementsReducer from "./Courses/[cid]/Announcements/reducer";
 import quizzesReducer from "./Courses/[cid]/Quizzes/reducer";
 import gradesReducer from "./Courses/[cid]/Grades/reducer";
 import zoomReducer from "./Courses/[cid]/Zoom/reducer";
+import usersReducer from "./Account/Users/reducer";
 
 const store = configureStore({
     reducer: {
@@ -20,10 +21,11 @@ const store = configureStore({
         quizzesReducer,
         gradesReducer,
         zoomReducer,
+        usersReducer,
     },
 });
 
-// Export types for TypeScript - CRITICAL for selectors to work
+// types for selectors and dispatch
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 

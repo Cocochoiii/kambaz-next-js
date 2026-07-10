@@ -1,12 +1,14 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { BsRocket, BsRocketFill, BsThreeDots } from "react-icons/bs";
-import { FaPlus } from "react-icons/fa";
+import { BsRocket, BsRocketFill } from "react-icons/bs";
+import { FaPlus, FaTrash } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
-import { addQuiz, deleteQuiz, updateQuiz } from "./reducer";
+import { useState, useEffect } from "react";
+import { setQuizzes, addQuiz, deleteQuiz, updateQuiz } from "./reducer";
+import * as quizzesClient from "./client";
 import QuizModal from "./QuizModal";
+import KebabMenu from "@/app/(Kambaz)/KebabMenu";
 
 export default function Quizzes() {
     const { cid } = useParams<{ cid: string }>();
@@ -18,6 +20,14 @@ export default function Quizzes() {
 
     const { quizzes } = useSelector((state: any) => state.quizzesReducer);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
+
+    const loadQuizzes = async () => {
+        const list = await quizzesClient.findQuizzesForCourse(cid);
+        dispatch(setQuizzes(list));
+    };
+    useEffect(() => {
+        loadQuizzes();
+    }, [cid]);
 
     // Filter quizzes for current course
     const courseQuizzes = quizzes
@@ -52,20 +62,23 @@ export default function Quizzes() {
         setShowModal(true);
     };
 
-    const handleDeleteClick = (quizId: string) => {
+    const handleDeleteClick = async (quizId: string) => {
         if (window.confirm("Are you sure you want to delete this quiz?")) {
+            await quizzesClient.deleteQuiz(quizId);
             dispatch(deleteQuiz(quizId));
         }
     };
 
-    const handleSave = (quizData: any) => {
+    const handleSave = async (quizData: any) => {
         if (editMode) {
+            await quizzesClient.updateQuiz(quizData);
             dispatch(updateQuiz(quizData));
         } else {
-            dispatch(addQuiz({
+            const created = await quizzesClient.createQuiz(cid, {
                 ...quizData,
                 course: cid,
-            }));
+            });
+            dispatch(addQuiz(created));
         }
         setShowModal(false);
         setEditingQuiz(null);
@@ -133,33 +146,15 @@ export default function Quizzes() {
                                 </div>
                             </div>
                             {isFaculty && (
-                                <div className="dropdown">
+                                <div className="ms-3 d-flex align-items-center gap-2">
                                     <button
-                                        className="btn btn-link text-muted p-0"
+                                        className="btn btn-link text-danger p-0"
                                         type="button"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
+                                        onClick={() => handleDeleteClick(quiz._id)}
                                     >
-                                        <BsThreeDots />
+                                        <FaTrash />
                                     </button>
-                                    <ul className="dropdown-menu">
-                                        <li>
-                                            <button
-                                                className="dropdown-item"
-                                                onClick={() => handleEditClick(quiz)}
-                                            >
-                                                Edit
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button
-                                                className="dropdown-item text-danger"
-                                                onClick={() => handleDeleteClick(quiz._id)}
-                                            >
-                                                Delete
-                                            </button>
-                                        </li>
-                                    </ul>
+                                    <KebabMenu items={[{ label: "Edit", onClick: () => handleEditClick(quiz) }]} />
                                 </div>
                             )}
                         </div>

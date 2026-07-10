@@ -9,7 +9,7 @@ export default function AccountNavigation() {
     const { currentUser } = useSelector((state: any) => state.accountReducer);
 
     // Show different links based on whether user is signed in
-    const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
+    const links = currentUser ? ["Profile", "Users"] : ["Signin", "Signup"];
 
     const Item = ({
                       href,

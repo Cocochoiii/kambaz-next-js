@@ -1,17 +1,43 @@
 "use client";
 
-import { IoEllipsisVertical } from "react-icons/io5";
-import GreenCheckmark from "./GreenCheckmark";
+import { FaCheckCircle, FaBan } from "react-icons/fa";
+import KebabMenu from "@/app/(Kambaz)/KebabMenu";
 
-/**
- * This component is **faculty-only** (parent controls visibility).
- * It keeps your original contents; just render it only for faculty.
- */
-export default function LessonControlButtons() {
+// Lesson row controls for faculty. Publish toggle + Edit/Delete menu.
+export default function LessonControlButtons({
+    published,
+    onTogglePublish,
+    onEdit,
+    onDelete,
+}: {
+    published: boolean;
+    onTogglePublish: () => void;
+    onEdit: () => void;
+    onDelete: () => void;
+}) {
     return (
-        <div className="float-end">
-            <GreenCheckmark />
-            <IoEllipsisVertical className="fs-4" />
+        <div className="d-flex align-items-center ms-auto gap-3">
+            {published ? (
+                <FaCheckCircle
+                    role="button"
+                    title="Published (click to unpublish)"
+                    className="text-success fs-5"
+                    onClick={onTogglePublish}
+                />
+            ) : (
+                <FaBan
+                    role="button"
+                    title="Unpublished (click to publish)"
+                    className="text-secondary fs-5"
+                    onClick={onTogglePublish}
+                />
+            )}
+            <KebabMenu
+                items={[
+                    { label: "Edit", onClick: onEdit },
+                    { label: "Delete", onClick: onDelete, danger: true },
+                ]}
+            />
         </div>
     );
 }

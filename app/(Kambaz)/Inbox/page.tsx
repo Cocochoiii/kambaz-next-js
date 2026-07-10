@@ -65,7 +65,7 @@ export default function InboxPage() {
             <div className="d-flex align-items-center mb-3 gap-2">
                 <BsInbox className="fs-3" />
                 <h2 className="m-0">Inbox</h2>
-                <span className="text-muted"> · placeholder</span>
+                <span className="text-muted"> - placeholder</span>
                 <div className="ms-auto">
                     <Link href="/Dashboard" className="btn btn-outline-secondary btn-sm">
                         Back to Dashboard
@@ -81,7 +81,7 @@ export default function InboxPage() {
                                 <BsSearch />
                             </InputGroup.Text>
                             <Form.Control
-                                placeholder="Search messages…"
+                                placeholder="Search messages..."
                                 value={q}
                                 onChange={(e) => setQ(e.target.value)}
                             />
@@ -106,7 +106,7 @@ export default function InboxPage() {
                 <ListGroup variant="flush">
                     {filtered.length === 0 && (
                         <ListGroup.Item className="py-5 text-center text-muted">
-                            No messages yet. This is a stub UI—hook it up to your data source when ready.
+                            No messages yet. This is a stub UI-hook it up to your data source when ready.
                         </ListGroup.Item>
                     )}
 

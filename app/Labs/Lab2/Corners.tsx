@@ -1,4 +1,3 @@
-
 export default function CornersEx(){
   return (
     <div id="wd-css-borders">

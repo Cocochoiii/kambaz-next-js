@@ -1,10 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useRouter } from "next/navigation";
 import { RootState } from "@/app/(Kambaz)/store";
 import { Tab, Tabs, Table, Button, Form, Modal, Row, Col, Alert } from "react-bootstrap";
-import { FaVideo, FaCalendarPlus, FaClock, FaUsers, FaRecordVinyl, FaLink } from "react-icons/fa";
+import { FaVideo, FaUsers, FaRecordVinyl, FaLink } from "react-icons/fa";
 import { addMeeting, deleteMeeting, updateMeetingStatus } from "./reducer";
 import { format } from "date-fns";
 

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
+import * as client from "../client";
 import { Form, Button } from "react-bootstrap";
 
 export default function Profile() {
@@ -20,14 +21,14 @@ export default function Profile() {
         setProfile(currentUser);
     };
 
-    const updateProfile = () => {
-        // Update the currentUser in Redux with the edited profile
-        dispatch(setCurrentUser(profile));
-        // ➜ After saving, go to Dashboard so the UI reflects the role immediately
+    const updateProfile = async () => {
+        const updated = await client.updateUser(profile);
+        dispatch(setCurrentUser(updated));
         router.push("/Dashboard");
     };
 
-    const signout = () => {
+    const signout = async () => {
+        await client.signout();
         dispatch(setCurrentUser(null));
         router.push("/Account/Signin");
     };
@@ -36,7 +37,6 @@ export default function Profile() {
         fetchProfile();
     }, [currentUser]);
 
-    // If no profile data yet, show loading or redirect
     if (!profile || !profile.username) {
         return <div>Loading...</div>;
     }
@@ -101,12 +101,7 @@ export default function Profile() {
                     value={profile.role || "USER"}
                     id="wd-role"
                     className="mb-3"
-                    onChange={(e) => {
-                        const updatedProfile = { ...profile, role: e.target.value };
-                        setProfile(updatedProfile);
-                        // Immediately update Redux when role changes
-                        dispatch(setCurrentUser(updatedProfile));
-                    }}
+                    onChange={(e) => setProfile({ ...profile, role: e.target.value })}
                 >
                     <option value="USER">User</option>
                     <option value="ADMIN">Admin</option>
@@ -114,19 +109,11 @@ export default function Profile() {
                     <option value="STUDENT">Student</option>
                 </Form.Select>
 
-                <Button
-                    onClick={updateProfile}
-                    className="w-100 btn-primary mb-2"
-                    id="wd-update-profile-btn"
-                >
+                <Button onClick={updateProfile} className="w-100 btn-primary mb-2" id="wd-update-profile-btn">
                     Update Profile
                 </Button>
 
-                <Button
-                    onClick={signout}
-                    className="w-100 btn-danger"
-                    id="wd-signout-btn"
-                >
+                <Button onClick={signout} className="w-100 btn-danger" id="wd-signout-btn">
                     Sign out
                 </Button>
             </Form>
