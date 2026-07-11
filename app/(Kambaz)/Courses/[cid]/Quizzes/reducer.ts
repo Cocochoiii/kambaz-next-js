@@ -1,3 +1,4 @@
+// Redux slice that holds the quiz list for the current screen.
 import { createSlice } from "@reduxjs/toolkit";
 import { quizzes } from "../../../Database";
 

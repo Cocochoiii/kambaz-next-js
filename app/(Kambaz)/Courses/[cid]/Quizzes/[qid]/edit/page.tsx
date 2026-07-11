@@ -2,19 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import { Button, Nav } from "react-bootstrap";
 import * as quizzesClient from "../../client";
 import { totalPoints } from "../../helpers";
 import DetailsTab from "./DetailsTab";
 import QuestionsTab from "./QuestionsTab";
 
-// Quiz Editor: 2 tabs (Details default, Questions). Save persists without
-// publishing; Save & Publish publishes; Cancel discards.
+// Quiz Editor: two tabs (Details, Questions). Save keeps changes without
+// publishing. Save & Publish publishes. Cancel throws the changes away.
 export default function QuizEditor() {
     const { cid, qid } = useParams<{ cid: string; qid: string }>();
     const router = useRouter();
     const [quiz, setQuiz] = useState<any>(null);
     const [tab, setTab] = useState<"details" | "questions">("details");
+    const { currentUser, viewAsStudent } = useSelector((s: any) => s.accountReducer);
+    const notFaculty = !!currentUser && (String(currentUser.role).toUpperCase() !== "FACULTY" || !!viewAsStudent);
 
     useEffect(() => {
         (async () => {
@@ -29,6 +32,13 @@ export default function QuizEditor() {
         if (t === "questions") setTab("questions");
     }, []);
 
+    useEffect(() => {
+        // Students can not edit a quiz.
+        if (notFaculty) router.replace(`/Courses/${cid}/Quizzes/${qid}`);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [notFaculty]);
+
+    if (notFaculty) return null;
     if (!quiz) return <div className="p-4 text-muted">Loading…</div>;
 
     const set = (patch: any) => setQuiz((prev: any) => ({ ...prev, ...patch }));

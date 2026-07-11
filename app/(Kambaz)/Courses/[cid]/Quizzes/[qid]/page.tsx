@@ -18,6 +18,8 @@ function Row({ label, value }: any) {
     );
 }
 
+// Quiz Details screen: faculty see a summary and actions (Preview/Edit/Publish);
+// a student sees Start and the score of their last attempt.
 export default function QuizDetails() {
     const { cid, qid } = useParams<{ cid: string; qid: string }>();
     const router = useRouter();

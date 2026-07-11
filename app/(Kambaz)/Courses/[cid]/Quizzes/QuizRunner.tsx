@@ -13,8 +13,8 @@ const shuffle = <T,>(arr: T[]): T[] => {
     return a;
 };
 
-// Fraction (0..1) of a question's points earned by `given`. Multiple choice
-// supports multiple correct options with partial credit.
+// How much of the points an answer earns, from 0 to 1. Multiple choice can
+// have many correct options and gives partial credit.
 const fractionOf = (q: any, given: any): number => {
     if (q.type === "TRUE_FALSE") return typeof given === "boolean" && given === !!q.correctAnswer ? 1 : 0;
     if (q.type === "FILL_BLANK") {
@@ -98,7 +98,7 @@ export default function QuizRunner({ quiz, mode, initialAnswers, showCorrect, on
     const review = mode === "review";
     const locked = review;
 
-    // Stable shuffle for this session (questions + choices), computed once.
+    // Shuffle once for this attempt, so the order does not change on each render.
     const layout = useMemo(() => {
         let order = base.map((_, i) => i);
         if (!review && quiz.shuffleQuestions) order = shuffle(order);
@@ -131,7 +131,7 @@ export default function QuizRunner({ quiz, mode, initialAnswers, showCorrect, on
         const arr = questions.map((q) => ({ questionId: q._id, answer: answers[q._id] ?? null }));
         const meta = { timeTaken: Math.round((Date.now() - startRef.current) / 1000) };
         if (onSubmit) await onSubmit(arr, meta, scoreOf(base, answers));
-        // The parent swaps to the results view after submit.
+        // After submit, the parent page shows the results.
     };
     submitRef.current = doSubmit;
 

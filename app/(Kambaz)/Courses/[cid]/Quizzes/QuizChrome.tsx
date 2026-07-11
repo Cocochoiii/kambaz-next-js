@@ -2,6 +2,8 @@
 
 import { fmtDate, totalPoints, questionCount, availability } from "./helpers";
 
+// Small read-only pieces shared by the quiz screens (Canvas-style layout).
+
 export const formatTimeTaken = (sec?: number): string => {
     if (sec == null) return "—";
     if (sec < 60) return `${sec} seconds`;
@@ -9,7 +11,7 @@ export const formatTimeTaken = (sec?: number): string => {
     return `${m} minute${m === 1 ? "" : "s"}`;
 };
 
-// Due / Points / Questions and Available / Time Limit, with thin rules.
+// Top info line: due date, points, questions, available dates, and time limit.
 export function TopInfoRow({ quiz }: any) {
     const tl = quiz.hasTimeLimit === false ? "None" : `${quiz.timeLimit ?? 20} Minutes`;
     return (

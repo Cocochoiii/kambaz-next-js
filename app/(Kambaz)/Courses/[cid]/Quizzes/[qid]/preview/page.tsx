@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import * as quizzesClient from "../../client";
 import { totalPoints } from "../../helpers";
@@ -14,10 +15,19 @@ export default function QuizPreview() {
     const router = useRouter();
     const [quiz, setQuiz] = useState<any>(null);
     const [result, setResult] = useState<any>(null);
+    const { currentUser, viewAsStudent } = useSelector((s: any) => s.accountReducer);
+    const notFaculty = !!currentUser && (String(currentUser.role).toUpperCase() !== "FACULTY" || !!viewAsStudent);
 
     useEffect(() => {
         (async () => setQuiz(await quizzesClient.getQuiz(qid).catch(() => null)))();
     }, [qid]);
+
+    useEffect(() => {
+        // Preview is a faculty-only screen.
+        if (notFaculty) router.replace(`/Courses/${cid}/Quizzes/${qid}`);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [notFaculty]);
+    if (notFaculty) return null;
     if (!quiz) return <div className="p-4 text-muted">Loading…</div>;
 
     const points = totalPoints(quiz);

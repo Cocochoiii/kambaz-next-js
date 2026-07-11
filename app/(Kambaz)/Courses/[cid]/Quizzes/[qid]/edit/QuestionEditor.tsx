@@ -5,7 +5,7 @@ import { Form, Button } from "react-bootstrap";
 import { v4 as uuid } from "uuid";
 import RichText from "../../RichText";
 
-// Multiple choice: any number of choices, one marked correct via radio.
+// Multiple choice: add any number of options; check the correct one(s).
 function MultipleChoice({ q, set }: any) {
     const choices = q.choices || [];
     const update = (cs: any[]) => set({ choices: cs });
@@ -65,6 +65,7 @@ function FillBlank({ q, set }: any) {
     );
 }
 
+// Edit one question: shared Title/Type/Points/Question plus a type-specific part.
 export default function QuestionEditor({ question, onSave, onCancel }: any) {
     // Work on a copy so Cancel discards changes.
     const [q, setQ] = useState<any>({

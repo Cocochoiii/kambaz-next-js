@@ -22,7 +22,7 @@ export const fmtDate = (d?: string): string => {
     return dt.toLocaleString(undefined, { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
 };
 
-// Availability: before availableDate -> not yet; after untilDate -> closed; else available.
+// Tell if the quiz is open now, not open yet, or already closed.
 export const availability = (quiz: any): { label: string; state: string } => {
     const now = new Date();
     const from = quiz?.availableDate ? new Date(quiz.availableDate) : null;

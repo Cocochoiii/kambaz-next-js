@@ -24,6 +24,7 @@ const blankQuestion = () => ({
     answers: [""],
 });
 
+// Questions tab: show the question list, add a new one, and edit or delete each.
 export default function QuestionsTab({ quiz, setQuiz }: any) {
     const questions: any[] = Array.isArray(quiz.questions) ? quiz.questions : [];
     const [editingId, setEditingId] = useState<string | null>(null);

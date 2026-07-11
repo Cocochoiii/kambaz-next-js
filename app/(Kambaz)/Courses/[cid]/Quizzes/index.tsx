@@ -11,6 +11,8 @@ import { availability, totalPoints, questionCount, fmtDate } from "./helpers";
 import KebabMenu from "@/app/(Kambaz)/KebabMenu";
 import { useIsFaculty } from "@/app/(Kambaz)/Account/roles";
 
+// Quiz List screen: list a course's quizzes, add/publish/delete (faculty),
+// and show each quiz availability, points, question count, and student score.
 export default function Quizzes() {
     const { cid } = useParams<{ cid: string }>();
     const router = useRouter();

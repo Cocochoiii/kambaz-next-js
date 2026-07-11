@@ -9,6 +9,8 @@ import { totalPoints, availability } from "../../helpers";
 import QuizRunner from "../../QuizRunner";
 import { TopInfoRow, Instructions, LockNotice, AttemptHistory, SubmissionDetails } from "../../QuizChrome";
 
+// Student quiz taking. Submitting stores an attempt (graded on the server).
+// A student can retake up to the limit and only sees the last attempt.
 export default function QuizTake() {
     const { cid, qid } = useParams<{ cid: string; qid: string }>();
     const router = useRouter();

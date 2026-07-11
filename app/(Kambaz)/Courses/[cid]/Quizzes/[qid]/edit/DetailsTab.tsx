@@ -4,7 +4,7 @@ import { Form } from "react-bootstrap";
 import RichText from "../../RichText";
 import { totalPoints } from "../../helpers";
 
-// Convert a stored date string to a value the datetime-local input accepts.
+// Turn a saved date into the value a datetime-local input needs.
 const toLocal = (d?: string) => {
     if (!d) return "";
     const dt = new Date(d);
@@ -13,6 +13,7 @@ const toLocal = (d?: string) => {
     return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
 };
 
+// Details tab: edit every quiz setting. The fields show the current values.
 export default function DetailsTab({ quiz, set }: any) {
     return (
         <div style={{ maxWidth: 820 }}>
