@@ -136,6 +136,8 @@ export default function PostView({ cid, post, currentUser, isInstructor, onChang
         await client.deletePost(post._id);
         onDeleted();
     };
+    const togglePin = async () => { await client.updatePost({ ...post, pinned: !post.pinned }); onChanged(); };
+    const toggleEndorse = async (a: any) => { await client.updateComment({ ...a, endorsed: !a.endorsed }); await reload(); };
 
     const ctx = { comments, canModify, editingId, editText, setEditingId, setEditText, startEdit, saveEdit, del, replyingTo, setReplyingTo, replyText, setReplyText, openReply, submitReply };
 
@@ -148,9 +150,17 @@ export default function PostView({ cid, post, currentUser, isInstructor, onChang
     const answerBlock = (a: any) => (
         <div key={a._id} className="border rounded p-2 mb-2">
             <div className="d-flex justify-content-between align-items-start">
-                <div className="small text-muted">{a.authorName} · {timeLabel(a.createdAt)}</div>
+                <div className="small text-muted">
+                    {a.authorName} · {timeLabel(a.createdAt)}
+                    {a.endorsed && <span className="badge bg-success ms-2">✔ Instructor endorsed</span>}
+                </div>
                 {canModify(a) && (
                     <div className="d-flex align-items-center gap-2">
+                        {isInstructor && !isInstructorRole(a.authorRole) && (
+                            <Button size="sm" variant={a.endorsed ? "success" : "outline-success"} onClick={() => toggleEndorse(a)}>
+                                {a.endorsed ? "Endorsed" : "Endorse"}
+                            </Button>
+                        )}
                         <Button size="sm" variant="outline-secondary" onClick={() => startEdit(a)}>Edit</Button>
                         <KebabMenu items={[
                             { label: "Edit", onClick: () => startEdit(a) },
@@ -178,6 +188,7 @@ export default function PostView({ cid, post, currentUser, isInstructor, onChang
             {/* Post header */}
             <div className="d-flex justify-content-between align-items-start">
                 <div className="flex-grow-1">
+                    {post.pinned && <div><span className="badge bg-warning text-dark mb-1">Pinned</span></div>}
                     {editingPost ? (
                         <Form.Control className="mb-2 fw-bold" value={editSummary} maxLength={100}
                             onChange={(e) => setEditSummary(e.target.value)} />
@@ -194,6 +205,7 @@ export default function PostView({ cid, post, currentUser, isInstructor, onChang
                     <div className="d-flex align-items-center gap-2">
                         <Button size="sm" variant="outline-secondary" onClick={() => setEditingPost(true)}>Edit</Button>
                         <KebabMenu items={[
+                            { label: post.pinned ? "Unpin" : "Pin", onClick: togglePin },
                             { label: "Edit", onClick: () => setEditingPost(true) },
                             { label: "Delete", danger: true, onClick: deletePost },
                         ]} />

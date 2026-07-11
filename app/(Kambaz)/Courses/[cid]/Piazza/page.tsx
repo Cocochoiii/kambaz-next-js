@@ -33,6 +33,7 @@ export default function Piazza() {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [mode, setMode] = useState<"glance" | "new" | "view">("glance");
     const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [showUnanswered, setShowUnanswered] = useState(false);
 
     const refresh = async () => {
         const [f, p, c] = await Promise.all([
@@ -59,7 +60,11 @@ export default function Piazza() {
         if (p.author === currentUser?._id) return true;
         return (p.recipients || []).includes(currentUser?._id);
     };
-    const visible = posts
+    // Answered question ids (drives unanswered counts + the instructor filter).
+    const answeredIds = new Set(comments.filter((c) => c.kind === "answer").map((c) => c.post));
+
+    // Base set: visible to the user, folder + search applied.
+    const baseVisible = posts
         .filter(canSee)
         .filter((p: any) => !selectedFolder || (p.folders || []).includes(selectedFolder))
         .filter((p: any) => {
@@ -68,21 +73,61 @@ export default function Piazza() {
             return (p.summary || "").toLowerCase().includes(q) || preview(p.details, 9999).toLowerCase().includes(q);
         })
         .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    const groups = groupPosts(visible);
+    // The list also honors the instructor "unanswered only" filter.
+    const visible = showUnanswered
+        ? baseVisible.filter((p: any) => p.type === "question" && !answeredIds.has(p._id))
+        : baseVisible;
+    const pinnedPosts = visible.filter((p: any) => p.pinned);
+    const groups = groupPosts(visible.filter((p: any) => !p.pinned));
     const selectedPost = posts.find((p: any) => p._id === selectedId);
 
     const openPost = (id: string) => { setSelectedId(id); setMode("view"); };
     const backToGlance = async () => { setMode("glance"); setSelectedId(null); await refresh(); };
     const onCreated = async (post: any) => { await refresh(); setSelectedId(post._id); setMode("view"); };
 
-    // Class at a Glance metrics.
-    const answeredIds = new Set(comments.filter((c) => c.kind === "answer").map((c) => c.post));
-    const unread = visible.filter((p) => !(p.viewers || []).includes(currentUser?._id)).length;
-    const unanswered = visible.filter((p) => p.type === "question" && !answeredIds.has(p._id)).length;
+    // Class at a Glance metrics (from the base set, not the unanswered filter).
+    const unread = baseVisible.filter((p) => !(p.viewers || []).includes(currentUser?._id)).length;
+    const unanswered = baseVisible.filter((p) => p.type === "question" && !answeredIds.has(p._id)).length;
     const instructorResponses = comments.filter((c) => isInstructorRole(c.authorRole)).length;
     const studentResponses = comments.filter((c) => !isInstructorRole(c.authorRole)).length;
     const unansweredFollowups = comments.filter((c) => c.kind === "discussion" && !c.resolved).length;
-    const totalContributions = visible.length + comments.length;
+    const totalContributions = baseVisible.length + comments.length;
+
+    // One post row in the list (reused by the Pinned group and the date groups).
+    const postItem = (p: any) => {
+        const active = p._id === selectedId;
+        return (
+            <div key={p._id} onClick={() => openPost(p._id)}
+                className="px-3 py-2 border-bottom"
+                style={{
+                    cursor: "pointer",
+                    background: active ? "#e7eefb" : "#fff",
+                    borderLeft: active ? "4px solid #2563b8" : "4px solid transparent",
+                }}>
+                <div className="d-flex gap-2">
+                    {p.type === "note" ? (
+                        <span title="Note" style={{ width: 14, height: 14, background: "#e0a100", borderRadius: 3, display: "inline-block", marginTop: 4, flexShrink: 0 }} />
+                    ) : (
+                        <FaRegQuestionCircle title="Question" style={{ color: "#2563b8", marginTop: 3, flexShrink: 0 }} />
+                    )}
+                    <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                        <div className="d-flex align-items-center gap-1">
+                            <span className="badge" style={{ background: isInstructorRole(p.authorRole) ? "#e07b39" : "#6c757d", fontSize: 10 }}>
+                                {isInstructorRole(p.authorRole) ? "Instr" : "Student"}
+                            </span>
+                            <span className="fw-bold text-truncate">{p.summary}</span>
+                        </div>
+                        <div className="small text-muted" style={{
+                            display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
+                        }}>
+                            {preview(p.details, 120)}
+                        </div>
+                    </div>
+                    <div className="small text-muted flex-shrink-0" style={{ whiteSpace: "nowrap" }}>{timeLabel(p.createdAt)}</div>
+                </div>
+            </div>
+        );
+    };
 
     const tabStyle = (active: boolean) => ({
         cursor: "pointer",
@@ -114,6 +159,9 @@ export default function Piazza() {
                     </Link>
                 )}
                 <span className="ms-auto d-flex align-items-center gap-2" style={{ color: "#fff" }}>
+                    <span className="badge" style={{ background: isInstructor ? "#e0a100" : "rgba(255,255,255,0.25)", color: "#fff" }}>
+                        {isInstructor ? "Instructor" : "Student"}
+                    </span>
                     <FaUserCircle size={22} />
                     {[currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(" ") || currentUser?.username}
                 </span>
@@ -165,46 +213,25 @@ export default function Piazza() {
                         </div>
 
                         <div style={{ overflowY: "auto", maxHeight: "62vh" }}>
+                            {showUnanswered && (
+                                <div className="d-flex justify-content-between align-items-center px-3 py-1 small" style={{ background: "#fff3cd" }}>
+                                    <span>Showing unanswered questions</span>
+                                    <button className="btn btn-link btn-sm p-0 text-decoration-none" onClick={() => setShowUnanswered(false)}>Clear</button>
+                                </div>
+                            )}
                             {visible.length === 0 && <div className="text-muted small p-3">No posts.</div>}
+                            {pinnedPosts.length > 0 && (
+                                <details open>
+                                    <summary className="px-3 py-1 bg-light fw-semibold small" style={{ cursor: "pointer" }}>Pinned</summary>
+                                    {pinnedPosts.map((p: any) => postItem(p))}
+                                </details>
+                            )}
                             {groups.map((g) => (
                                 <details key={g.key} open>
                                     <summary className="px-3 py-1 bg-light fw-semibold small" style={{ cursor: "pointer" }}>
                                         {g.label}
                                     </summary>
-                                    {g.posts.map((p: any) => {
-                                        const active = p._id === selectedId;
-                                        return (
-                                            <div key={p._id} onClick={() => openPost(p._id)}
-                                                className="px-3 py-2 border-bottom"
-                                                style={{
-                                                    cursor: "pointer",
-                                                    background: active ? "#e7eefb" : "#fff",
-                                                    borderLeft: active ? "4px solid #2563b8" : "4px solid transparent",
-                                                }}>
-                                                <div className="d-flex gap-2">
-                                                    {p.type === "note" ? (
-                                                        <span title="Note" style={{ width: 14, height: 14, background: "#e0a100", borderRadius: 3, display: "inline-block", marginTop: 4, flexShrink: 0 }} />
-                                                    ) : (
-                                                        <FaRegQuestionCircle title="Question" style={{ color: "#2563b8", marginTop: 3, flexShrink: 0 }} />
-                                                    )}
-                                                    <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                                                        <div className="d-flex align-items-center gap-1">
-                                                            <span className="badge" style={{ background: isInstructorRole(p.authorRole) ? "#e07b39" : "#6c757d", fontSize: 10 }}>
-                                                                {isInstructorRole(p.authorRole) ? "Instr" : "Student"}
-                                                            </span>
-                                                            <span className="fw-bold text-truncate">{p.summary}</span>
-                                                        </div>
-                                                        <div className="small text-muted" style={{
-                                                            display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
-                                                        }}>
-                                                            {preview(p.details, 120)}
-                                                        </div>
-                                                    </div>
-                                                    <div className="small text-muted flex-shrink-0" style={{ whiteSpace: "nowrap" }}>{timeLabel(p.createdAt)}</div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
+                                    {g.posts.map((p: any) => postItem(p))}
                                 </details>
                             ))}
                         </div>
@@ -228,6 +255,7 @@ export default function Piazza() {
                     {(mode === "glance" || (mode === "view" && !selectedPost)) && (
                         <ClassAtGlance
                             isInstructor={isInstructor}
+                            onShowUnanswered={() => setShowUnanswered(true)}
                             unread={unread}
                             unanswered={unanswered}
                             unansweredFollowups={unansweredFollowups}
