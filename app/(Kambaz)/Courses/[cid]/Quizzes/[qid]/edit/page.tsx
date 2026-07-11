@@ -23,6 +23,12 @@ export default function QuizEditor() {
         })();
     }, [qid]);
 
+    useEffect(() => {
+        // Preview's "Edit Quiz" links here with ?tab=questions.
+        const t = new URLSearchParams(window.location.search).get("tab");
+        if (t === "questions") setTab("questions");
+    }, []);
+
     if (!quiz) return <div className="p-4 text-muted">Loading…</div>;
 
     const set = (patch: any) => setQuiz((prev: any) => ({ ...prev, ...patch }));
@@ -60,7 +66,7 @@ export default function QuizEditor() {
             <div className="d-flex justify-content-center gap-2">
                 <Button variant="light" className="border" onClick={cancel}>Cancel</Button>
                 <Button variant="secondary" onClick={() => save(false)}>Save</Button>
-                <Button style={{ backgroundColor: "#d32f2f", border: "none" }} onClick={() => save(true)}>Save &amp; Publish</Button>
+                <Button variant="dark" onClick={() => save(true)}>Save &amp; Publish</Button>
             </div>
         </div>
     );

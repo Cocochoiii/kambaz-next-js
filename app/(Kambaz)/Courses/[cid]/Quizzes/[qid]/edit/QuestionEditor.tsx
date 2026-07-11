@@ -11,15 +11,15 @@ function MultipleChoice({ q, set }: any) {
     const update = (cs: any[]) => set({ choices: cs });
     const addChoice = () => update([...choices, { _id: uuid(), text: "", correct: choices.length === 0 }]);
     const removeChoice = (id: string) => update(choices.filter((c: any) => c._id !== id));
-    const setCorrect = (id: string) => update(choices.map((c: any) => ({ ...c, correct: c._id === id })));
+    const toggleCorrect = (id: string) => update(choices.map((c: any) => (c._id === id ? { ...c, correct: !c.correct } : c)));
     const setText = (id: string, text: string) => update(choices.map((c: any) => (c._id === id ? { ...c, text } : c)));
     return (
         <div>
-            <Form.Label>Answers</Form.Label>
+            <Form.Label>Answers (check the correct one(s))</Form.Label>
             {choices.map((c: any) => (
                 <div key={c._id} className="d-flex align-items-center gap-2 mb-2">
-                    <Form.Check type="radio" name={`correct-${q._id}`} title="Correct answer"
-                        checked={!!c.correct} onChange={() => setCorrect(c._id)} />
+                    <Form.Check type="checkbox" title="Correct answer"
+                        checked={!!c.correct} onChange={() => toggleCorrect(c._id)} />
                     <Form.Control as="textarea" rows={1} value={c.text} placeholder="Answer text"
                         onChange={(e) => setText(c._id, e.target.value)} />
                     <Button size="sm" variant="outline-danger" onClick={() => removeChoice(c._id)}>Remove</Button>

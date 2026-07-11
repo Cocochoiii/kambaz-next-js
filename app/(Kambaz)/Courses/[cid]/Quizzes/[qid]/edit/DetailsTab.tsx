@@ -59,6 +59,8 @@ export default function DetailsTab({ quiz, set }: any) {
             <div className="mt-3">
                 <Form.Check type="checkbox" label="Shuffle Answers"
                     checked={quiz.shuffleAnswers !== false} onChange={(e) => set({ shuffleAnswers: e.target.checked })} />
+                <Form.Check type="checkbox" label="Shuffle Questions"
+                    checked={!!quiz.shuffleQuestions} onChange={(e) => set({ shuffleQuestions: e.target.checked })} />
 
                 <div className="d-flex align-items-center gap-2 my-2">
                     <Form.Check type="checkbox" label="Time Limit"
