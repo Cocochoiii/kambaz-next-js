@@ -1,197 +1,129 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { BsRocket, BsRocketFill } from "react-icons/bs";
-import { FaPlus, FaTrash, FaCheckCircle, FaBan } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
+import { FaPlus, FaCheckCircle, FaBan } from "react-icons/fa";
+import { BsRocket, BsRocketFill } from "react-icons/bs";
 import { setQuizzes, addQuiz, deleteQuiz, updateQuiz } from "./reducer";
 import * as quizzesClient from "./client";
-import QuizModal from "./QuizModal";
+import { availability, totalPoints, questionCount, fmtDate } from "./helpers";
 import KebabMenu from "@/app/(Kambaz)/KebabMenu";
-import { useIsFaculty } from "../../../Account/roles";
+import { useIsFaculty } from "@/app/(Kambaz)/Account/roles";
 
 export default function Quizzes() {
     const { cid } = useParams<{ cid: string }>();
+    const router = useRouter();
     const dispatch = useDispatch();
-    const [showModal, setShowModal] = useState(false);
-    const [editMode, setEditMode] = useState(false);
-    const [editingQuiz, setEditingQuiz] = useState<any>(null);
-    const [searchTerm, setSearchTerm] = useState("");
-
-    const { quizzes } = useSelector((state: any) => state.quizzesReducer);
+    const { quizzes } = useSelector((s: any) => s.quizzesReducer);
+    const { currentUser } = useSelector((s: any) => s.accountReducer);
     const isFaculty = useIsFaculty();
+    const [search, setSearch] = useState("");
+    const [scores, setScores] = useState<Record<string, number | null>>({});
 
-    const loadQuizzes = async () => {
-        const list = await quizzesClient.findQuizzesForCourse(cid);
+    const load = async () => {
+        const list = await quizzesClient.findQuizzesForCourse(cid).catch(() => []);
         dispatch(setQuizzes(list));
+        // Student: show the score from the last attempt on each published quiz.
+        if (!isFaculty && currentUser?._id) {
+            const published = list.filter((q: any) => q.published !== false);
+            const entries = await Promise.all(
+                published.map(async (q: any) => {
+                    const a = await quizzesClient.getAttempts(q._id, currentUser._id).catch(() => null);
+                    return [q._id, a?.last ? a.last.score : null] as const;
+                })
+            );
+            setScores(Object.fromEntries(entries));
+        }
     };
     useEffect(() => {
-        loadQuizzes();
-    }, [cid]);
+        load();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [cid, isFaculty, currentUser?._id]);
 
-    // Filter quizzes for current course
     const courseQuizzes = quizzes
-        .filter((quiz: any) => quiz.course === cid)
-        .filter((quiz: any) =>
-            quiz.title.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        // Students only see published quizzes.
-        .filter((quiz: any) => isFaculty || quiz.published !== false);
+        .filter((q: any) => q.course === cid)
+        .filter((q: any) => (q.title || "").toLowerCase().includes(search.toLowerCase()))
+        .filter((q: any) => isFaculty || q.published !== false)
+        .slice()
+        .sort((a: any, b: any) => new Date(a.availableDate || 0).getTime() - new Date(b.availableDate || 0).getTime());
 
-    // Faculty publish toggle: persists on the server via the update endpoint.
+    const addQuizAndEdit = async () => {
+        const created = await quizzesClient.createQuiz(cid, { title: "New Quiz", course: cid });
+        dispatch(addQuiz(created));
+        router.push(`/Courses/${cid}/Quizzes/${created._id}/edit`);
+    };
     const togglePublish = async (quiz: any) => {
         const updated = { ...quiz, published: !(quiz.published !== false) };
         await quizzesClient.updateQuiz(updated);
         dispatch(updateQuiz(updated));
     };
-
-    const handleAddClick = () => {
-        setEditingQuiz({
-            title: "",
-            status: "Open",
-            dueDate: "",
-            points: 0,
-            questions: 0,
-            timeLimit: 20,
-            attempts: 1,
-            description: "",
-            availableFrom: "",
-            availableUntil: "",
-        });
-        setEditMode(false);
-        setShowModal(true);
-    };
-
-    const handleEditClick = (quiz: any) => {
-        setEditingQuiz(quiz);
-        setEditMode(true);
-        setShowModal(true);
-    };
-
-    const handleDeleteClick = async (quizId: string) => {
-        if (window.confirm("Are you sure you want to delete this quiz?")) {
-            await quizzesClient.deleteQuiz(quizId);
-            dispatch(deleteQuiz(quizId));
-        }
-    };
-
-    const handleSave = async (quizData: any) => {
-        if (editMode) {
-            await quizzesClient.updateQuiz(quizData);
-            dispatch(updateQuiz(quizData));
-        } else {
-            const created = await quizzesClient.createQuiz(cid, {
-                ...quizData,
-                course: cid,
-            });
-            dispatch(addQuiz(created));
-        }
-        setShowModal(false);
-        setEditingQuiz(null);
+    const removeQuiz = async (quizId: string) => {
+        if (!window.confirm("Delete this quiz?")) return;
+        await quizzesClient.deleteQuiz(quizId);
+        dispatch(deleteQuiz(quizId));
     };
 
     return (
         <div id="wd-quizzes">
-            <div className="mb-4">
-                <div className="d-flex justify-content-between align-items-center">
-                    <input
-                        type="text"
-                        className="form-control w-50"
-                        placeholder="Search for Quiz"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    {isFaculty && (
-                        <button
-                            className="btn btn-danger"
-                            onClick={handleAddClick}
-                        >
-                            <FaPlus className="me-1" /> Quiz
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            <div className="mb-3">
-                <h4>Assignment Quizzes</h4>
-            </div>
-
-            <div className="list-group">
-                {courseQuizzes.length === 0 ? (
-                    <div className="alert alert-info">
-                        No quizzes found.
-                    </div>
-                ) : (
-                    courseQuizzes.map((quiz: any) => (
-                        <div key={quiz._id} className="d-flex align-items-center border-bottom py-3">
-                            <div className="me-3">
-                                {quiz.status === "Closed" ? (
-                                    <BsRocket className="text-secondary" size={20} />
-                                ) : (
-                                    <BsRocketFill className="text-success" size={20} />
-                                )}
-                            </div>
-                            <div className="flex-grow-1">
-                                <h6 className="mb-1">
-                                    <a href="#" className="text-dark text-decoration-none">
-                                        {quiz.title}
-                                    </a>
-                                </h6>
-                                <div className="text-muted small">
-                                    <span className="me-3">{quiz.status}</span>
-                                    <span className="me-3">Due {quiz.dueDate}</span>
-                                    {quiz.questions > 0 && (
-                                        <>
-                                            <span className="me-3">{quiz.points} pts</span>
-                                            <span>{quiz.questions} Questions</span>
-                                        </>
-                                    )}
-                                    {quiz.questions === 0 && (
-                                        <span>{quiz.points} pts</span>
-                                    )}
-                                </div>
-                            </div>
-                            {isFaculty && (
-                                <div className="ms-3 d-flex align-items-center gap-2">
-                                    <button
-                                        className="btn btn-link p-0"
-                                        type="button"
-                                        title={quiz.published !== false ? "Published — click to unpublish" : "Unpublished — click to publish"}
-                                        onClick={() => togglePublish(quiz)}
-                                    >
-                                        {quiz.published !== false ? (
-                                            <FaCheckCircle className="text-success" />
-                                        ) : (
-                                            <FaBan className="text-secondary" />
-                                        )}
-                                    </button>
-                                    <button
-                                        className="btn btn-link text-danger p-0"
-                                        type="button"
-                                        onClick={() => handleDeleteClick(quiz._id)}
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                    <KebabMenu items={[{ label: "Edit", onClick: () => handleEditClick(quiz) }]} />
-                                </div>
-                            )}
-                        </div>
-                    ))
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <input className="form-control w-50" placeholder="Search for Quiz"
+                    value={search} onChange={(e) => setSearch(e.target.value)} />
+                {isFaculty && (
+                    <button className="btn btn-danger" onClick={addQuizAndEdit}>
+                        <FaPlus className="me-1" /> Quiz
+                    </button>
                 )}
             </div>
 
-            {showModal && (
-                <QuizModal
-                    show={showModal}
-                    onClose={() => {
-                        setShowModal(false);
-                        setEditingQuiz(null);
-                    }}
-                    onSave={handleSave}
-                    quiz={editingQuiz}
-                    editMode={editMode}
-                />
+            <h4 className="border-bottom pb-2">Assignment Quizzes</h4>
+
+            {courseQuizzes.length === 0 ? (
+                <div className="alert alert-info">
+                    No quizzes yet. {isFaculty ? "Click the + Quiz button to add one." : "Check back later."}
+                </div>
+            ) : (
+                <div className="list-group list-group-flush">
+                    {courseQuizzes.map((quiz: any) => {
+                        const av = availability(quiz);
+                        const score = scores[quiz._id];
+                        const published = quiz.published !== false;
+                        return (
+                            <div key={quiz._id} className="d-flex align-items-center border-bottom py-3">
+                                {published
+                                    ? <BsRocketFill className="text-success me-3" size={22} />
+                                    : <BsRocket className="text-secondary me-3" size={22} />}
+                                <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                                    <div className="fw-bold text-dark" role="button"
+                                        onClick={() => router.push(`/Courses/${cid}/Quizzes/${quiz._id}`)}>
+                                        {quiz.title}
+                                    </div>
+                                    <div className="text-muted small">
+                                        <span className="fw-semibold">{av.label}</span>
+                                        {quiz.dueDate && <span> | Due {fmtDate(quiz.dueDate)}</span>}
+                                        <span> | {totalPoints(quiz)} pts</span>
+                                        <span> | {questionCount(quiz)} Questions</span>
+                                        {!isFaculty && score != null && <span> | Score {score}</span>}
+                                    </div>
+                                </div>
+                                {isFaculty && (
+                                    <div className="ms-3 d-flex align-items-center gap-2">
+                                        <button className="btn btn-link p-0"
+                                            title={published ? "Published — click to unpublish" : "Unpublished — click to publish"}
+                                            onClick={() => togglePublish(quiz)}>
+                                            {published ? <FaCheckCircle className="text-success" /> : <FaBan className="text-secondary" />}
+                                        </button>
+                                        <KebabMenu items={[
+                                            { label: "Edit", onClick: () => router.push(`/Courses/${cid}/Quizzes/${quiz._id}`) },
+                                            { label: published ? "Unpublish" : "Publish", onClick: () => togglePublish(quiz) },
+                                            { label: "Delete", danger: true, onClick: () => removeQuiz(quiz._id) },
+                                        ]} />
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
             )}
         </div>
     );

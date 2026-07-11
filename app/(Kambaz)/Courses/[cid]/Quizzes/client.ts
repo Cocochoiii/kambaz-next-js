@@ -20,3 +20,16 @@ export const deleteQuiz = async (quizId: string) => {
     const { data } = await axios.delete(`${QUIZZES_API}/${quizId}`);
     return data;
 };
+
+export const getQuiz = async (quizId: string) => {
+    const { data } = await axios.get(`${QUIZZES_API}/${quizId}`);
+    return data;
+};
+export const getAttempts = async (quizId: string, userId: string) => {
+    const { data } = await axios.get(`${QUIZZES_API}/${quizId}/attempts`, { params: { userId } });
+    return data; // { count, last }
+};
+export const submitAttempt = async (quizId: string, payload: any) => {
+    const { data } = await axios.post(`${QUIZZES_API}/${quizId}/attempts`, payload);
+    return data;
+};
