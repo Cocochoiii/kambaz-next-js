@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
+import "react-quill/dist/quill.snow.css";
 export const metadata: Metadata = {
     title: "Kambaz / Labs - Coco Choi",
     description: "A5 - Node and HTTP"

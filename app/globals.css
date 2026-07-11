@@ -21,3 +21,6 @@ a { color: inherit; }
 .list-group-item{ --bs-list-group-border-color: gray; }
 .wd-lesson{ border-left: 3px solid green !important; }
 
+
+/* Editing area height for the Piazza rich-text editor (Details uses a taller value). */
+.wd-rte .ql-editor { min-height: var(--wd-rte-min, 0); }
