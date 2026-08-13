@@ -1,43 +1,16 @@
-// app/(Kambaz)/Account/Signup/page.tsx
-"use client";
-
+// The Sign up screen. New users make an account here.
+// "Sign up" goes to the Profile screen. "Sign in" goes back to Sign in.
 import Link from "next/link";
 
 export default function Signup() {
-    return (
-        <div id="wd-signup-screen" className="pt-2">
-            <h3>Sign up</h3>
-
-            <input
-                placeholder="username"
-                className="wd-username"
-                type="text"
-                defaultValue="new_user"
-                autoComplete="username"
-            />
-            <br />
-
-            <input
-                placeholder="password"
-                className="wd-password"
-                type="password"
-                defaultValue="123"
-                autoComplete="new-password"
-            />
-            <br />
-
-            <input
-                placeholder="verify password"
-                className="wd-password-verify"
-                type="password"
-                defaultValue="123"
-                autoComplete="new-password"
-            />
-            <br />
-
-            <Link href="/Account/Profile">Sign up</Link>
-            <br />
-            <Link href="/Account/Signin">Sign in</Link>
-        </div>
-    );
+  return (
+    <div id="wd-signup-screen">
+      <h3>Sign up</h3>
+      <input type="text" placeholder="username" defaultValue="new_user" className="wd-username" /><br />
+      <input type="password" placeholder="password" defaultValue="123" className="wd-password" /><br />
+      <input type="password" placeholder="verify password" defaultValue="123" className="wd-password-verify" /><br />
+      <Link id="wd-signup-btn" href="/Account/Profile"> Sign up </Link><br />
+      <Link id="wd-signin-link" href="/Account/Signin"> Sign in </Link>
+    </div>
+  );
 }

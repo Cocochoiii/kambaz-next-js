@@ -1,5 +1,7 @@
 'use client';
 
+// Lab 1. All the HTML exercises from Chapter 1 are here.
+// I need "use client" because the button below calls alert() when I click it.
 export default function Lab1() {
   return (
       <div id="wd-lab1">
@@ -133,7 +135,7 @@ export default function Lab1() {
 
             <h5>Text boxes</h5>
             <label>Biography:</label><br/>
-            {/* Use defaultValue to avoid React warning */}
+            {/* I use defaultValue here. If I use value, React makes the field read only. */}
             <textarea
                 id="wd-textarea"
                 cols={30}
@@ -196,11 +198,14 @@ export default function Lab1() {
             <input type="range" defaultValue="4" max="5" id="wd-text-fields-rating"/><br/>
             <label htmlFor="wd-text-fields-dob"> Date of birth: </label>
             <input type="date" defaultValue="2000-01-21" id="wd-text-fields-dob"/><br/>
-
-            <h4>Anchor tag</h4>
-            Please <a href="https://www.lipsum.com" id="wd-lipsum" target="_blank" rel="noreferrer">click here</a> to get dummy text<br/>
-            <a href="https://github.com/Cocochoiii" id="wd-github" target="_blank" rel="noreferrer">My GitHub</a>
           </form>
+        </div>
+
+        {/* Anchor tags go at the end, outside the form */}
+        <div id="wd-anchors">
+          <h4>Anchor tag</h4>
+          Please <a href="https://www.lipsum.com" id="wd-lipsum" target="_blank" rel="noreferrer">click here</a> to get dummy text<br/>
+          <a href="https://github.com/Cocochoiii" id="wd-github" target="_blank" rel="noreferrer">My GitHub</a>
         </div>
       </div>
   );
