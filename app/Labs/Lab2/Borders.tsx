@@ -1,5 +1,5 @@
-
-export default function Borders(){
+// A border needs a width, a style, and a color.
+export default function Borders() {
   return (
     <div id="wd-css-borders">
       <h2>Borders</h2>

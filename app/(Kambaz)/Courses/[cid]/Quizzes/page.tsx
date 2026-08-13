@@ -1,60 +1,53 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { BsRocket, BsRocketFill } from "react-icons/bs";
+// The Quizzes screen. It is not in the textbook, I added it because Canvas
+// has it. It reads the quizzes of this course from the Database.
+import { BsRocket, BsRocketFill, BsThreeDotsVertical } from "react-icons/bs";
 import * as db from "../../../Database";
 
-export default function Quizzes() {
-    const { cid } = useParams<{ cid: string }>();
-    const quizzes = db.quizzes.filter((quiz: any) => quiz.course === cid);
+export default async function Quizzes({
+  params,
+}: {
+  params: Promise<{ cid: string }>;
+}) {
+  const { cid } = await params;
+  const quizzes = db.quizzes.filter((quiz) => quiz.course === cid);
 
-    return (
-        <div id="wd-quizzes">
-            <div className="mb-4">
-                <input
-                    type="text"
-                    className="form-control w-50"
-                    placeholder="Search for Quiz"
-                />
-            </div>
+  return (
+    <div id="wd-quizzes">
+      <div className="input-group mb-4" style={{ width: "300px" }}>
+        <input id="wd-search-quiz" className="form-control" placeholder="Search for Quiz" />
+      </div>
 
-            <div className="mb-3">
-                <h4>Assignment Quizzes</h4>
-            </div>
+      <div className="p-3 bg-secondary border border-secondary">
+        <span id="wd-quizzes-title" className="fw-bold">ASSIGNMENT QUIZZES</span>
+      </div>
 
-            <div className="list-group">
-                {quizzes.map((quiz: any) => (
-                    <div key={quiz._id} className="d-flex align-items-center border-bottom py-3">
-                        <div className="me-3">
-                            {quiz.status === "Closed" ? (
-                                <BsRocket className="text-secondary" size={20} />
-                            ) : (
-                                <BsRocketFill className="text-success" size={20} />
-                            )}
-                        </div>
-                        <div className="flex-grow-1">
-                            <h6 className="mb-1">
-                                <a href="#" className="text-dark text-decoration-none">
-                                    {quiz.title}
-                                </a>
-                            </h6>
-                            <div className="text-muted small">
-                                <span className="me-3">{quiz.status}</span>
-                                <span className="me-3">Due {quiz.dueDate}</span>
-                                {quiz.questions > 0 && (
-                                    <>
-                                        <span className="me-3">{quiz.points} pts</span>
-                                        <span>{quiz.questions} Questions</span>
-                                    </>
-                                )}
-                                {quiz.questions === 0 && (
-                                    <span>{quiz.points} pts</span>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                ))}
+      <ul id="wd-quiz-list" className="list-group rounded-0">
+        {quizzes.map((quiz) => (
+          <li
+            key={quiz._id}
+            className="wd-quiz-list-item list-group-item p-3 ps-1 d-flex align-items-center"
+          >
+            <div className="me-3 ms-2">
+              {/* A closed quiz gets the gray rocket, an open one the green rocket. */}
+              {quiz.status === "Closed"
+                ? <BsRocket className="fs-4 text-secondary" />
+                : <BsRocketFill className="fs-4 text-success" />}
             </div>
-        </div>
-    );
+            <div className="flex-fill">
+              <span className="fw-bold">{quiz.title}</span>
+              <p className="mb-0">
+                <b>{quiz.status}</b>
+                {" | "}<b>Due</b> {quiz.dueDate}
+                {" | "}{quiz.points} pts
+                {" | "}{quiz.questions} Questions
+              </p>
+            </div>
+            <div className="ms-3">
+              <BsThreeDotsVertical className="fs-4" />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }

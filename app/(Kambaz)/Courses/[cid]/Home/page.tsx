@@ -1,6 +1,5 @@
-// The Home screen. The Modules are on the left and the Course Status is on
-// the right. The Modules screen already reads the modules of the current
-// course from the Database, so I just import it again here.
+// The Home screen. In A1 this was a table. Now I use Bootstrap flex.
+// The Modules are on the left and the Course Status is on the right.
 // The Course Status hides first when the window gets narrow.
 import Modules from "../Modules/page";
 import CourseStatus from "./Status";

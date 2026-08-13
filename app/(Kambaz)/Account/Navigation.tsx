@@ -1,35 +1,19 @@
-"use client";
-
+// The small menu for the Account screens.
+// I style it like the Course menu, so I use the same Bootstrap classes.
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 export default function AccountNavigation() {
-    const pathname = usePathname();
-    const Item = ({
-                      href,
-                      label,
-                  }: {
-        href: string;
-        label: string;
-    }) => {
-        const active = pathname?.startsWith(href);
-        return (
-            <Link
-                href={href}
-                className={`d-block mb-3 text-decoration-none ${
-                    active ? "text-dark fw-semibold" : "text-danger"
-                }`}
-            >
-                {label}
-            </Link>
-        );
-    };
-
-    return (
-        <nav id="wd-account-nav" aria-label="Account">
-            <Item href="/Account/Signin" label="Signin" />
-            <Item href="/Account/Signup" label="Signup" />
-            <Item href="/Account/Profile" label="Profile" />
-        </nav>
-    );
+  return (
+    <div id="wd-account-navigation" className="wd list-group fs-5 rounded-0" style={{ width: 150 }}>
+      <Link href="/Account/Signin" id="wd-account-signin-link" className="list-group-item active border-0">
+        Signin
+      </Link>
+      <Link href="/Account/Signup" id="wd-account-signup-link" className="list-group-item text-danger border-0">
+        Signup
+      </Link>
+      <Link href="/Account/Profile" id="wd-account-profile-link" className="list-group-item text-danger border-0">
+        Profile
+      </Link>
+    </div>
+  );
 }

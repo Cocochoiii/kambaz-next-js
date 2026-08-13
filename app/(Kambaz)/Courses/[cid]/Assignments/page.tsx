@@ -1,99 +1,100 @@
-"use client";
-
+// The Assignments screen.
+// Chapter 3 asks me to read the assignments from the Database. I read the
+// course id (cid) from the URL and keep only the assignments of that course.
+// Every title is a link that puts the assignment id in the path, so the
+// editor screen knows which assignment to open.
+// The search field is on the left. The two buttons float to the right.
+// Every line item has a green bar on the left.
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { ListGroup, Badge, Button, Form, InputGroup } from "react-bootstrap";
-import { FaPlus } from "react-icons/fa";
-import {
-    BsGripVertical,
-    BsFileEarmarkText,
-    BsThreeDotsVertical,
-    BsCheckCircleFill,
-    BsPlus,
-    BsSearch,
-} from "react-icons/bs";
+import { BsGripVertical, BsPlus, BsThreeDotsVertical, BsSearch } from "react-icons/bs";
+import { FaPlus } from "react-icons/fa6";
+import { LiaFileAltSolid } from "react-icons/lia";
+import GreenCheckmark from "../Modules/GreenCheckmark";
 import * as db from "../../../Database";
 
-export default function Assignments() {
-    const { cid } = useParams<{ cid: string }>();
-    const assignments = db.assignments.filter((assignment: any) => assignment.course === cid);
+// The dates in the Database look like 2025-01-19. I build the short date
+// myself instead of using toLocaleDateString, so the server and the browser
+// always print exactly the same text.
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    return (
-        <div id="wd-assignments" className="mt-2">
-            <div className="d-flex align-items-center gap-2 mb-3">
-                {/* Search field with a magnifying glass, kept to the left */}
-                <InputGroup style={{ maxWidth: 380 }}>
-                    <InputGroup.Text className="bg-white">
-                        <BsSearch className="text-secondary" />
-                    </InputGroup.Text>
-                    <Form.Control id="wd-search-assignment" placeholder="Search for Assignments" />
-                </InputGroup>
+function shortDate(date: string) {
+  const [, month, day] = date.split("-");
+  return `${MONTHS[Number(month) - 1]} ${Number(day)}`;
+}
 
-                {/* Buttons floated right; same colors as Modules (grey + red) */}
-                <Button id="wd-add-assignment-group" variant="secondary" className="ms-auto">
-                    <FaPlus className="me-1" /> Group
-                </Button>
-                <Button id="wd-add-assignment" variant="danger">
-                    <FaPlus className="me-1" /> Assignment
-                </Button>
-            </div>
+export default async function Assignments({
+  params,
+}: {
+  params: Promise<{ cid: string }>;
+}) {
+  const { cid } = await params;
+  const assignments = db.assignments.filter((assignment) => assignment.course === cid);
 
-            <div className="border rounded mb-3">
-                <div className="d-flex align-items-center justify-content-between px-3 py-2">
-                    <div className="d-flex align-items-center gap-2">
-                        <BsGripVertical className="fs-4 text-secondary" />
-                        <strong>ASSIGNMENTS</strong>
-                    </div>
-                    <div className="d-flex align-items-center gap-2">
-                        <Badge bg="light" text="dark" className="border">
-                            40% of Total
-                        </Badge>
-                        <Button size="sm" variant="light">
-                            <BsPlus />
-                        </Button>
-                        <Button size="sm" variant="light">
-                            <BsThreeDotsVertical />
-                        </Button>
-                    </div>
-                </div>
-
-                {/* Each row gets a green left border from #wd-assignment-list in globals.css */}
-                <ListGroup variant="flush" id="wd-assignment-list">
-                    {assignments.map((assignment: any) => (
-                        <ListGroup.Item
-                            key={assignment._id}
-                            className="py-3 d-flex align-items-start"
-                        >
-                            <div className="me-2 pt-1">
-                                <BsGripVertical className="text-secondary" />
-                            </div>
-                            <div className="me-3 pt-1">
-                                <BsFileEarmarkText className="text-success fs-5" />
-                            </div>
-                            <div className="flex-grow-1">
-                                <Link
-                                    className="wd-assignment-link fw-semibold text-decoration-none"
-                                    href={`/Courses/${cid}/Assignments/${assignment._id}`}
-                                >
-                                    {assignment.title}
-                                </Link>
-                                <div className="text-muted small">
-                                    Multiple Modules <span className="mx-2">|</span>
-                                    Not available until {new Date(assignment.availableFrom).toLocaleDateString()} at 12:00am{" "}
-                                    <span className="mx-2">|</span>
-                                    Due {new Date(assignment.dueDate).toLocaleDateString()} at 11:59pm{" "}
-                                    <span className="mx-2">|</span>
-                                    {assignment.points} pts
-                                </div>
-                            </div>
-                            <div className="ms-3 d-flex align-items-center gap-2">
-                                <BsCheckCircleFill className="text-success" />
-                                <BsThreeDotsVertical className="text-secondary" />
-                            </div>
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
-            </div>
+  return (
+    <div id="wd-assignments">
+      {/* The buttons float to the right, so I write the right one first. */}
+      <div className="clearfix mb-4">
+        <button id="wd-add-assignment" className="btn btn-lg btn-danger float-end">
+          <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+          Assignment
+        </button>
+        <button id="wd-add-assignment-group" className="btn btn-lg btn-secondary me-2 float-end">
+          <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+          Group
+        </button>
+        <div className="input-group" style={{ width: "300px" }}>
+          <span className="input-group-text bg-white">
+            <BsSearch />
+          </span>
+          <input
+            id="wd-search-assignment"
+            className="form-control"
+            placeholder="Search for Assignments"
+          />
         </div>
-    );
+      </div>
+
+      {/* The ASSIGNMENTS group title */}
+      <div className="p-3 bg-secondary border border-secondary clearfix">
+        <BsGripVertical className="me-2 fs-3" />
+        <span id="wd-assignments-title" className="fw-bold">ASSIGNMENTS</span>
+        <div className="float-end">
+          <span className="border border-dark rounded-pill px-2 py-1 me-2">40% of Total</span>
+          <BsPlus className="fs-4" />
+          <BsThreeDotsVertical className="fs-4" />
+        </div>
+      </div>
+
+      <ul id="wd-assignment-list" className="list-group rounded-0">
+        {assignments.map((assignment) => (
+          <li
+            key={assignment._id}
+            className="wd-assignment-list-item list-group-item p-3 ps-1 d-flex align-items-center"
+          >
+            <BsGripVertical className="me-2 fs-3" />
+            <LiaFileAltSolid className="me-3 fs-3 text-success" />
+            <div className="flex-fill">
+              <Link
+                href={`/Courses/${cid}/Assignments/${assignment._id}`}
+                className="wd-assignment-link fw-bold text-dark text-decoration-none"
+              >
+                {assignment.title}
+              </Link>
+              <p className="mb-0">
+                <span className="text-danger">Multiple Modules</span>
+                {" | "}<b>Not available until</b> {shortDate(assignment.availableFrom)} at 12:00am
+                {" | "}<b>Due</b> {shortDate(assignment.dueDate)} at 11:59pm
+                {" | "}{assignment.points} pts
+              </p>
+            </div>
+            <div className="ms-3">
+              <GreenCheckmark />
+              <BsThreeDotsVertical className="fs-4" />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }

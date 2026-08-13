@@ -1,6 +1,11 @@
+// When someone opens a course, I send them to the Home screen of that course.
 import { redirect } from "next/navigation";
 
-export default function CoursesPage({ params }: { params: { cid: string } }) {
-    const { cid } = params;
-    redirect(`/Courses/${cid}/Home`);
+export default async function CoursesPage({
+  params,
+}: {
+  params: Promise<{ cid: string }>;
+}) {
+  const { cid } = await params;
+  redirect(`/Courses/${cid}/Home`);
 }

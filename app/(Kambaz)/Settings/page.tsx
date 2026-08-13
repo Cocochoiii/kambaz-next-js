@@ -1,5 +1,6 @@
-// The Settings screen. The fields only show default values for now.
-// There is no state yet, so nothing is saved.
+// The Settings screen. It is not in the textbook, I added it because Canvas
+// has it. The fields only show default values for now. Chapter 4 is the one
+// that teaches state, so nothing is saved yet.
 export default function Settings() {
   return (
     <div id="wd-settings">
@@ -8,19 +9,26 @@ export default function Settings() {
 
       <h4>Profile</h4>
       <label htmlFor="wd-settings-display-name" className="form-label">Display name</label>
-      <input id="wd-settings-display-name" className="form-control mb-3" defaultValue="Coco Choi" />
+      <input id="wd-settings-display-name" className="form-control mb-3"
+             defaultValue="Coco Choi" style={{ maxWidth: "400px" }} />
 
       <label htmlFor="wd-settings-email" className="form-label">Email</label>
-      <input id="wd-settings-email" type="email" className="form-control mb-3" defaultValue="coco@example.com" />
+      <input id="wd-settings-email" type="email" className="form-control mb-3"
+             defaultValue="coco@example.com" style={{ maxWidth: "400px" }} />
 
       <h4>Notifications</h4>
       <div className="form-check">
-        <input className="form-check-input" type="checkbox" id="wd-settings-email-alerts" defaultChecked />
-        <label className="form-check-label" htmlFor="wd-settings-email-alerts">Email alerts</label>
+        <input className="form-check-input" type="checkbox"
+               id="wd-settings-email-alerts" defaultChecked />
+        <label className="form-check-label" htmlFor="wd-settings-email-alerts">
+          Email alerts
+        </label>
       </div>
       <div className="form-check mb-3">
         <input className="form-check-input" type="checkbox" id="wd-settings-push-alerts" />
-        <label className="form-check-label" htmlFor="wd-settings-push-alerts">Push alerts</label>
+        <label className="form-check-label" htmlFor="wd-settings-push-alerts">
+          Push alerts
+        </label>
       </div>
 
       <button id="wd-settings-save" className="btn btn-danger">Save</button>
