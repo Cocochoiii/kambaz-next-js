@@ -3,6 +3,8 @@
 // The Dashboard screen. It shows all my courses.
 // Now each course is a Bootstrap Card inside a Col.
 // The cards wrap to the next line when the window gets narrow.
+// I give the title a fixed height so a long course name can use two lines
+// and every card still ends up the same size.
 // I need "use client" because React Bootstrap uses React context.
 import Link from "next/link";
 import { Row, Col, Card, Button } from "react-bootstrap";
@@ -20,7 +22,7 @@ export default function Dashboard() {
               <Link href="/Courses/5610/Home" className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/course1.jpg" width="100%" height={160} alt="CS5610 Web Development" />
                 <Card.Body>
-                  <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                  <Card.Title className="wd-dashboard-course-title overflow-hidden" style={{ height: "56px" }}>
                     CS5610 Web Development
                   </Card.Title>
                   <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "70px" }}>
@@ -37,7 +39,7 @@ export default function Dashboard() {
               <Link href="/Courses/5520/Home" className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/course2.jpg" width="100%" height={160} alt="CS5520 Mobile Application Development" />
                 <Card.Body>
-                  <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                  <Card.Title className="wd-dashboard-course-title overflow-hidden" style={{ height: "56px" }}>
                     CS5520 Mobile Application Development
                   </Card.Title>
                   <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "70px" }}>
@@ -54,7 +56,7 @@ export default function Dashboard() {
               <Link href="/Courses/5004/Home" className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/course3.jpg" width="100%" height={160} alt="CS5004 Object Oriented Design" />
                 <Card.Body>
-                  <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                  <Card.Title className="wd-dashboard-course-title overflow-hidden" style={{ height: "56px" }}>
                     CS5004 Object Oriented Design
                   </Card.Title>
                   <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "70px" }}>
@@ -71,7 +73,7 @@ export default function Dashboard() {
               <Link href="/Courses/5200/Home" className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/course4.jpg" width="100%" height={160} alt="CS5200 Database Management Systems" />
                 <Card.Body>
-                  <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                  <Card.Title className="wd-dashboard-course-title overflow-hidden" style={{ height: "56px" }}>
                     CS5200 Database Management Systems
                   </Card.Title>
                   <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "70px" }}>
@@ -88,7 +90,7 @@ export default function Dashboard() {
               <Link href="/Courses/5800/Home" className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/course5.jpg" width="100%" height={160} alt="CS5800 Algorithms" />
                 <Card.Body>
-                  <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                  <Card.Title className="wd-dashboard-course-title overflow-hidden" style={{ height: "56px" }}>
                     CS5800 Algorithms
                   </Card.Title>
                   <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "70px" }}>
@@ -105,7 +107,7 @@ export default function Dashboard() {
               <Link href="/Courses/6620/Home" className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/course6.jpg" width="100%" height={160} alt="CS6620 Fundamentals of Cloud Computing" />
                 <Card.Body>
-                  <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                  <Card.Title className="wd-dashboard-course-title overflow-hidden" style={{ height: "56px" }}>
                     CS6620 Fundamentals of Cloud Computing
                   </Card.Title>
                   <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "70px" }}>
@@ -122,7 +124,7 @@ export default function Dashboard() {
               <Link href="/Courses/6510/Home" className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/course7.jpg" width="100%" height={160} alt="CS6510 Advanced Software Development" />
                 <Card.Body>
-                  <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                  <Card.Title className="wd-dashboard-course-title overflow-hidden" style={{ height: "56px" }}>
                     CS6510 Advanced Software Development
                   </Card.Title>
                   <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "70px" }}>
@@ -139,7 +141,7 @@ export default function Dashboard() {
               <Link href="/Courses/5700/Home" className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/course8.jpg" width="100%" height={160} alt="CS5700 Computer Networks" />
                 <Card.Body>
-                  <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                  <Card.Title className="wd-dashboard-course-title overflow-hidden" style={{ height: "56px" }}>
                     CS5700 Computer Networks
                   </Card.Title>
                   <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "70px" }}>
@@ -156,7 +158,7 @@ export default function Dashboard() {
               <Link href="/Courses/6140/Home" className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/course9.jpg" width="100%" height={160} alt="CS6140 Machine Learning" />
                 <Card.Body>
-                  <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                  <Card.Title className="wd-dashboard-course-title overflow-hidden" style={{ height: "56px" }}>
                     CS6140 Machine Learning
                   </Card.Title>
                   <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "70px" }}>
@@ -173,7 +175,7 @@ export default function Dashboard() {
               <Link href="/Courses/5100/Home" className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/course10.jpg" width="100%" height={160} alt="CS5100 Foundations of Artificial Intelligence" />
                 <Card.Body>
-                  <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                  <Card.Title className="wd-dashboard-course-title overflow-hidden" style={{ height: "56px" }}>
                     CS5100 Foundations of Artificial Intelligence
                   </Card.Title>
                   <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "70px" }}>
@@ -190,7 +192,7 @@ export default function Dashboard() {
               <Link href="/Courses/6650/Home" className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/course11.jpg" width="100%" height={160} alt="CS6650 Building Scalable Distributed Systems" />
                 <Card.Body>
-                  <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                  <Card.Title className="wd-dashboard-course-title overflow-hidden" style={{ height: "56px" }}>
                     CS6650 Building Scalable Distributed Systems
                   </Card.Title>
                   <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "70px" }}>
