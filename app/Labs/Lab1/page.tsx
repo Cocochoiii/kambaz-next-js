@@ -4,6 +4,22 @@ export default function Lab1() {
   return (
       <div id="wd-lab1">
         <h2>Lab 1</h2>
+
+        {/* The assignment asks for my name, my section, and the links below */}
+        <p>Name: Coco Choi</p>
+        <p>Section: Fall 2025 Section 04</p>
+        <ul>
+          <li><a href="/Labs/Lab1">Lab 1: HTML</a></li>
+          <li><a href="/Labs/Lab2">Lab 2: CSS &amp; Bootstrap</a></li>
+          <li><a href="/Labs/Lab3">Lab 3: JavaScript</a></li>
+          <li><a href="/">Kambaz</a></li>
+          <li>
+            <a href="https://github.com/Cocochoiii/kambaz-next-js" target="_blank" rel="noreferrer">
+              Source code repository
+            </a>
+          </li>
+        </ul>
+
         <h3>HTML Examples</h3>
 
         <div id="wd-h-tag">
@@ -199,7 +215,7 @@ export default function Lab1() {
 
             <h4>Anchor tag</h4>
             Please <a href="https://www.lipsum.com" id="wd-lipsum" target="_blank" rel="noreferrer">click here</a> to get dummy text<br/>
-            <a href="https://github.com/Cocochoiii" id="wd-github" target="_blank" rel="noreferrer">My GitHub</a>
+            <a href="https://github.com/Cocochoiii" id="wd-my-github" target="_blank" rel="noreferrer">My GitHub</a>
           </form>
         </div>
       </div>

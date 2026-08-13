@@ -1,5 +1,4 @@
 'use client';
-import { useEffect } from "react";
 import Link from "next/link";
 import Add from "../Add";
 import Square from "../Square";
@@ -40,7 +39,7 @@ import Styles from "../Styles";
 type PageProps = { params: { slug?: string[] } };
 
 export default function Lab3Page({ params }: PageProps) {
-  useEffect(() => { console.log("Hello World!"); }, []);
+  console.log("Hello World!");
 
   const parts = params.slug || [];
   const isAdd = parts[0] === "add" && parts.length === 3;

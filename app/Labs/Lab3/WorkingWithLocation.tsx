@@ -11,7 +11,6 @@ export default function WorkingWithLocation() {
       <NavItem><NavLink as={Link} href="/Labs/Lab3/add/1/2" id="wd-a2" active={pathname.includes("/add/1/2")}> 1 + 2 </NavLink></NavItem>
       <NavItem><NavLink as={Link} href="/Labs/Lab3/add/3/4" id="wd-a3" active={pathname.includes("/add/3/4")}> 3 + 4 </NavLink></NavItem>
       <NavItem><NavLink as={Link} href="/" id="wd-kambaz-link"> Kambaz </NavLink></NavItem>
-      <NavItem><NavLink id="wd-github" href="https://github.com/Cocochoiii/kambaz-next-js">GitHub Repository</NavLink></NavItem>
     </Nav>
   );
 }

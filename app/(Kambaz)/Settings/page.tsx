@@ -1,140 +1,29 @@
-'use client';
+// The Settings screen. The fields only show default values for now.
+// There is no state yet, so nothing is saved.
+export default function Settings() {
+  return (
+    <div id="wd-settings">
+      <h2>Settings</h2>
+      <hr />
 
-import { useState } from "react";
+      <h4>Profile</h4>
+      <label htmlFor="wd-settings-display-name" className="form-label">Display name</label>
+      <input id="wd-settings-display-name" className="form-control mb-3" defaultValue="Coco Choi" />
 
-export default function SettingsPage() {
-    // demo state only
-    const [displayName, setDisplayName] = useState("Your Name");
-    const [email, setEmail] = useState("you@example.com");
-    const [darkMode, setDarkMode] = useState(false);
-    const [emailAlerts, setEmailAlerts] = useState(true);
-    const [pushAlerts, setPushAlerts] = useState(false);
+      <label htmlFor="wd-settings-email" className="form-label">Email</label>
+      <input id="wd-settings-email" type="email" className="form-control mb-3" defaultValue="coco@example.com" />
 
-    const onSave = (e: React.FormEvent) => {
-        e.preventDefault();
-        // demo only
-        alert("Settings saved (demo)");
-    };
+      <h4>Notifications</h4>
+      <div className="form-check">
+        <input className="form-check-input" type="checkbox" id="wd-settings-email-alerts" defaultChecked />
+        <label className="form-check-label" htmlFor="wd-settings-email-alerts">Email alerts</label>
+      </div>
+      <div className="form-check mb-3">
+        <input className="form-check-input" type="checkbox" id="wd-settings-push-alerts" />
+        <label className="form-check-label" htmlFor="wd-settings-push-alerts">Push alerts</label>
+      </div>
 
-    return (
-        <div id="wd-settings" className="container-fluid">
-            <h1 className="mb-4">Settings</h1>
-
-            <form onSubmit={onSave} className="row g-4">
-                {/* Profile */}
-                <div className="col-12 col-xl-6">
-                    <div className="card shadow-sm">
-                        <div className="card-body">
-                            <h5 className="card-title mb-3">Profile</h5>
-
-                            <div className="mb-3">
-                                <label htmlFor="displayName" className="form-label">Display name</label>
-                                <input
-                                    id="displayName"
-                                    className="form-control"
-                                    value={displayName}
-                                    onChange={(e) => setDisplayName(e.target.value)}
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="email" className="form-label">Email</label>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    className="form-control"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
-
-                            <div className="d-flex gap-2">
-                                <button type="submit" className="btn btn-primary">Save</button>
-                                <button
-                                    type="button"
-                                    className="btn btn-outline-secondary"
-                                    onClick={() => {
-                                        setDisplayName("Your Name");
-                                        setEmail("you@example.com");
-                                    }}
-                                >
-                                    Reset
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Appearance */}
-                <div className="col-12 col-xl-6">
-                    <div className="card shadow-sm h-100">
-                        <div className="card-body">
-                            <h5 className="card-title mb-3">Appearance</h5>
-                            <div className="form-check form-switch mb-2">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id="darkMode"
-                                    checked={darkMode}
-                                    onChange={(e) => setDarkMode(e.target.checked)}
-                                />
-                                <label className="form-check-label" htmlFor="darkMode">
-                                    Use dark mode
-                                </label>
-                            </div>
-
-                            <small className="text-muted">
-                            </small>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Notifications */}
-                <div className="col-12">
-                    <div className="card shadow-sm">
-                        <div className="card-body">
-                            <h5 className="card-title mb-3">Notifications</h5>
-
-                            <div className="row">
-                                <div className="col-12 col-md-6">
-                                    <div className="form-check form-switch mb-2">
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            id="emailAlerts"
-                                            checked={emailAlerts}
-                                            onChange={(e) => setEmailAlerts(e.target.checked)}
-                                        />
-                                        <label className="form-check-label" htmlFor="emailAlerts">
-                                            Email notifications
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div className="col-12 col-md-6">
-                                    <div className="form-check form-switch mb-2">
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            id="pushAlerts"
-                                            checked={pushAlerts}
-                                            onChange={(e) => setPushAlerts(e.target.checked)}
-                                        />
-                                        <label className="form-check-label" htmlFor="pushAlerts">
-                                            Push notifications
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mt-3">
-                                <button type="submit" className="btn btn-primary">Save</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </form>
-        </div>
-    );
+      <button id="wd-settings-save" className="btn btn-danger">Save</button>
+    </div>
+  );
 }

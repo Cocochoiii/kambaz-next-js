@@ -11,6 +11,12 @@ export default function Labs(){
         <li><a id="wd-lab3-link" href="/Labs/Lab3">Lab 3: JavaScript</a></li>
       </ul>
       <p><a id="wd-kambaz-home" href="/">Back to Kambaz</a></p>
+      <p>
+        <a id="wd-repo-link" href="https://github.com/Cocochoiii/kambaz-next-js"
+           target="_blank" rel="noreferrer">
+          Source code repository
+        </a>
+      </p>
     </div>
   );
 }

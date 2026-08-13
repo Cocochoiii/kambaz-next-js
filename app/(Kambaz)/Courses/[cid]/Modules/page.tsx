@@ -1,81 +1,58 @@
 "use client";
 
-import { useState } from "react";
+// The Modules screen. It reads the modules from the Database and shows only
+// the modules of the course in the URL. Every module and lesson is a
+// Bootstrap ListGroupItem. The module title is gray. Every lesson has a
+// green bar on the left.
+// I need "use client" because useParams and React Bootstrap run on the client.
+import { ListGroup } from "react-bootstrap";
 import { useParams } from "next/navigation";
-import ListGroup from "react-bootstrap/ListGroup";
 import { BsGripVertical } from "react-icons/bs";
-import LessonControlButtons from "./LessonControlButtons";
-import ModuleControlButtons from "./ModuleControlButtons";
 import ModulesControls from "./ModulesControls";
+import ModuleControlButtons from "./ModuleControlButtons";
+import LessonControlButtons from "./LessonControlButtons";
 import GreenCheckmark from "./GreenCheckmark";
 import * as db from "../../../Database";
 
-export default function ModulesPage() {
-    const { cid } = useParams<{ cid: string }>();
-    const modules = db.modules.filter((module: any) => module.course === cid);
+export default function Modules() {
+  // The course id comes from the path, for example /Courses/5610/Modules
+  const { cid } = useParams<{ cid: string }>();
+  const modules = db.modules.filter((module: any) => module.course === cid);
 
-    const [collapsed, setCollapsed] = useState<boolean[]>(
-        () => modules.map(() => false)
-    );
-    const allCollapsed = collapsed.every(Boolean);
-
-    const toggleAll = () => setCollapsed(collapsed.map(() => !allCollapsed));
-    const toggleOne = (i: number) =>
-        setCollapsed(prev => prev.map((c, idx) => (idx === i ? !c : c)));
-
-    return (
-        <div id="wd-courses-modules">
-            <ModulesControls onToggleAll={toggleAll} allCollapsed={allCollapsed} />
-
-            <ListGroup id="wd-modules" className="rounded-0">
-                {modules.map((module: any, i: number) => (
-                    <ListGroup.Item
-                        key={module._id}
-                        className="wd-module p-0 mb-5 fs-5 border-gray"
-                    >
-                        {/* header toggles the panel */}
-                        <button
-                            className="w-100 text-start border-0 p-0"
-                            onClick={() => toggleOne(i)}
-                            aria-expanded={!collapsed[i]}
-                            aria-controls={`wd-module-panel-${i}`}
-                        >
-                            <div className="wd-title p-3 ps-2 bg-secondary">
-                                <BsGripVertical className="me-2 wd-grip" />
-                                {module.name}
-                                <ModuleControlButtons />
-                            </div>
-                        </button>
-
-                        {/* collapsible lessons */}
-                        {module.lessons && (
-                            <div id={`wd-module-panel-${i}`} hidden={collapsed[i]}>
-                                <ListGroup className="wd-lessons rounded-0">
-                                    {/* learning objectives row */}
-                                    <ListGroup.Item className="wd-lesson p-3 ps-1">
-                                        <BsGripVertical className="me-2 wd-grip" />
-                                        <GreenCheckmark />
-                                        LEARNING OBJECTIVES
-                                        <LessonControlButtons />
-                                    </ListGroup.Item>
-
-                                    {/* lessons */}
-                                    {module.lessons.map((lesson: any) => (
-                                        <ListGroup.Item
-                                            key={lesson._id}
-                                            className="wd-lesson p-3 ps-1"
-                                        >
-                                            <BsGripVertical className="me-2 wd-grip" />
-                                            {lesson.name}
-                                            <LessonControlButtons />
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
-                            </div>
-                        )}
-                    </ListGroup.Item>
+  return (
+    <div id="wd-courses-modules">
+      <ModulesControls /><br /><br /><br /><br />
+      <ListGroup className="rounded-0" id="wd-modules">
+        {modules.map((module: any) => (
+          <ListGroup.Item
+            key={module._id}
+            className="wd-module p-0 mb-5 fs-5 border-gray"
+          >
+            <div className="wd-title p-3 ps-2 bg-secondary">
+              <BsGripVertical className="me-2 fs-3" />
+              {module.name}
+              <ModuleControlButtons />
+            </div>
+            {module.lessons && (
+              <ListGroup className="wd-lessons rounded-0">
+                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                  <BsGripVertical className="me-2 fs-3" />
+                  <GreenCheckmark />
+                  LEARNING OBJECTIVES
+                  <LessonControlButtons />
+                </ListGroup.Item>
+                {module.lessons.map((lesson: any) => (
+                  <ListGroup.Item key={lesson._id} className="wd-lesson p-3 ps-1">
+                    <BsGripVertical className="me-2 fs-3" />
+                    {lesson.name}
+                    <LessonControlButtons />
+                  </ListGroup.Item>
                 ))}
-            </ListGroup>
-        </div>
-    );
+              </ListGroup>
+            )}
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+    </div>
+  );
 }
