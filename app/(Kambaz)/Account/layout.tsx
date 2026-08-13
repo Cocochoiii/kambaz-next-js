@@ -1,24 +1,19 @@
+// Layout for the three Account screens.
+// The Account menu is on the left. The screen is on the right.
 import type { ReactNode } from "react";
 import AccountNavigation from "./Navigation";
 
-export const metadata = {
-    title: "Kambaz · Account",
-    description: "Account pages",
-};
-
-export default function AccountLayout({ children }: { children: ReactNode }) {
-    return (
-        <div id="wd-account" className="container-fluid py-3">
-            {/* smaller gutter than the default */}
-            <div className="row align-items-start" style={{ ["--bs-gutter-x" as any]: "0.5rem" }}>
-                <aside className="col-8 col-md-2 pe-md-2">
-                    <AccountNavigation />
-                </aside>
-
-                <main className="col-8 col-md-4 col-xl-2">
-                    {children}
-                </main>
-            </div>
+export default function AccountLayout({ children }: Readonly<{ children: ReactNode }>) {
+  return (
+    <div id="wd-account-screen">
+      <div className="d-flex">
+        <div className="d-none d-md-block">
+          <AccountNavigation />
         </div>
-    );
+        <div className="flex-fill ms-4" style={{ maxWidth: "300px" }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
 }

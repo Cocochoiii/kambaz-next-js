@@ -1,227 +1,45 @@
-/* Type and spacing */
-:root{
-  --wd-font-body: 14px;
-  --wd-font-small: 13px;
-  --wd-font-title: 15.5px;
-  --wd-font-h1: 24px;
-  --wd-font-h2: 18px;
-  --wd-line-height: 1.35;
-}
+/* The style sheet for all the Kambaz screens. */
 
-html, body { font-size: var(--wd-font-body); line-height: var(--wd-line-height); }
+body { margin: 0; padding: 0; }
+body * { font-family: Arial, Helvetica, sans-serif; }
 
-/* Page titles & subtitles */
-#wd-courses-home h1, #wd-courses-modules h1,
-#wd-courses-home h2, #wd-courses-modules h2 { font-size: var(--wd-font-h1); font-weight: 600; margin: 8px 0 4px; }
-#wd-course-status h2 { font-size: var(--wd-font-h2); font-weight: 600; }
-#wd-courses-home .text-muted{ font-size:.95rem; }
-
-/* Course sidebar links: red text; active link gets black text + black left border */
-#wd-courses-navigation .list-group-item{ border:0; color:#b02a37; font-size:.95rem; padding:.5rem .75rem; }
-#wd-courses-navigation .list-group-item:hover{ background:#f5f5f5; }
-#wd-courses-navigation .list-group-item.active{ color:#000; background:#fff; border-left:3px solid #000; }
-
-/* Toolbars (Collapse/View/Publish/Module) */
-#wd-modules-toolbar .btn,
-#wd-courses-home .wd-toolbar .btn { font-size:.92rem; padding:.45rem .7rem; border-radius:.4rem; }
-.btn-danger{ border:none; }
-
-/* Bootstrap overrides to match Canvas grays */
-.btn.btn-secondary{
-  --bs-btn-bg:#c7cdd1 !important;
-  --bs-btn-border-color:#c7cdd1 !important;
-  --bs-btn-color:#000 !important;
-  --bs-btn-hover-color:#fff !important;
-}
-.bg-secondary{ --bs-secondary-rgb:199,205,209; }
-.list-group-item{ --bs-list-group-border-color:#b8b8b8; }
-.border-gray{ border:1px solid #b8b8b8 !important; }
-
-/* Module & lesson rows */
-.wd-module .wd-title{ font-size:var(--wd-font-title); font-weight:600; }
-.wd-lesson{ border-left:3px solid #198754 !important; min-height:44px; padding:.8rem .5rem !important; }
-.wd-lesson .wd-title{ font-weight:600; }
-
-/* Icon sizing helpers */
-.wd-grip{ font-size:1.15rem; vertical-align:-2px; }
-.wd-icon-md{ font-size:1.15rem; }
-
-/* Hide right status on narrower screens (as in spec) */
-@media (max-width: 1200px){ #wd-course-status{ display:none; } }
-
-/* Nav and card polish */
+/* The Kambaz menu is fixed, so the screen would render under it.
+   This class pushes the screen to the right, but only when the menu
+   is visible, that is only on screens wider than 768 pixels. */
 @media (min-width: 768px) {
-  #wd-kambaz .wd-main-content-offset { padding-left: 124px !important; }
-}
-.wd-nav .nav-label{ font-size:12px; margin-top:4px; line-height:1.1; }
-.wd-nav .list-group-item{ background:#000; color:#fff; border:0; transition:background .15s,color .15s; }
-.wd-nav .list-group-item:not(.active):hover{ background:#111; }
-.wd-nav .list-group-item.active{ background:#fff; color:#dc3545; }
-.wd-nav a{ color:inherit; }
-.wd-nav a .text-danger{ color:#dc3545 !important; }
-
-@media (min-height:600px){
-  .wd-nav .list-group-item{ padding-top:.9rem; padding-bottom:.9rem; }
+  #wd-kambaz .wd-main-content-offset {
+    padding-left: 140px !important;
+  }
 }
 
-.course-banner{ height:54px; border-top-left-radius:.5rem; border-top-right-radius:.5rem; display:flex; align-items:center; padding:0 12px; color:#fff; font-weight:700; letter-spacing:.3px; }
-.course-code{ background:rgba(0,0,0,.18); border-radius:999px; padding:2px 10px; font-size:.8rem; }
-.line-clamp-2{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-.course-title{ font-weight:700; }
-.hover-lift{ transition:transform .15s, box-shadow .15s; }
-.hover-lift:hover{ transform:translateY(-2px); box-shadow:0 10px 24px rgba(0,0,0,.08); }
-.card .ratio{ border-bottom-left-radius:.5rem; border-bottom-right-radius:.5rem; overflow:hidden; }
-.card .card-body{ padding-bottom:3rem; }
-.card .btn-go{ position:absolute; right:12px; bottom:12px; z-index:2; }
-.card .stretched-link{ z-index:1; }
-
-/* Dashboard headings */
-#wd-dashboard-title{ font-size: var(--wd-font-h1); font-weight:700; }
-#wd-dashboard-published{ letter-spacing:.2px; }
-
-/* Card look close to Canvas */
-.wd-course-card{
-  border-radius: .75rem;
+/* Bootstrap gray is too dark, so I make it lighter like Canvas. */
+.btn-secondary {
+  --bs-btn-color: #000 !important;
+  --bs-btn-bg: #c7cdd1 !important;
+  --bs-btn-border-color: #c7cdd1 !important;
+  --bs-btn-hover-color: #fff !important;
 }
-.wd-course-card .ratio{
-  border-top-left-radius: .75rem;
-  border-top-right-radius: .75rem;
-  overflow: hidden;
+.bg-secondary {
+  --bs-secondary-rgb: 199, 205, 209;
 }
-.wd-thumb-gradient{
-  position:absolute; inset:0 0 auto 0; height:56px;
-  background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,0));
-  pointer-events:none;
-}
-.wd-card-title{
-  font-size: 1rem;           /* ~16px */
-  font-weight: 700;
-  line-height: 1.2;
-  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-}
-.wd-card-sub{
-  font-size: .9rem;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.list-group-item {
+  --bs-list-group-border-color: gray;
 }
 
-/* Keep the Go button at the bottom-right of the card */
-.card .btn-go{ position:absolute; right:12px; bottom:12px; z-index:2; }
-
-/* Card hover shadow */
-.wd-course-card:hover{ box-shadow: 0 10px 28px rgba(0,0,0,.10); }
-
-/* Tighter gutters on very wide screens */
-@media (min-width: 1600px){
-  #wd-dashboard .row.g-4{ --bs-gutter-x:1.25rem; --bs-gutter-y:1.25rem; }
+/* The selected link of a menu: black text and a black bar on the left.
+   I use it for the Course menu and the Account menu. */
+.list-group.wd > .list-group-item.active {
+  color: black;
+  background-color: white;
+  border-left: 3px solid black !important;
 }
 
-.canvas-tile-icon {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
-  font-size: 20px;
-  line-height: 1;
-  opacity: .85;
+/* Every lesson has a green bar on the left. */
+.wd-lesson {
+  border-left: 3px solid green !important;
 }
 
-.card .card-body { padding-bottom: 3rem; }
-.card .btn-go { position: absolute; right: 12px; bottom: 12px; z-index: 2; }
-
-/* Dashboard card icon buttons */
-.dashboard-icon-btn {
-  color: #6c757d;
-  transition: color 0.2s ease;
-  cursor: pointer;
-}
-
-.dashboard-icon-btn:hover,
-.dashboard-icon-btn:focus {
-  color: #dc3545 !important;
-}
-
-.dashboard-icon-btn:active {
-  color: #dc3545 !important;
-}
-
-/* Account screens spacing */
-#wd-account h1 { font-size: 24px; font-weight: 600; }
-#wd-signin-screen h2,
-#wd-signup-screen h2,
-#wd-profile-screen h2 { font-size: 22px; font-weight: 600; }
-
-#wd-account-navigation .vr { height: 68px; }
-
-/* Narrow forms on wide monitors */
-#wd-account .form-control, #wd-account .form-select { font-size: 14px; }
-
-#wd-calendar .btn.border { border-color: #d1d5db !important; background: #fff; }
-
-.wd-cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0;
-}
-.wd-cal-head { border: 1px solid #d1d5db; border-bottom: 0; background: #f8fafc; }
-.wd-cal-head > div { border-right: 1px solid #e5e7eb; }
-.wd-cal-head > div:last-child { border-right: 0; }
-
-.wd-cal-body {
-  border: 1px solid #d1d5db;
-  background: #fff;
-}
-.wd-cal-cell {
-  min-height: 120px;
-  border-right: 1px solid #e5e7eb;
-  border-top: 1px solid #e5e7eb;
-  padding: .5rem .5rem 1rem;
-  position: relative;
-}
-.wd-cal-cell:nth-child(-n+7) { border-top: 0; }      /* remove top border on first row */
-.wd-cal-cell:nth-child(7n) { border-right: 0; }      /* remove right border on last col */
-
-.wd-cal-date {
-  position: absolute;
-  right: .5rem;
-  top: .4rem;
-  font-size: .85rem;
-  color: #6b7280;
-}
-.wd-cal-today {
-  background: #111827;
-  color: #fff;
-  border-radius: 999px;
-  padding: 2px 7px;
-}
-.wd-cal-faded { background: #f9fafb; color: #9ca3af; }
-
-.wd-cal-pill {
-  font-size: .86rem;
-  background: #f3f4f6;
-  border-radius: 6px;
-  padding: 3px 6px;
-  border: 1px solid #e5e7eb;
-}
-.wd-cal-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  display: inline-block;
-}
-
-/* Mini calendar */
-.wd-mini-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  row-gap: .25rem;
-}
-.wd-mini-date {
-  display: inline-block;
-  width: 1.65rem;
-  height: 1.65rem;
-  line-height: 1.65rem;
-  border-radius: 6px;
-}
-.wd-mini-today {
-  background: #111827;
-  color: #fff;
+/* Every assignment has a green bar on the left too. */
+.wd-assignment-list-item {
+  border-left: 3px solid green !important;
 }

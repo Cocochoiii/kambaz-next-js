@@ -1,122 +1,125 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import { Button, Col, Form, Row } from "react-bootstrap";
-import { getAssignment } from "../catalog";
+// The Assignment Editor screen.
+// In A1 this was a table. Now every row is a Bootstrap Row with two
+// Cols: the label on the left and the field on the right.
+// Every assignment still shows the same data. That is OK for now.
+// I need "use client" because React Bootstrap uses React context.
+import { Row, Col, Button, Form } from "react-bootstrap";
 
 export default function AssignmentEditor() {
-    const { cid, aid } = useParams<{ cid: string; aid: string }>();
-    const seed = getAssignment(cid, aid);
+  return (
+    <div id="wd-assignments-editor">
+      <Form>
+        <Form.Group className="mb-3" controlId="wd-name">
+          <Form.Label>Assignment Name</Form.Label>
+          <Form.Control defaultValue="A1 - ENV + HTML" />
+        </Form.Group>
 
-    return (
-        <div id="wd-assignments-editor" className="container-fluid">
-            <Form>
-                <Form.Group className="mb-3">
-                    <Form.Label htmlFor="wd-name" className="fw-semibold">Assignment Name</Form.Label>
-                    <Form.Control id="wd-name" defaultValue={seed.title} />
-                </Form.Group>
+        <Form.Group className="mb-4" controlId="wd-description">
+          <Form.Control
+            as="textarea"
+            rows={8}
+            defaultValue="The assignment is available online. Submit a link to the landing page of your Web application running on Netlify. The landing page should include the following: your full name and section, links to each of the lab assignments, link to the Kambaz application, links to all relevant source code repositories."
+          />
+        </Form.Group>
 
-                <Form.Group className="mb-4">
-                    <Form.Control as="textarea" id="wd-description" rows={6} defaultValue={seed.description} />
-                </Form.Group>
+        <Row className="mb-3">
+          <Col md={3} className="text-md-end pt-md-2">
+            <Form.Label htmlFor="wd-points">Points</Form.Label>
+          </Col>
+          <Col md={9}>
+            <Form.Control id="wd-points" type="number" defaultValue={100} />
+          </Col>
+        </Row>
 
-                {/* Each label/field pair is a Bootstrap grid row: label on the left, field on the right */}
-                <Row className="mb-3 align-items-center">
-                    <Col md={3} className="text-md-end">
-                        <Form.Label htmlFor="wd-points" className="mb-0">Points</Form.Label>
-                    </Col>
-                    <Col md={9}>
-                        <Form.Control id="wd-points" type="number" defaultValue={seed.points} />
-                    </Col>
-                </Row>
+        <Row className="mb-3">
+          <Col md={3} className="text-md-end pt-md-2">
+            <Form.Label htmlFor="wd-group">Assignment Group</Form.Label>
+          </Col>
+          <Col md={9}>
+            <Form.Select id="wd-group" defaultValue="ASSIGNMENTS" className="form-control">
+              <option value="ASSIGNMENTS">ASSIGNMENTS</option>
+              <option value="QUIZZES">QUIZZES</option>
+              <option value="EXAMS">EXAMS</option>
+              <option value="PROJECT">PROJECT</option>
+            </Form.Select>
+          </Col>
+        </Row>
 
-                <Row className="mb-3 align-items-center">
-                    <Col md={3} className="text-md-end">
-                        <Form.Label htmlFor="wd-group" className="mb-0">Assignment Group</Form.Label>
-                    </Col>
-                    <Col md={9}>
-                        <Form.Select id="wd-group">
-                            <option>ASSIGNMENTS</option>
-                            <option>QUIZZES</option>
-                            <option>EXAMS</option>
-                            <option>PROJECT</option>
-                        </Form.Select>
-                    </Col>
-                </Row>
+        <Row className="mb-3">
+          <Col md={3} className="text-md-end pt-md-2">
+            <Form.Label htmlFor="wd-display-grade-as">Display Grade as</Form.Label>
+          </Col>
+          <Col md={9}>
+            <Form.Select id="wd-display-grade-as" defaultValue="PERCENTAGE" className="form-control">
+              <option value="PERCENTAGE">Percentage</option>
+              <option value="POINTS">Points</option>
+            </Form.Select>
+          </Col>
+        </Row>
 
-                <Row className="mb-3 align-items-center">
-                    <Col md={3} className="text-md-end">
-                        <Form.Label htmlFor="wd-display-grade-as" className="mb-0">Display Grade as</Form.Label>
-                    </Col>
-                    <Col md={9}>
-                        <Form.Select id="wd-display-grade-as">
-                            <option>Percentage</option>
-                            <option>Points</option>
-                        </Form.Select>
-                    </Col>
-                </Row>
+        <Row className="mb-3">
+          <Col md={3} className="text-md-end pt-md-2">
+            <Form.Label htmlFor="wd-submission-type">Submission Type</Form.Label>
+          </Col>
+          <Col md={9}>
+            <div className="border rounded p-3">
+              <Form.Select id="wd-submission-type" defaultValue="ONLINE" className="form-control mb-3">
+                <option value="ONLINE">Online</option>
+                <option value="ON_PAPER">On Paper</option>
+              </Form.Select>
+              <Form.Label className="fw-bold">Online Entry Options</Form.Label>
+              <Form.Check id="wd-text-entry" label="Text Entry" defaultChecked />
+              <Form.Check id="wd-website-url" label="Website URL" defaultChecked />
+              <Form.Check id="wd-media-recordings" label="Media Recordings" />
+              <Form.Check id="wd-student-annotation" label="Student Annotation" />
+              <Form.Check id="wd-file-upload" label="File Uploads" />
+            </div>
+          </Col>
+        </Row>
 
-                <Row className="mb-3">
-                    <Col md={3} className="text-md-end">
-                        <Form.Label htmlFor="wd-submission-type" className="mb-0">Submission Type</Form.Label>
-                    </Col>
-                    <Col md={9}>
-                        <Form.Select id="wd-submission-type" className="mb-2">
-                            <option>Online</option>
-                            <option>On Paper</option>
-                        </Form.Select>
-                        <div className="ps-1">
-                            <Form.Check id="wd-text-entry" label="Text Entry" defaultChecked />
-                            <Form.Check id="wd-website-url" label="Website URL" defaultChecked />
-                            <Form.Check id="wd-media-recordings" label="Media Recordings" />
-                            <Form.Check id="wd-student-annotation" label="Student Annotation" />
-                            <Form.Check id="wd-file-upload" label="File Uploads" />
-                        </div>
-                    </Col>
-                </Row>
+        <Row className="mb-3">
+          <Col md={3} className="text-md-end pt-md-2">
+            <Form.Label htmlFor="wd-assign-to">Assign</Form.Label>
+          </Col>
+          <Col md={9}>
+            <div className="border rounded p-3">
+              <Form.Group className="mb-3" controlId="wd-assign-to">
+                <Form.Label className="fw-bold">Assign to</Form.Label>
+                <Form.Control defaultValue="Everyone" />
+              </Form.Group>
 
-                <Row className="mb-3 align-items-center">
-                    <Col md={3} className="text-md-end">
-                        <Form.Label htmlFor="wd-assign-to" className="mb-0">Assign to</Form.Label>
-                    </Col>
-                    <Col md={9}>
-                        <Form.Control id="wd-assign-to" defaultValue="Everyone" />
-                    </Col>
-                </Row>
+              <Form.Group className="mb-3" controlId="wd-due-date">
+                <Form.Label className="fw-bold">Due</Form.Label>
+                <Form.Control type="date" defaultValue="2025-09-22" />
+              </Form.Group>
 
-                <Row className="mb-3 align-items-center">
-                    <Col md={3} className="text-md-end">
-                        <Form.Label htmlFor="wd-due-date" className="mb-0">Due</Form.Label>
-                    </Col>
-                    <Col md={9}>
-                        <Form.Control id="wd-due-date" type="date" defaultValue="2025-05-13" />
-                    </Col>
-                </Row>
+              <Row>
+                <Col md={6}>
+                  <Form.Group controlId="wd-available-from">
+                    <Form.Label className="fw-bold">Available from</Form.Label>
+                    <Form.Control type="date" defaultValue="2025-09-01" />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group controlId="wd-available-until">
+                    <Form.Label className="fw-bold">Until</Form.Label>
+                    <Form.Control type="date" defaultValue="2025-12-31" />
+                  </Form.Group>
+                </Col>
+              </Row>
+            </div>
+          </Col>
+        </Row>
 
-                <Row className="mb-3 align-items-center">
-                    <Col md={3} className="text-md-end">
-                        <Form.Label htmlFor="wd-available-from" className="mb-0">Available from</Form.Label>
-                    </Col>
-                    <Col md={9}>
-                        <Form.Control id="wd-available-from" type="date" defaultValue="2025-05-06" />
-                    </Col>
-                </Row>
+        <hr />
 
-                <Row className="mb-3 align-items-center">
-                    <Col md={3} className="text-md-end">
-                        <Form.Label htmlFor="wd-available-until" className="mb-0">Until</Form.Label>
-                    </Col>
-                    <Col md={9}>
-                        <Form.Control id="wd-available-until" type="date" />
-                    </Col>
-                </Row>
-
-                <div className="d-flex gap-2 mt-4">
-                    <Link href={`/Courses/${cid}/Assignments`} className="btn btn-light">Cancel</Link>
-                    <Link href={`/Courses/${cid}/Assignments`} className="btn btn-danger">Save</Link>
-                </div>
-            </Form>
+        <div className="clearfix mb-3">
+          <Button variant="danger" className="float-end" id="wd-save-btn">Save</Button>
+          <Button variant="secondary" className="me-2 float-end" id="wd-cancel-btn">Cancel</Button>
         </div>
-    );
+      </Form>
+    </div>
+  );
 }

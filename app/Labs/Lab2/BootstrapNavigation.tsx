@@ -1,25 +1,40 @@
-
 "use client";
-import { Nav, NavItem, NavLink, Card, Button } from "react-bootstrap";
-export default function BootstrapNavigation(){
+
+// Tabs look like the tabs of a folder.
+// A Card puts an image, a title, some text, and a button in one box.
+// I need "use client" because React Bootstrap uses React context.
+import { Card, Button, Nav } from "react-bootstrap";
+
+export default function BootstrapNavigation() {
   return (
     <div>
-      <div id="wd-css-navigating-with-tabs" className="my-3">
+      <div id="wd-css-navigating-with-tabs">
         <h2>Tabs</h2>
         <Nav variant="tabs">
-          <NavItem><NavLink href="#/Labs/Lab2/Active">Active</NavLink></NavItem>
-          <NavItem><NavLink href="#/Labs/Lab2/Link1">Link 1</NavLink></NavItem>
-          <NavItem><NavLink href="#/Labs/Lab2/Link2">Link 2</NavLink></NavItem>
-          <NavItem><NavLink href="#/Labs/Lab2/Disabled" disabled>Disabled</NavLink></NavItem>
+          <Nav.Item>
+            <Nav.Link href="#/Labs/Lab2/Active" active>Active</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#/Labs/Lab2/Link1">Link 1</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#/Labs/Lab2/Link2">Link 2</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#/Labs/Lab2/Disabled" disabled>Disabled</Nav.Link>
+          </Nav.Item>
         </Nav>
       </div>
-      <div id="wd-css-navigating-with-cards" className="my-3">
+
+      <div id="wd-css-navigating-with-cards" className="mt-3">
         <h2>Cards</h2>
-        <Card style={{ width:"18rem"}}>
-          <Card.Img variant="top" src="/images/stacked.jpg"/>
+        <Card style={{ width: "18rem" }}>
+          <Card.Img variant="top" src="/images/stacked.jpg" />
           <Card.Body>
             <Card.Title>Stacking Starship</Card.Title>
-            <Card.Text>Stacking the most powerful rocket in history. Mars or bust!</Card.Text>
+            <Card.Text>
+              Stacking the most powerful rocket in history. Mars or bust!
+            </Card.Text>
             <Button variant="primary">Boldly Go</Button>
           </Card.Body>
         </Card>

@@ -1,12 +1,13 @@
-
+// Layout for the Labs pages.
+// The table of contents is on top and the lab content is under it.
 import type { ReactNode } from "react";
-import TOC from "./Navigation";
-import "./globals.css";
+import TOC from "./TOC";
+
 export default function LabsLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <div className="d-flex p-2">
-      <div style={{minWidth:220}}><TOC/></div>
-      <div className="flex-fill p-2">{children}</div>
+    <div id="wd-labs-layout" className="px-3 pb-3 pt-5">
+      <TOC />
+      <div className="mt-3">{children}</div>
     </div>
   );
 }
