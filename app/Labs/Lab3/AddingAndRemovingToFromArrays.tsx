@@ -1,3 +1,4 @@
+// push() adds an item at the end. splice() takes items out.
 export default function AddingAndRemovingToFromArrays() {
   let numberArray1 = [1, 2, 3, 4, 5];
   let stringArray1 = ["string1","string2"];

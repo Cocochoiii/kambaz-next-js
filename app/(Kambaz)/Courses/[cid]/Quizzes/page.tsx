@@ -1,4 +1,4 @@
-// The Quizzes screen. It is not in the textbook, I added it because Canvas
+// The Quizzes screen. The book does not ask for it, I added it because Canvas
 // has it. It reads the quizzes of this course from the Database.
 import { BsRocket, BsRocketFill, BsThreeDotsVertical } from "react-icons/bs";
 import * as db from "../../../Database";

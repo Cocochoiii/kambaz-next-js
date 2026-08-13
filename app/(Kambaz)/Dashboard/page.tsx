@@ -1,8 +1,6 @@
-// The Dashboard screen. It shows all my courses.
-// Chapter 3 asks me to read the courses from the Database and map over them,
-// instead of writing eleven cards by hand.
-// Every card links to the Home screen of the course and puts the course id in
-// the path. Under the card there are four shortcuts, the same ones Canvas has.
+// The Dashboard screen. It reads the courses from the Database and maps over
+// them, so I do not write eleven cards by hand.
+// Every card links to the Home screen and puts the course id in the path.
 import Link from "next/link";
 import Image from "next/image";
 import { FaBullhorn, FaRegEdit, FaRegCommentDots, FaRegFolder } from "react-icons/fa";

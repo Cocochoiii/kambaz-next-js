@@ -1,12 +1,9 @@
 "use client";
 
-// The Assignment Editor screen.
-// Chapter 3 asks me to show the assignment I clicked on. I read the course id
-// (cid) and the assignment id (aid) from the URL and look the assignment up in
-// the Database, so the name, description, points, and dates are the real ones.
-// Every row is a Bootstrap Row with two Cols: the label on the left and the
-// field on the right. Cancel and Save are links back to the Assignments screen.
-// I need "use client" because useParams and React Bootstrap run in the browser.
+// The Assignment Editor screen. It shows the assignment I clicked on.
+// I read the two ids from the URL and find the assignment in the Database.
+// Cancel and Save are links back to the Assignments screen.
+// I need "use client" because useParams runs in the browser.
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Row, Col, Form } from "react-bootstrap";
@@ -14,8 +11,8 @@ import * as db from "../../../../Database";
 
 export default function AssignmentEditor() {
   const params = useParams<{ cid: string; aid: string }>();
-  const cid = params?.cid;
-  const aid = params?.aid;
+  const cid = params ? params.cid : "";
+  const aid = params ? params.aid : "";
   const assignment = db.assignments.find((assignment) => assignment._id === aid);
 
   if (!assignment) {

@@ -1,10 +1,8 @@
 "use client";
 
-// The People screen.
-// Chapter 3 asks me to show the people of the course I am reading. I read the
-// course id (cid) from the URL, then keep only the users that have an
-// enrollment in this course. Every person is one row of a Bootstrap table.
-// I need "use client" because useParams and React Bootstrap run in the browser.
+// The People screen. It shows the people of this course.
+// I keep only the users that have an enrollment in the course in the URL.
+// I need "use client" because useParams runs in the browser.
 import { Table } from "react-bootstrap";
 import { useParams } from "next/navigation";
 import { FaUserCircle } from "react-icons/fa";
@@ -12,7 +10,7 @@ import * as db from "../../../../Database";
 
 export default function PeopleTable() {
   const params = useParams<{ cid: string }>();
-  const cid = params?.cid;
+  const cid = params ? params.cid : "";
   const { users, enrollments } = db;
 
   const courseUsers = users.filter((user) =>

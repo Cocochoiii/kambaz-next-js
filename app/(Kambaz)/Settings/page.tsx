@@ -1,6 +1,6 @@
-// The Settings screen. It is not in the textbook, I added it because Canvas
-// has it. The fields only show default values for now. Chapter 4 is the one
-// that teaches state, so nothing is saved yet.
+// The Settings screen. The book does not ask for it, I added it because Canvas
+// has it. The fields only show default values. Chapter 4 teaches state, so
+// nothing is saved yet.
 export default function Settings() {
   return (
     <div id="wd-settings">

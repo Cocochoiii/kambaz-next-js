@@ -1,12 +1,9 @@
 "use client";
 
-// The Kambaz menu on the left side.
-// Chapter 3 asks me to stop repeating the links. Now the labels, the paths,
-// and the icons live in one array and I map over it to build the menu.
-// The Courses link goes to the Dashboard on purpose, because a course is only
-// opened from the Dashboard. It still stays selected while I read a course, so
-// I keep a separate "match" path for the highlighting.
-// I need "use client" because usePathname and React Bootstrap run in the browser.
+// The Kambaz menu on the left side. The links live in one array now.
+// Courses goes to the Dashboard but stays selected inside a course, so each
+// link also keeps the path I use for the highlighting.
+// I need "use client" because usePathname runs in the browser.
 import { ListGroup } from "react-bootstrap";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -26,7 +23,7 @@ const links = [
 ];
 
 export default function KambazNavigation() {
-  const pathname = usePathname() ?? "";
+  const pathname = usePathname() || "";
 
   return (
     <ListGroup
@@ -47,7 +44,7 @@ export default function KambazNavigation() {
 
       {links.map((link) => {
         // The selected item is white with red text. Every other item is black.
-        const active = pathname === link.match || pathname.startsWith(`${link.match}/`);
+        const active = pathname === link.match || pathname.includes(`${link.match}/`);
         const Icon = link.icon;
         // Only the Account icon is white when it is not selected.
         const iconColor =

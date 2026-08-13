@@ -1,11 +1,9 @@
 "use client";
 
-// The Modules screen.
-// Chapter 3 asks me to read the modules from the Database instead of writing
-// them by hand. I read the course id (cid) from the URL and keep only the
-// modules of that course, so every course shows its own modules and lessons.
-// The module title is gray. Every lesson has a green bar on the left.
-// I need "use client" because useParams and React Bootstrap run in the browser.
+// The Modules screen. It reads the modules from the Database.
+// I keep only the modules of the course in the URL, so every course shows
+// its own modules and lessons.
+// I need "use client" because useParams runs in the browser.
 import { ListGroup } from "react-bootstrap";
 import { useParams } from "next/navigation";
 import { BsGripVertical } from "react-icons/bs";
@@ -15,9 +13,9 @@ import LessonControlButtons from "./LessonControlButtons";
 import * as db from "../../../Database";
 
 export default function Modules() {
-  // useParams can be empty outside a course route, so I read it safely.
+  // useParams can be empty, so I check it first.
   const params = useParams<{ cid: string }>();
-  const cid = params?.cid;
+  const cid = params ? params.cid : "";
   const modules = db.modules.filter((module) => module.course === cid);
 
   return (

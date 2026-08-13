@@ -1,4 +1,4 @@
-// The Announcements screen. It is not in the textbook, I added it because
+// The Announcements screen. The book does not ask for it, I added it because
 // Canvas has it. It reads the announcements of this course from the Database.
 import { FaUserCircle } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";

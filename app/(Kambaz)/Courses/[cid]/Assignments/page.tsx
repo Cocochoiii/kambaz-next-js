@@ -1,10 +1,6 @@
-// The Assignments screen.
-// Chapter 3 asks me to read the assignments from the Database. I read the
-// course id (cid) from the URL and keep only the assignments of that course.
+// The Assignments screen. It reads the assignments from the Database.
 // Every title is a link that puts the assignment id in the path, so the
-// editor screen knows which assignment to open.
-// The search field is on the left. The two buttons float to the right.
-// Every line item has a green bar on the left.
+// editor screen knows which one to open.
 import Link from "next/link";
 import { BsGripVertical, BsPlus, BsThreeDotsVertical, BsSearch } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa6";
@@ -12,9 +8,8 @@ import { LiaFileAltSolid } from "react-icons/lia";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 import * as db from "../../../Database";
 
-// The dates in the Database look like 2025-01-19. I build the short date
-// myself instead of using toLocaleDateString, so the server and the browser
-// always print exactly the same text.
+// The dates look like 2025-01-19. I build the short date myself, so the
+// server and the browser always print the same text.
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 

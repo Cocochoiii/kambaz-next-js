@@ -1,5 +1,5 @@
-// The Kambaz "database". For now the data is just JSON files. Every screen
-// imports this file, so there is only one place that knows the file names.
+// The Kambaz "database". For now the data is only JSON files.
+// Every screen imports this one file.
 import courses from "./courses.json";
 import modules from "./modules.json";
 import assignments from "./assignments.json";

@@ -1,6 +1,6 @@
-// Layout for one course. I read the course id (cid) from the URL and then look
-// up the course in the Database, so the title shows the real course name
-// instead of the id. The course menu is on the left. It hides on a narrow screen.
+// Layout for one course. I read the course id (cid) from the URL and find the
+// course in the Database, so the title shows the real name.
+// The course menu is on the left. It hides on a narrow screen.
 import type { ReactNode } from "react";
 import { FaAlignJustify } from "react-icons/fa6";
 import CourseNavigation from "./Navigation";

@@ -1,3 +1,4 @@
+// I read the todos from JSON and map them into TodoItem rows.
 import { ListGroup } from "react-bootstrap";
 import TodoItem from "./TodoItem";
 import todos from "./todos.json";

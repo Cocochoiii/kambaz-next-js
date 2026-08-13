@@ -1,3 +1,4 @@
+// I choose the CSS class with code instead of writing it by hand.
 import './Classes.css';
 export default function Classes() {
   const color = 'blue';

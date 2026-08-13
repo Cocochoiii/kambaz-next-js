@@ -4,11 +4,8 @@ body { margin: 0; padding: 0; }
 body * { font-family: Arial, Helvetica, sans-serif; }
 
 /* ----- Type scale -----
-   Bootstrap starts at 16px, which makes every screen bigger than the Canvas
-   screenshots in the assignment. I set the base size to 14px and then give the
-   titles, the menus, and the buttons their own size, so the screens look as
-   compact as Canvas. These sizes only load with the Kambaz screens, so the
-   Labs pages keep the normal Bootstrap size. */
+   Bootstrap starts at 16px, which is bigger than Canvas. I use 14px as the
+   base and then give the titles and the menus their own size. */
 :root {
   --wd-font-body: 14px;
   --wd-font-small: 13px;
@@ -23,7 +20,7 @@ html, body {
   line-height: var(--wd-line-height);
 }
 
-/* Screen titles. Bootstrap h1 is 2.5rem and h2 is 2rem, both too big here. */
+/* Screen titles. The Bootstrap h1 and h2 are too big here. */
 #wd-courses > h2 { font-size: var(--wd-font-h1); font-weight: 600; }
 #wd-dashboard-title { font-size: var(--wd-font-h1); font-weight: 700; }
 #wd-dashboard-published { font-size: var(--wd-font-h2); font-weight: 600; }
@@ -32,8 +29,7 @@ html, body {
 #wd-signup-screen h1,
 #wd-profile-screen h1 { font-size: var(--wd-font-h1); font-weight: 600; }
 
-/* The two menus. The links are smaller than the fs-5 class in the markup,
-   because a direct rule beats a size inherited from the parent. */
+/* The two menus. This rule wins over the fs-5 class on the parent. */
 #wd-courses-navigation .list-group-item,
 #wd-account-navigation .list-group-item {
   font-size: .95rem;
@@ -44,7 +40,7 @@ html, body {
 .wd-module .wd-title { font-size: var(--wd-font-title); font-weight: 600; }
 .wd-lesson { min-height: 44px; }
 
-/* The btn-lg buttons in the toolbars are too tall for a 14px screen. */
+/* The btn-lg buttons are too tall for a 14px screen. */
 #wd-modules-controls .btn,
 #wd-assignments .btn,
 #wd-announcements .btn,
@@ -58,10 +54,8 @@ html, body {
 #wd-quizzes .wd-quiz-list-item p { font-size: var(--wd-font-small); }
 #wd-announcements h5 { font-size: var(--wd-font-title); font-weight: 600; }
 
-/* The grip dots and the control icons in the rows. The markup uses the fs-3
-   and fs-4 classes, and those grow with the base size, so they look too big
-   next to 14px text. The Bootstrap size classes use !important, so I need it
-   here too. */
+/* The grip dots and the control icons. The fs-3 and fs-4 classes are too big
+   next to 14px text. Those classes use !important, so I need it too. */
 #wd-modules .fs-3,
 #wd-assignments .fs-3 { font-size: 1.3rem !important; }
 #wd-modules .fs-4,
