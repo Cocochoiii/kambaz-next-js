@@ -1,85 +1,75 @@
 "use client";
 
-import Link from "next/link";
+// The Sign up screen. There is no server yet, so I only build the user
+// in the browser, put it in the store, and go to the Profile screen.
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Form, Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { Alert, Button, Form } from "react-bootstrap";
+import { setCurrentUser } from "../reducer";
 
 export default function Signup() {
-    const [user, setUser] = useState({
-        username: "",
-        password: "",
-        verifyPassword: "",
-        role: "STUDENT",
-    });
-    const router = useRouter();
+  const [user, setUser] = useState({ username: "new_user", password: "123", verify: "123" });
+  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const router = useRouter();
 
-    const signup = () => {
-        if (!user.username || !user.password) {
-            alert("Please enter username and password");
-            return;
-        }
-        if (user.password !== user.verifyPassword) {
-            alert("Passwords do not match");
-            return;
-        }
+  const signup = () => {
+    if (!user.username) {
+      setError("Please type a username");
+      return;
+    }
+    if (user.password !== user.verify) {
+      setError("The two passwords are not the same");
+      return;
+    }
+    dispatch(setCurrentUser({
+      _id: new Date().getTime().toString(),
+      username: user.username,
+      password: user.password,
+      firstName: "",
+      lastName: "",
+      email: "",
+      dob: "",
+      role: "STUDENT",
+    }));
+    router.push("/Account/Profile");
+  };
 
-        // a real app would persist the user here; for now just redirect to signin
-        router.push("/Account/Signin");
-    };
+  return (
+    <div id="wd-signup-screen">
+      <h1>Sign up</h1>
 
-    return (
-        <div id="wd-signup-screen" className="mx-auto" style={{ maxWidth: 420 }}>
-            <h1 className="mb-3">Signup</h1>
+      {error && <Alert variant="danger" id="wd-signup-error">{error}</Alert>}
 
-            <Form.Control
-                placeholder="username"
-                className="mb-2"
-                id="wd-su-username"
-                value={user.username}
-                onChange={(e) => setUser({ ...user, username: e.target.value })}
-            />
-            <Form.Control
-                placeholder="password"
-                type="password"
-                className="mb-2"
-                id="wd-su-password"
-                value={user.password}
-                onChange={(e) => setUser({ ...user, password: e.target.value })}
-            />
-            <Form.Control
-                placeholder="verify password"
-                type="password"
-                className="mb-2"
-                id="wd-su-password-verify"
-                value={user.verifyPassword}
-                onChange={(e) => setUser({ ...user, verifyPassword: e.target.value })}
-            />
-
-            {/* Role selector (same options as Profile) */}
-            <Form.Select
-                value={user.role}
-                id="wd-su-role"
-                className="mb-3"
-                onChange={(e) => setUser({ ...user, role: e.target.value })}
-            >
-                <option value="USER">User</option>
-                <option value="ADMIN">Admin</option>
-                <option value="FACULTY">Faculty</option>
-                <option value="STUDENT">Student</option>
-            </Form.Select>
-
-            <Button
-                onClick={signup}
-                className="btn btn-primary w-100 mb-2"
-                id="wd-signup-btn"
-            >
-                Signup
-            </Button>
-
-            <Link href="/Account/Signin" className="link-primary">
-                Signin
-            </Link>
-        </div>
-    );
+      <Form.Control
+        id="wd-su-username"
+        placeholder="username"
+        className="mb-2"
+        value={user.username}
+        onChange={(e) => setUser({ ...user, username: e.target.value })}
+      />
+      <Form.Control
+        id="wd-su-password"
+        placeholder="password"
+        type="password"
+        className="mb-2"
+        value={user.password}
+        onChange={(e) => setUser({ ...user, password: e.target.value })}
+      />
+      <Form.Control
+        id="wd-su-password-verify"
+        placeholder="verify password"
+        type="password"
+        className="mb-2"
+        value={user.verify}
+        onChange={(e) => setUser({ ...user, verify: e.target.value })}
+      />
+      <Button id="wd-signup-btn" onClick={signup} className="btn btn-primary w-100 mb-2">
+        Sign up
+      </Button>
+      <Link id="wd-signin-link" href="/Account/Signin">Sign in</Link>
+    </div>
+  );
 }

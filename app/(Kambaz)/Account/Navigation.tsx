@@ -1,45 +1,32 @@
 "use client";
 
+// 4.11 The Account menu.
+// Before I sign in it shows Signin and Signup. After that only Profile.
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 
 export default function AccountNavigation() {
-    const pathname = usePathname();
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const pathname = usePathname() || "";
+  const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
 
-    // Show different links based on whether user is signed in
-    const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
-
-    const Item = ({
-                      href,
-                      label,
-                  }: {
-        href: string;
-        label: string;
-    }) => {
-        const active = pathname?.startsWith(href);
+  return (
+    <div id="wd-account-navigation" className="wd list-group fs-5 rounded-0" style={{ width: 150 }}>
+      {links.map((link) => {
+        const href = `/Account/${link}`;
+        const active = pathname === href;
         return (
-            <Link
-                href={href}
-                className={`d-block mb-3 text-decoration-none ${
-                    active ? "text-dark fw-semibold" : "text-danger"
-                }`}
-            >
-                {label}
-            </Link>
+          <Link
+            key={link}
+            href={href}
+            id={`wd-account-${link.toLowerCase()}-link`}
+            className={`list-group-item border-0 ${active ? "active" : "text-danger"}`}
+          >
+            {link}
+          </Link>
         );
-    };
-
-    return (
-        <nav id="wd-account-nav" aria-label="Account">
-            {links.map((link) => (
-                <Item
-                    key={link}
-                    href={`/Account/${link}`}
-                    label={link}
-                />
-            ))}
-        </nav>
-    );
+      })}
+    </div>
+  );
 }

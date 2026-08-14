@@ -1,3 +1,4 @@
+// typeof tells me the type of a variable.
 export default function VariableTypes() {
   let numberVariable = 123;
   let floatingPointNumber = 234.345;

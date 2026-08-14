@@ -1,3 +1,4 @@
+// The old ES5 way to write a function.
 function add(a: number, b: number) {
   return a + b;
 }

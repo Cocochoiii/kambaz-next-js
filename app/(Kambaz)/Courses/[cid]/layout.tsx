@@ -1,61 +1,68 @@
 "use client";
 
+// Layout for one course.
+// 4.9 The course name comes from the store, so a new course has a name.
+// 4.11 and 4.13 Only a signed in and enrolled user can open a course.
 import type { ReactNode } from "react";
-import { useParams, usePathname, useRouter } from "next/navigation";
-import { FaAlignJustify } from "react-icons/fa";
-import CourseNavigation from "../CourseNavigation";
-import * as db from "../../Database";
-import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { FaAlignJustify } from "react-icons/fa6";
+import CourseNavigation from "./Navigation";
+import Breadcrumb from "./Breadcrumb";
+import ProtectedRoute from "../../Account/ProtectedRoute";
 
-export default function CoursesLayout({ children }: { children: ReactNode }) {
-    const { cid } = useParams<{ cid: string }>();
-    const pathname = usePathname();
-    const router = useRouter();
-    const course = db.courses.find((c: any) => c._id === cid);
+function CourseContent({ children }: { children: ReactNode }) {
+  const params = useParams<{ cid: string }>();
+  const cid = params ? params.cid : "";
+  const router = useRouter();
 
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
+  const { courses } = useSelector((state: any) => state.coursesReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
 
-    // Check if user is enrolled or is faculty
-    const isEnrolled = enrollments.some(
-        (e: any) => e.user === currentUser?._id && e.course === cid
-    );
-    const canAccess = isEnrolled || currentUser?.role === "FACULTY";
+  const course = courses.find((course: any) => course._id === cid);
 
-    useEffect(() => {
-        if (!currentUser) {
-            router.push("/Account/Signin");
-        } else if (!canAccess) {
-            router.push("/Dashboard");
-        }
-    }, [currentUser, canAccess, router]);
+  const isEnrolled = enrollments.some(
+    (enrollment: any) =>
+      enrollment.user === currentUser?._id && enrollment.course === cid
+  );
+  const canOpen = currentUser?.role === "FACULTY" || isEnrolled;
 
-    if (!canAccess) {
-        return null;
+  useEffect(() => {
+    if (!canOpen) {
+      router.replace("/Dashboard");
     }
+  }, [canOpen, router]);
 
-    // Extract the section name from the pathname for breadcrumb
-    const pathParts = pathname.split('/');
-    const section = pathParts[pathParts.length - 1] === cid
-        ? "Home"
-        : pathParts[pathParts.length - 1] === "Table"
-            ? "People"
-            : pathParts[pathParts.length - 1];
+  if (!canOpen) {
+    return null;
+  }
 
-    return (
-        <div id="wd-courses" className="p-2">
-            <h2 className="text-danger">
-                <FaAlignJustify className="me-3 fs-4 mb-1" />
-                {course ? course.name : `Course ${cid}`} &gt; {section}
-            </h2>
-            <hr />
-            <div className="d-flex">
-                <div className="d-none d-md-block" style={{ minWidth: 200 }}>
-                    <CourseNavigation cid={cid} />
-                </div>
-                <div className="flex-fill ms-3">{children}</div>
-            </div>
+  return (
+    <div id="wd-courses">
+      <h2 className="text-danger">
+        <FaAlignJustify className="me-4 fs-4 mb-1" />
+        {course ? course.name : `Course ${cid}`}
+        <Breadcrumb />
+      </h2>
+      <hr />
+      <div className="d-flex">
+        <div className="d-none d-md-block">
+          <CourseNavigation cid={cid} />
         </div>
-    );
+        <div className="flex-fill ms-3">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function CoursesLayout({ children }: Readonly<{ children: ReactNode }>) {
+  return (
+    <ProtectedRoute>
+      <CourseContent>{children}</CourseContent>
+    </ProtectedRoute>
+  );
 }

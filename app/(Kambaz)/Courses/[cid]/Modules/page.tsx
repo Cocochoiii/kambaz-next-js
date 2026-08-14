@@ -1,108 +1,97 @@
 "use client";
 
+// The Modules screen.
+// 4.10 The modules come from the store, so I can add, delete and rename.
+// Faculty can change them. A student only reads them.
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import ListGroup from "react-bootstrap/ListGroup";
+import { ListGroup, Form } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
-import { Form } from "react-bootstrap";
-import LessonControlButtons from "./LessonControlButtons";
-import ModuleControlButtons from "./ModuleControlButtons";
+import { useDispatch, useSelector } from "react-redux";
 import ModulesControls from "./ModulesControls";
-import { useSelector, useDispatch } from "react-redux";
+import ModuleControlButtons from "./ModuleControlButtons";
+import LessonControlButtons from "./LessonControlButtons";
 import { addModule, deleteModule, updateModule, editModule } from "./reducer";
 
-export default function ModulesPage() {
-    const { cid } = useParams<{ cid: string }>();
-    const { modules } = useSelector((state: any) => state.modulesReducer);
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const dispatch = useDispatch();
-    const [moduleName, setModuleName] = useState("");
+export default function Modules() {
+  // useParams can be empty, so I check it first.
+  const params = useParams<{ cid: string }>();
+  const cid = params ? params.cid : "";
 
-    const courseModules = modules.filter((m: any) => m.course === cid);
-    const [collapsed, setCollapsed] = useState<boolean[]>(() => courseModules.map(() => false));
-    const allCollapsed = collapsed.every(Boolean);
-    const toggleAll = () => setCollapsed(collapsed.map(() => !allCollapsed));
-    const toggleOne = (i: number) => setCollapsed((prev) => prev.map((c, idx) => (idx === i ? !c : c)));
+  const [moduleName, setModuleName] = useState("");
+  const { modules } = useSelector((state: any) => state.modulesReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const dispatch = useDispatch();
 
-    const isFaculty = (currentUser?.role ?? "").toString().toUpperCase() === "FACULTY";
+  const isFaculty = currentUser?.role === "FACULTY";
+  const courseModules = modules.filter((module: any) => module.course === cid);
 
-    return (
-        <div id="wd-courses-modules">
-            {isFaculty ? (
-                <ModulesControls
-                    onToggleAll={toggleAll}
-                    allCollapsed={allCollapsed}
-                    moduleName={moduleName}
-                    setModuleName={setModuleName}
-                    addModule={() => {
-                        dispatch(addModule({ name: moduleName, course: cid }));
-                        setModuleName("");
-                    }}
+  return (
+    <div id="wd-courses-modules">
+      {isFaculty && (
+        <>
+          <ModulesControls
+            moduleName={moduleName}
+            setModuleName={setModuleName}
+            addModule={() => {
+              dispatch(addModule({ name: moduleName, course: cid }));
+              setModuleName("");
+            }}
+          />
+          <br /><br /><br /><br />
+        </>
+      )}
+
+      <ListGroup className="rounded-0" id="wd-modules">
+        {courseModules.map((module: any) => (
+          <ListGroup.Item key={module._id} className="wd-module p-0 mb-5 fs-5 border-gray">
+            <div className="wd-title p-3 ps-2 bg-secondary">
+              <BsGripVertical className="me-2 fs-3" />
+
+              {/* The title is a text field only while I edit it. */}
+              {!module.editing && module.name}
+              {module.editing && (
+                <Form.Control
+                  className="w-50 d-inline-block"
+                  defaultValue={module.name}
+                  onChange={(e) =>
+                    dispatch(updateModule({ ...module, name: e.target.value }))
+                  }
+                  onKeyDown={(e) => {
+                    // Enter keeps the new name and closes the field.
+                    if (e.key === "Enter") {
+                      dispatch(updateModule({ ...module, editing: false }));
+                    }
+                  }}
                 />
-            ) : (
-                <div id="wd-modules-toolbar" className="btn-toolbar gap-2 mb-3">
-                    <button id="wd-modules-collapse-all" className="btn btn-secondary" onClick={toggleAll}>
-                        {allCollapsed ? "Expand All" : "Collapse All"}
-                    </button>
-                </div>
-            )}
+              )}
 
-            <ListGroup id="wd-modules" className="rounded-0">
-                {courseModules.map((module: any, i: number) => (
-                    <ListGroup.Item key={module._id} className="wd-module p-0 mb-5 fs-5 border-gray">
-                        <button
-                            className="w-100 text-start border-0 p-0"
-                            onClick={() => toggleOne(i)}
-                            aria-expanded={!collapsed[i]}
-                            aria-controls={`wd-module-panel-${i}`}
-                        >
-                            <div className="wd-title p-3 ps-2 bg-secondary">
-                                <BsGripVertical className="me-2 wd-grip" />
-                                {!module.editing && module.name}
-                                {module.editing && isFaculty && (
-                                    <Form.Control
-                                        className="w-50 d-inline-block"
-                                        onClick={(e) => e.stopPropagation()}
-                                        onChange={(e) => dispatch(updateModule({ ...module, name: e.target.value }))}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") dispatch(updateModule({ ...module, editing: false }));
-                                        }}
-                                        defaultValue={module.name}
-                                    />
-                                )}
-                                {isFaculty && (
-                                    <ModuleControlButtons
-                                        moduleId={module._id}
-                                        deleteModule={(moduleId) => dispatch(deleteModule(moduleId))}
-                                        editModule={(moduleId) => dispatch(editModule(moduleId))}
-                                    />
-                                )}
-                            </div>
-                        </button>
+              {isFaculty && (
+                <ModuleControlButtons
+                  moduleId={module._id}
+                  deleteModule={(moduleId) => dispatch(deleteModule(moduleId))}
+                  editModule={(moduleId) => dispatch(editModule(moduleId))}
+                />
+              )}
+            </div>
 
-                        {module.lessons && (
-                            <div id={`wd-module-panel-${i}`} hidden={collapsed[i]}>
-                                <ListGroup className="wd-lessons rounded-0">
-                                    <ListGroup.Item className="wd-lesson p-3 ps-1 d-flex align-items-center">
-                                        <BsGripVertical className="me-2 wd-grip" />
-                                        <span className="wd-title ms-2">LEARNING OBJECTIVES</span>
-                                        {/* Checkmark + kebab inside LessonControlButtons - faculty only */}
-                                        {isFaculty && <LessonControlButtons />}
-                                    </ListGroup.Item>
-
-                                    {module.lessons.map((lesson: any) => (
-                                        <ListGroup.Item key={lesson._id} className="wd-lesson p-3 ps-1 d-flex align-items-center">
-                                            <BsGripVertical className="me-2 wd-grip" />
-                                            {lesson.name}
-                                            {isFaculty && <LessonControlButtons />}
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
-                            </div>
-                        )}
-                    </ListGroup.Item>
-                ))}
+            <ListGroup className="wd-lessons rounded-0">
+              <ListGroup.Item className="wd-lesson p-3 ps-1">
+                <BsGripVertical className="me-2 fs-3" />
+                LEARNING OBJECTIVES
+                <LessonControlButtons />
+              </ListGroup.Item>
+              {module.lessons && module.lessons.map((lesson: any) => (
+                <ListGroup.Item key={lesson._id} className="wd-lesson p-3 ps-1">
+                  <BsGripVertical className="me-2 fs-3" />
+                  {lesson.name}
+                  <LessonControlButtons />
+                </ListGroup.Item>
+              ))}
             </ListGroup>
-        </div>
-    );
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+    </div>
+  );
 }

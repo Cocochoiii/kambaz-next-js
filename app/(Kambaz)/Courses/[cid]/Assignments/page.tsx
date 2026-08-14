@@ -1,119 +1,127 @@
 "use client";
 
+// The Assignments screen.
+// 4.12 The assignments come from the store. + Assignment opens the
+// editor. The trash can asks first, then deletes. Faculty only.
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ListGroup, Badge, Button, Form, InputGroup } from "react-bootstrap";
-import {
-    BsGripVertical,
-    BsFileEarmarkText,
-    BsThreeDotsVertical,
-    BsPlus,
-    BsSearch
-} from "react-icons/bs";
+import { BsGripVertical, BsPlus, BsThreeDotsVertical, BsSearch } from "react-icons/bs";
 import { FaPlus, FaTrash } from "react-icons/fa6";
-import { useSelector, useDispatch } from "react-redux";
+import { LiaFileAltSolid } from "react-icons/lia";
+import { useDispatch, useSelector } from "react-redux";
+import GreenCheckmark from "../Modules/GreenCheckmark";
 import { deleteAssignment } from "./reducer";
 
+// The dates look like 2025-01-19. I build the short date myself, so the
+// server and the browser print the same text.
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function shortDate(date?: string) {
+  if (!date) { return "-"; }
+  const [, month, day] = date.split("-");
+  return `${MONTHS[Number(month) - 1]} ${Number(day)}`;
+}
+
 export default function Assignments() {
-    const { cid } = useParams<{ cid: string }>();
-    const router = useRouter();
-    const dispatch = useDispatch();
-    const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const params = useParams<{ cid: string }>();
+  const cid = params ? params.cid : "";
+  const router = useRouter();
+  const dispatch = useDispatch();
 
-    const courseAssignments = assignments.filter((a: any) => a.course === cid);
-    const isFaculty = (currentUser?.role ?? "").toString().toUpperCase() === "FACULTY";
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
-    const handleDelete = (assignmentId: string) => {
-        if (window.confirm("Are you sure you want to delete this assignment?")) {
-            dispatch(deleteAssignment(assignmentId));
-        }
-    };
+  const isFaculty = currentUser?.role === "FACULTY";
+  const courseAssignments = assignments.filter((a: any) => a.course === cid);
 
-    const handleAddAssignment = () => router.push(`/Courses/${cid}/Assignments/new`);
+  const removeAssignment = (assignmentId: string) => {
+    // The book asks for a dialog. Yes deletes, Cancel does nothing.
+    if (window.confirm("Are you sure you want to remove this assignment?")) {
+      dispatch(deleteAssignment(assignmentId));
+    }
+  };
 
-    return (
-        <div id="wd-assignments" className="mt-2">
-            <div className="d-flex align-items-center gap-2 mb-3">
-                <InputGroup style={{ maxWidth: 380 }}>
-                    <InputGroup.Text><BsSearch /></InputGroup.Text>
-                    <Form.Control id="wd-search-assignment" placeholder="Search for Assignments" />
-                </InputGroup>
-                {isFaculty && (
-                    <>
-                        <Button id="wd-add-assignment-group" variant="secondary" className="ms-auto">
-                            <FaPlus className="me-1" /> Group
-                        </Button>
-                        <Button id="wd-add-assignment" variant="danger" onClick={handleAddAssignment}>
-                            <FaPlus className="me-1" /> Assignment
-                        </Button>
-                    </>
-                )}
-            </div>
-
-            <div className="border rounded mb-3">
-                <div className="d-flex align-items-center justify-content-between px-3 py-2">
-                    <div className="d-flex align-items-center gap-2">
-                        <BsGripVertical className="fs-4 text-secondary" />
-                        <strong>ASSIGNMENTS</strong>
-                    </div>
-                    <div className="d-flex align-items-center gap-2">
-                        <Badge bg="light" text="dark" className="border">40% of Total</Badge>
-                        {isFaculty && (
-                            <>
-                                <Button size="sm" variant="light" onClick={handleAddAssignment}><BsPlus /></Button>
-                                <Button size="sm" variant="light"><BsThreeDotsVertical /></Button>
-                            </>
-                        )}
-                    </div>
-                </div>
-
-                <ListGroup variant="flush" id="wd-assignment-list">
-                    {courseAssignments.map((assignment: any) => (
-                        <ListGroup.Item key={assignment._id} className="py-3 d-flex align-items-start">
-                            <div className="me-2 pt-1"><BsGripVertical className="text-secondary" /></div>
-                            <div className="me-3 pt-1"><BsFileEarmarkText className="text-success fs-5" /></div>
-
-                            <div className="flex-grow-1">
-                                <Link
-                                    className="wd-assignment-link fw-semibold text-decoration-none"
-                                    href={`/Courses/${cid}/Assignments/${assignment._id}`}
-                                >
-                                    {assignment.title}
-                                </Link>
-                                <div className="text-muted small">
-                                    Multiple Modules <span className="mx-2">|</span>
-                                    {assignment.availableFrom
-                                        ? <>Not available until {new Date(assignment.availableFrom).toLocaleDateString()} at 12:00am</>
-                                        : <>Not available yet</>
-                                    }
-                                    <span className="mx-2">|</span>
-                                    {assignment.dueDate
-                                        ? <>Due {new Date(assignment.dueDate).toLocaleDateString()} at 11:59pm</>
-                                        : <>Due -</>
-                                    }
-                                    <span className="mx-2">|</span>
-                                    {assignment.points} pts
-                                </div>
-                            </div>
-
-                            <div className="ms-3 d-flex align-items-center gap-2">
-                                {/* No green check for students; faculty can delete */}
-                                {isFaculty && (
-                                    <Button
-                                        variant="link"
-                                        className="text-danger p-0"
-                                        onClick={() => handleDelete(assignment._id)}
-                                    >
-                                        <FaTrash />
-                                    </Button>
-                                )}
-                                <BsThreeDotsVertical className="text-secondary" />
-                            </div>
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
-            </div>
+  return (
+    <div id="wd-assignments">
+      {/* The buttons float right, so I write the right one first. */}
+      <div className="clearfix mb-4">
+        {isFaculty && (
+          <>
+            <button
+              id="wd-add-assignment"
+              className="btn btn-lg btn-danger float-end"
+              onClick={() => router.push(`/Courses/${cid}/Assignments/new`)}
+            >
+              <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+              Assignment
+            </button>
+            <button id="wd-add-assignment-group" className="btn btn-lg btn-secondary me-2 float-end">
+              <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+              Group
+            </button>
+          </>
+        )}
+        <div className="input-group" style={{ width: "300px" }}>
+          <span className="input-group-text bg-white">
+            <BsSearch />
+          </span>
+          <input
+            id="wd-search-assignment"
+            className="form-control"
+            placeholder="Search for Assignments"
+          />
         </div>
-    );
+      </div>
+
+      {/* The ASSIGNMENTS group title */}
+      <div className="p-3 bg-secondary border border-secondary clearfix">
+        <BsGripVertical className="me-2 fs-3" />
+        <span id="wd-assignments-title" className="fw-bold">ASSIGNMENTS</span>
+        <div className="float-end">
+          <span className="border border-dark rounded-pill px-2 py-1 me-2">40% of Total</span>
+          <BsPlus className="fs-4" />
+          <BsThreeDotsVertical className="fs-4" />
+        </div>
+      </div>
+
+      <ul id="wd-assignment-list" className="list-group rounded-0">
+        {courseAssignments.map((assignment: any) => (
+          <li
+            key={assignment._id}
+            className="wd-assignment-list-item list-group-item p-3 ps-1 d-flex align-items-center"
+          >
+            <BsGripVertical className="me-2 fs-3" />
+            <LiaFileAltSolid className="me-3 fs-3 text-success" />
+            <div className="flex-fill">
+              <Link
+                href={`/Courses/${cid}/Assignments/${assignment._id}`}
+                className="wd-assignment-link fw-bold text-dark text-decoration-none"
+              >
+                {assignment.title}
+              </Link>
+              <p className="mb-0">
+                <span className="text-danger">Multiple Modules</span>
+                {" | "}<b>Not available until</b> {shortDate(assignment.availableFrom)} at 12:00am
+                {" | "}<b>Due</b> {shortDate(assignment.dueDate)} at 11:59pm
+                {" | "}{assignment.points} pts
+              </p>
+            </div>
+            <div className="ms-3 d-flex align-items-center">
+              {isFaculty && (
+                <FaTrash
+                  role="button"
+                  aria-label="Delete assignment"
+                  className="text-danger me-3"
+                  onClick={() => removeAssignment(assignment._id)}
+                />
+              )}
+              <GreenCheckmark />
+              <BsThreeDotsVertical className="fs-4" />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }

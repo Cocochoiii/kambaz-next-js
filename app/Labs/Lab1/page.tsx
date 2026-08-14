@@ -1,9 +1,32 @@
 'use client';
 
+// Lab 1. All the HTML exercises from Chapter 1.
+// Lab 1 is the landing page of the labs, so the top also shows my name,
+// my section, and the links.
+import Link from "next/link";
+
 export default function Lab1() {
   return (
       <div id="wd-lab1">
         <h2>Lab 1</h2>
+
+        <div id="wd-lab1-about">
+          <h5>Coco Choi</h5>
+          <h5>CS5610 Web Development, Fall 2025, Section 04</h5>
+          <ul>
+            <li><Link href="/Labs/Lab1" id="wd-lab1-lab1-link">Lab 1: HTML Examples</Link></li>
+            <li><Link href="/Labs/Lab2" id="wd-lab1-lab2-link">Lab 2: CSS and Bootstrap</Link></li>
+            <li><Link href="/Labs/Lab3" id="wd-lab1-lab3-link">Lab 3: JavaScript Fundamentals</Link></li>
+            <li><Link href="/Labs/Lab4" id="wd-lab1-lab4-link">Lab 4: State and Redux</Link></li>
+            <li><Link href="/" id="wd-lab1-kambaz-link">Kambaz</Link></li>
+            <li>
+              <a href="https://github.com/Cocochoiii/kambaz-next-js" target="_blank" rel="noreferrer" id="wd-lab1-repo-link">
+                Source code repository: Cocochoiii/kambaz-next-js
+              </a>
+            </li>
+          </ul>
+        </div>
+
         <h3>HTML Examples</h3>
 
         <div id="wd-h-tag">
@@ -133,7 +156,7 @@ export default function Lab1() {
 
             <h5>Text boxes</h5>
             <label>Biography:</label><br/>
-            {/* Use defaultValue to avoid React warning */}
+            {/* I use defaultValue. With value the field becomes read only. */}
             <textarea
                 id="wd-textarea"
                 cols={30}
@@ -196,11 +219,14 @@ export default function Lab1() {
             <input type="range" defaultValue="4" max="5" id="wd-text-fields-rating"/><br/>
             <label htmlFor="wd-text-fields-dob"> Date of birth: </label>
             <input type="date" defaultValue="2000-01-21" id="wd-text-fields-dob"/><br/>
-
-            <h4>Anchor tag</h4>
-            Please <a href="https://www.lipsum.com" id="wd-lipsum" target="_blank" rel="noreferrer">click here</a> to get dummy text<br/>
-            <a href="https://github.com/Cocochoiii" id="wd-github" target="_blank" rel="noreferrer">My GitHub</a>
           </form>
+        </div>
+
+        {/* The anchor tags go at the end, outside the form */}
+        <div id="wd-anchors">
+          <h4>Anchor tag</h4>
+          Please <a href="https://www.lipsum.com" id="wd-lipsum" target="_blank" rel="noreferrer">click here</a> to get dummy text<br/>
+          <a href="https://github.com/Cocochoiii" id="wd-github" target="_blank" rel="noreferrer">My GitHub</a>
         </div>
       </div>
   );

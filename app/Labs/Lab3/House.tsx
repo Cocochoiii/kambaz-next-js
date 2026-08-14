@@ -1,3 +1,4 @@
+// A JSON object can hold numbers, strings, arrays, and objects.
 export default function House() {
   const house = {
     bedrooms: 4, bathrooms: 2.5, squareFeet: 2000,

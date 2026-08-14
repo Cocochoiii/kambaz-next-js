@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kambaz - Next.js (A4)
 
-## Getting Started
+Coco Choi. CS5610 Web Development, Fall 2025, Section 04.
 
-First, run the development server:
+This is my A4 work. It covers Chapter 4 of the book, *Developing Full Stack
+MERN Web Applications*. Chapter 4 is about state. First the state of one
+component, then the state of the whole app with Redux.
+
+Lab 4 practices events, `useState`, sharing state, and Redux. The Kambaz
+screens are not read only any more. A Faculty user can add, rename and delete
+courses, modules and assignments. A Student can enroll and unenroll. Every
+change is kept in the store, so it is still there on the next screen.
+
+## How to run it
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000. The first screen is Sign in. The menu on the
+left has a Labs link. `/Labs` lists Lab 1, Lab 2, Lab 3, and Lab 4.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Accounts to try
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The Sign in screen also shows these two accounts under the button.
 
-## Learn More
+- Faculty: `sstrange` / `678`. Can add, edit, update and delete courses,
+  modules and assignments.
+- Student: `coco` / `123`. Can enroll and unenroll, and read the courses.
 
-To learn more about Next.js, take a look at the following resources:
+A Student can also open Profile, change the role to Faculty, and press Save.
+Then the Dashboard shows the Faculty buttons.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## What Chapter 4 added
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Lab 4, in `app/Labs/Lab4`:
 
-## Deploy on Vercel
+- click events, passing data, passing a function, and the event object
+- state variables: integer, boolean, string, date, object, and array
+- sharing one state variable between a parent and a child
+- Redux: Hello Redux, Counter Redux, Add Redux, and the todo list
+- the last step of the chapter: Lab 3 shows the same todo list, because both
+  labs read it from the same store
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Kambaz:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `app/(Kambaz)/store.ts` holds all five slices
+- `Courses/reducer.ts` adds, edits, updates and deletes a course
+- `Courses/[cid]/Modules/reducer.ts` adds, deletes and renames a module
+- `Courses/[cid]/Assignments/reducer.ts` adds, updates and deletes an
+  assignment
+- `Account/reducer.ts` remembers who is signed in
+- `Enrollments/reducer.ts` enrolls and unenrolls a student
+- `Account/ProtectedRoute.tsx` keeps the Dashboard and the courses for signed
+  in users, and a course only opens for a student who is enrolled in it
+
+## Folders
+
+- `app/(Kambaz)` the Kambaz screens: Account, Dashboard, Courses, and more
+- `app/(Kambaz)/Database` the data as JSON: courses, modules, assignments,
+  users, enrollments, announcements, quizzes, and grades
+- `app/Labs` the lab exercises for chapters 1, 2, 3, and 4
+
+## Links
+
+- GitHub: https://github.com/Cocochoiii/kambaz-next-js
