@@ -92,6 +92,13 @@ They read the server too, in the same way as the modules.
 | Zoom | the server. Faculty can add and remove |
 | People | the server joins the users and the enrollments |
 | Grade Book | the server. Faculty can change a score and release |
+| Inbox | the server. I can read, send and delete a message |
+| Calendar | the server. A month grid and an agenda |
+
+The Calendar keeps no data. The server puts the assignment due dates, the
+Zoom meetings and the announcements of my courses into one list. The screen
+has two tabs. Month draws a grid, and a click on a day opens that day.
+Agenda groups everything by day in one long list.
 
 Piazza is still an empty screen.
 

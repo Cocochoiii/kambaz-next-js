@@ -1,6 +1,6 @@
 "use client";
 
-// The table of contents. It links to every lab, Kambaz, and my GitHub.
+// The table of contents. It links to every lab, Kambaz, and both repos.
 // The pill of the page I am on is active.
 import { Nav } from "react-bootstrap";
 import Link from "next/link";

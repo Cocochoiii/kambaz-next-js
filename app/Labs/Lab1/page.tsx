@@ -1,29 +1,15 @@
 'use client';
 
 // Lab 1. The HTML exercises of Chapter 1.
-import Link from "next/link";
+// It is also the landing page, so the header goes on top.
+import LabsHeader from "../LabsHeader";
 
 export default function Lab1() {
   return (
       <div id="wd-lab1">
         <h2>Lab 1</h2>
 
-        <div id="wd-lab1-about">
-          <h5>Coco Choi</h5>
-          <h5>CS5610 Web Development, Fall 2025, Section 04</h5>
-          <ul>
-            <li><Link href="/Labs/Lab1" id="wd-lab1-lab1-link">Lab 1: HTML Examples</Link></li>
-            <li><Link href="/Labs/Lab2" id="wd-lab1-lab2-link">Lab 2: CSS and Bootstrap</Link></li>
-            <li><Link href="/Labs/Lab3" id="wd-lab1-lab3-link">Lab 3: JavaScript Fundamentals</Link></li>
-            <li><Link href="/Labs/Lab4" id="wd-lab1-lab4-link">Lab 4: State and Redux</Link></li>
-            <li><Link href="/" id="wd-lab1-kambaz-link">Kambaz</Link></li>
-            <li>
-              <a href="https://github.com/Cocochoiii/kambaz-next-js" target="_blank" rel="noreferrer" id="wd-lab1-repo-link">
-                Source code repository: Cocochoiii/kambaz-next-js
-              </a>
-            </li>
-          </ul>
-        </div>
+        <LabsHeader />
 
         <h3>HTML Examples</h3>
 

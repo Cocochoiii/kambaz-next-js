@@ -69,6 +69,12 @@ export default function Signin() {
       </Button>
       <Link id="wd-signup-link" href="/Account/Signup">Sign up</Link>
 
+      {/* The menu on the left hides on a narrow screen.
+          A5 asks for a link to the labs, so I put one here too. */}
+      <div className="mt-2">
+        <Link id="wd-signin-labs-link" href="/Labs">Lab exercises</Link>
+      </div>
+
       {/* Two accounts that exist on the server. */}
       <div className="text-muted small mt-3" id="wd-signin-accounts">
         <div><b>Faculty:</b> iron_man / stark123</div>

@@ -6,6 +6,7 @@ import assignmentsReducer from "./Courses/[cid]/Assignments/reducer";
 import announcementsReducer from "./Courses/[cid]/Announcements/reducer";
 import gradesReducer from "./Courses/[cid]/Grades/reducer";
 import meetingsReducer from "./Courses/[cid]/Zoom/reducer";
+import messagesReducer from "./Inbox/reducer";
 import accountReducer from "./Account/reducer";
 import enrollmentsReducer from "./Enrollments/reducer";
 
@@ -17,6 +18,7 @@ const store = configureStore({
     announcementsReducer,
     gradesReducer,
     meetingsReducer,
+    messagesReducer,
     accountReducer,
     enrollmentsReducer,
   },
