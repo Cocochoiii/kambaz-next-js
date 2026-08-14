@@ -3,8 +3,7 @@
 body { margin: 0; padding: 0; }
 body * { font-family: Arial, Helvetica, sans-serif; }
 
-/* Font sizes. Bootstrap starts at 16px, which is bigger than Canvas,
-   so I use 14px as the base. */
+/* Font sizes. Bootstrap starts at 16px. Canvas is smaller, so I use 14px. */
 :root {
   --wd-font-body: 14px;
   --wd-font-small: 13px;
@@ -53,19 +52,40 @@ html, body {
 #wd-quizzes .wd-quiz-list-item p { font-size: var(--wd-font-small); }
 #wd-announcements h5 { font-size: var(--wd-font-title); font-weight: 600; }
 
-/* The grip dots and the icons. The fs-3 and fs-4 classes are too big next
-   to 14px text. They use !important, so I need it too. */
+/* The grip dots and the icons. The fs-3 and fs-4 classes are too big here.
+   They use !important, so I need it too. */
 #wd-modules .fs-3,
 #wd-assignments .fs-3 { font-size: 1.3rem !important; }
 #wd-modules .fs-4,
 #wd-assignments .fs-4 { font-size: 1.15rem !important; }
 
-/* The menu is fixed, so the screen would sit under it. This class pushes
-   the screen right, but only when the menu is visible. */
+/* The menu is fixed, so the screen would sit under it. This pushes the
+   screen right, but only when the menu is visible. */
 @media (min-width: 768px) {
   #wd-kambaz .wd-main-content-offset {
     padding-left: 140px !important;
   }
+}
+
+/* A flex box does not get smaller than the things inside it. These two
+   boxes hold a screen, so a wide table must scroll inside them. */
+#wd-kambaz .wd-main-content-offset,
+#wd-courses .wd-course-screen {
+  min-width: 0;
+}
+
+/* The Grades table has many columns, so the cells are small. The lines
+   make a table of numbers easier to read. */
+#wd-grades table th,
+#wd-grades table td {
+  padding: .4rem .5rem;
+  font-size: .9rem;
+  border: 1px solid #dee2e6;
+}
+
+/* The row under the mouse turns gray, so I can follow it across. */
+#wd-grades tbody tr:hover {
+  background-color: #f2f4f5;
 }
 
 /* Bootstrap gray is too dark, so I make it lighter like Canvas. */

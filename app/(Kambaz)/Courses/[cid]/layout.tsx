@@ -51,7 +51,7 @@ function CourseContent({ children }: { children: ReactNode }) {
         <div className="d-none d-md-block">
           <CourseNavigation cid={cid} />
         </div>
-        <div className="flex-fill ms-3">
+        <div className="flex-fill ms-3 wd-course-screen">
           {children}
         </div>
       </div>

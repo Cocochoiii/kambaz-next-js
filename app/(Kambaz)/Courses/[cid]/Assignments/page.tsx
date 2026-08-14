@@ -1,16 +1,16 @@
 "use client";
 
 // The Assignments screen.
-// 4.12 The assignments come from the store. + Assignment opens the
-// editor. The trash can asks first, then deletes. Faculty only.
+// 4.12 The assignments come from the store. + Assignment opens the editor.
+// Faculty can also delete, publish and unpublish. A student only reads.
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { BsGripVertical, BsPlus, BsThreeDotsVertical, BsSearch } from "react-icons/bs";
 import { FaPlus, FaTrash } from "react-icons/fa6";
 import { LiaFileAltSolid } from "react-icons/lia";
 import { useDispatch, useSelector } from "react-redux";
-import GreenCheckmark from "../Modules/GreenCheckmark";
-import { deleteAssignment } from "./reducer";
+import PublishToggle from "../Modules/PublishToggle";
+import { deleteAssignment, updateAssignment } from "./reducer";
 
 // The dates look like 2025-01-19. I build the short date myself, so the
 // server and the browser print the same text.
@@ -34,6 +34,10 @@ export default function Assignments() {
 
   const isFaculty = currentUser?.role === "FACULTY";
   const courseAssignments = assignments.filter((a: any) => a.course === cid);
+
+  // Publish and unpublish only flip a flag, so I reuse updateAssignment.
+  const togglePublish = (assignment: any) =>
+    dispatch(updateAssignment({ ...assignment, published: !assignment.published }));
 
   const removeAssignment = (assignmentId: string) => {
     // The book asks for a dialog. Yes deletes, Cancel does nothing.
@@ -116,7 +120,10 @@ export default function Assignments() {
                   onClick={() => removeAssignment(assignment._id)}
                 />
               )}
-              <GreenCheckmark />
+              <PublishToggle
+                published={assignment.published !== false}
+                onToggle={isFaculty ? () => togglePublish(assignment) : undefined}
+              />
               <BsThreeDotsVertical className="fs-4" />
             </div>
           </li>

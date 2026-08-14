@@ -1,9 +1,8 @@
 "use client";
 
 // 4.2.3 Date state variables.
-// An <input type="date"> only reads the text YYYY-MM-DD, so I turn the
-// Date into that text. Next.js draws this twice, on the server and in
-// the browser, so the two clocks can be a little different.
+// An <input type="date"> only reads the text YYYY-MM-DD, so I turn the Date
+// into that text. Next.js draws this twice, so the two clocks can differ.
 import { useState } from "react";
 import { Form } from "react-bootstrap";
 

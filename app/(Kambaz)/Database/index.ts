@@ -10,6 +10,7 @@ import quizzes from "./quizzes.json";
 import grades from "./grades.json";
 import gradeCategories from "./gradeCategories.json";
 import gradeStatistics from "./gradeStatistics.json";
+import meetings from "./meetings.json";
 
 export {
   courses,
@@ -22,4 +23,5 @@ export {
   grades,
   gradeCategories,
   gradeStatistics,
+  meetings,
 };

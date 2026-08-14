@@ -7,7 +7,8 @@
     "points": 100,
     "dueDate": "2025-01-19",
     "availableFrom": "2025-01-13",
-    "availableUntil": "2025-01-22"
+    "availableUntil": "2025-01-22",
+    "published": true
   },
   {
     "_id": "A-5610-02",
@@ -17,7 +18,8 @@
     "points": 100,
     "dueDate": "2025-01-26",
     "availableFrom": "2025-01-20",
-    "availableUntil": "2025-01-29"
+    "availableUntil": "2025-01-29",
+    "published": true
   },
   {
     "_id": "A-5610-03",
@@ -27,7 +29,8 @@
     "points": 100,
     "dueDate": "2025-02-02",
     "availableFrom": "2025-01-27",
-    "availableUntil": "2025-02-05"
+    "availableUntil": "2025-02-05",
+    "published": true
   },
   {
     "_id": "A-5610-04",
@@ -37,7 +40,8 @@
     "points": 100,
     "dueDate": "2025-02-09",
     "availableFrom": "2025-02-03",
-    "availableUntil": "2025-02-12"
+    "availableUntil": "2025-02-12",
+    "published": true
   },
   {
     "_id": "A-5610-05",
@@ -47,7 +51,8 @@
     "points": 100,
     "dueDate": "2025-02-16",
     "availableFrom": "2025-02-10",
-    "availableUntil": "2025-02-19"
+    "availableUntil": "2025-02-19",
+    "published": true
   },
   {
     "_id": "A-5610-06",
@@ -57,7 +62,8 @@
     "points": 100,
     "dueDate": "2025-02-23",
     "availableFrom": "2025-02-17",
-    "availableUntil": "2025-02-26"
+    "availableUntil": "2025-02-26",
+    "published": true
   },
   {
     "_id": "A-5610-07",
@@ -67,7 +73,8 @@
     "points": 100,
     "dueDate": "2025-03-02",
     "availableFrom": "2025-02-24",
-    "availableUntil": "2025-03-05"
+    "availableUntil": "2025-03-05",
+    "published": true
   },
   {
     "_id": "A-5610-08",
@@ -77,7 +84,8 @@
     "points": 100,
     "dueDate": "2025-03-09",
     "availableFrom": "2025-03-03",
-    "availableUntil": "2025-03-12"
+    "availableUntil": "2025-03-12",
+    "published": true
   },
   {
     "_id": "A-5610-09",
@@ -87,7 +95,8 @@
     "points": 100,
     "dueDate": "2025-03-16",
     "availableFrom": "2025-03-10",
-    "availableUntil": "2025-03-19"
+    "availableUntil": "2025-03-19",
+    "published": true
   },
   {
     "_id": "A-5610-10",
@@ -97,7 +106,8 @@
     "points": 150,
     "dueDate": "2025-03-23",
     "availableFrom": "2025-03-17",
-    "availableUntil": "2025-03-26"
+    "availableUntil": "2025-03-26",
+    "published": true
   },
   {
     "_id": "A-5520-01",
@@ -107,7 +117,8 @@
     "points": 100,
     "dueDate": "2025-01-19",
     "availableFrom": "2025-01-13",
-    "availableUntil": "2025-01-22"
+    "availableUntil": "2025-01-22",
+    "published": true
   },
   {
     "_id": "A-5520-02",
@@ -117,7 +128,8 @@
     "points": 100,
     "dueDate": "2025-01-26",
     "availableFrom": "2025-01-20",
-    "availableUntil": "2025-01-29"
+    "availableUntil": "2025-01-29",
+    "published": true
   },
   {
     "_id": "A-5520-03",
@@ -127,7 +139,8 @@
     "points": 100,
     "dueDate": "2025-02-02",
     "availableFrom": "2025-01-27",
-    "availableUntil": "2025-02-05"
+    "availableUntil": "2025-02-05",
+    "published": true
   },
   {
     "_id": "A-5520-04",
@@ -137,7 +150,8 @@
     "points": 100,
     "dueDate": "2025-02-09",
     "availableFrom": "2025-02-03",
-    "availableUntil": "2025-02-12"
+    "availableUntil": "2025-02-12",
+    "published": true
   },
   {
     "_id": "A-5520-05",
@@ -147,7 +161,8 @@
     "points": 100,
     "dueDate": "2025-02-16",
     "availableFrom": "2025-02-10",
-    "availableUntil": "2025-02-19"
+    "availableUntil": "2025-02-19",
+    "published": true
   },
   {
     "_id": "A-5520-06",
@@ -157,7 +172,8 @@
     "points": 100,
     "dueDate": "2025-02-23",
     "availableFrom": "2025-02-17",
-    "availableUntil": "2025-02-26"
+    "availableUntil": "2025-02-26",
+    "published": true
   },
   {
     "_id": "A-5520-07",
@@ -167,7 +183,8 @@
     "points": 100,
     "dueDate": "2025-03-02",
     "availableFrom": "2025-02-24",
-    "availableUntil": "2025-03-05"
+    "availableUntil": "2025-03-05",
+    "published": true
   },
   {
     "_id": "A-5520-08",
@@ -177,7 +194,8 @@
     "points": 100,
     "dueDate": "2025-03-09",
     "availableFrom": "2025-03-03",
-    "availableUntil": "2025-03-12"
+    "availableUntil": "2025-03-12",
+    "published": true
   },
   {
     "_id": "A-5520-09",
@@ -187,7 +205,8 @@
     "points": 100,
     "dueDate": "2025-03-16",
     "availableFrom": "2025-03-10",
-    "availableUntil": "2025-03-19"
+    "availableUntil": "2025-03-19",
+    "published": true
   },
   {
     "_id": "A-5520-10",
@@ -197,7 +216,8 @@
     "points": 150,
     "dueDate": "2025-03-23",
     "availableFrom": "2025-03-17",
-    "availableUntil": "2025-03-26"
+    "availableUntil": "2025-03-26",
+    "published": true
   },
   {
     "_id": "A-5004-01",
@@ -207,7 +227,8 @@
     "points": 100,
     "dueDate": "2025-01-19",
     "availableFrom": "2025-01-13",
-    "availableUntil": "2025-01-22"
+    "availableUntil": "2025-01-22",
+    "published": true
   },
   {
     "_id": "A-5004-02",
@@ -217,7 +238,8 @@
     "points": 100,
     "dueDate": "2025-01-26",
     "availableFrom": "2025-01-20",
-    "availableUntil": "2025-01-29"
+    "availableUntil": "2025-01-29",
+    "published": true
   },
   {
     "_id": "A-5004-03",
@@ -227,7 +249,8 @@
     "points": 100,
     "dueDate": "2025-02-02",
     "availableFrom": "2025-01-27",
-    "availableUntil": "2025-02-05"
+    "availableUntil": "2025-02-05",
+    "published": true
   },
   {
     "_id": "A-5004-04",
@@ -237,7 +260,8 @@
     "points": 100,
     "dueDate": "2025-02-09",
     "availableFrom": "2025-02-03",
-    "availableUntil": "2025-02-12"
+    "availableUntil": "2025-02-12",
+    "published": true
   },
   {
     "_id": "A-5004-05",
@@ -247,7 +271,8 @@
     "points": 100,
     "dueDate": "2025-02-16",
     "availableFrom": "2025-02-10",
-    "availableUntil": "2025-02-19"
+    "availableUntil": "2025-02-19",
+    "published": true
   },
   {
     "_id": "A-5004-06",
@@ -257,7 +282,8 @@
     "points": 100,
     "dueDate": "2025-02-23",
     "availableFrom": "2025-02-17",
-    "availableUntil": "2025-02-26"
+    "availableUntil": "2025-02-26",
+    "published": true
   },
   {
     "_id": "A-5004-07",
@@ -267,7 +293,8 @@
     "points": 100,
     "dueDate": "2025-03-02",
     "availableFrom": "2025-02-24",
-    "availableUntil": "2025-03-05"
+    "availableUntil": "2025-03-05",
+    "published": true
   },
   {
     "_id": "A-5004-08",
@@ -277,7 +304,8 @@
     "points": 100,
     "dueDate": "2025-03-09",
     "availableFrom": "2025-03-03",
-    "availableUntil": "2025-03-12"
+    "availableUntil": "2025-03-12",
+    "published": true
   },
   {
     "_id": "A-5004-09",
@@ -287,7 +315,8 @@
     "points": 100,
     "dueDate": "2025-03-16",
     "availableFrom": "2025-03-10",
-    "availableUntil": "2025-03-19"
+    "availableUntil": "2025-03-19",
+    "published": true
   },
   {
     "_id": "A-5004-10",
@@ -297,7 +326,8 @@
     "points": 150,
     "dueDate": "2025-03-23",
     "availableFrom": "2025-03-17",
-    "availableUntil": "2025-03-26"
+    "availableUntil": "2025-03-26",
+    "published": true
   },
   {
     "_id": "A-5200-01",
@@ -307,7 +337,8 @@
     "points": 100,
     "dueDate": "2025-01-19",
     "availableFrom": "2025-01-13",
-    "availableUntil": "2025-01-22"
+    "availableUntil": "2025-01-22",
+    "published": true
   },
   {
     "_id": "A-5200-02",
@@ -317,7 +348,8 @@
     "points": 100,
     "dueDate": "2025-01-26",
     "availableFrom": "2025-01-20",
-    "availableUntil": "2025-01-29"
+    "availableUntil": "2025-01-29",
+    "published": true
   },
   {
     "_id": "A-5200-03",
@@ -327,7 +359,8 @@
     "points": 100,
     "dueDate": "2025-02-02",
     "availableFrom": "2025-01-27",
-    "availableUntil": "2025-02-05"
+    "availableUntil": "2025-02-05",
+    "published": true
   },
   {
     "_id": "A-5200-04",
@@ -337,7 +370,8 @@
     "points": 100,
     "dueDate": "2025-02-09",
     "availableFrom": "2025-02-03",
-    "availableUntil": "2025-02-12"
+    "availableUntil": "2025-02-12",
+    "published": true
   },
   {
     "_id": "A-5200-05",
@@ -347,7 +381,8 @@
     "points": 100,
     "dueDate": "2025-02-16",
     "availableFrom": "2025-02-10",
-    "availableUntil": "2025-02-19"
+    "availableUntil": "2025-02-19",
+    "published": true
   },
   {
     "_id": "A-5200-06",
@@ -357,7 +392,8 @@
     "points": 100,
     "dueDate": "2025-02-23",
     "availableFrom": "2025-02-17",
-    "availableUntil": "2025-02-26"
+    "availableUntil": "2025-02-26",
+    "published": true
   },
   {
     "_id": "A-5200-07",
@@ -367,7 +403,8 @@
     "points": 100,
     "dueDate": "2025-03-02",
     "availableFrom": "2025-02-24",
-    "availableUntil": "2025-03-05"
+    "availableUntil": "2025-03-05",
+    "published": true
   },
   {
     "_id": "A-5200-08",
@@ -377,7 +414,8 @@
     "points": 100,
     "dueDate": "2025-03-09",
     "availableFrom": "2025-03-03",
-    "availableUntil": "2025-03-12"
+    "availableUntil": "2025-03-12",
+    "published": true
   },
   {
     "_id": "A-5200-09",
@@ -387,7 +425,8 @@
     "points": 100,
     "dueDate": "2025-03-16",
     "availableFrom": "2025-03-10",
-    "availableUntil": "2025-03-19"
+    "availableUntil": "2025-03-19",
+    "published": true
   },
   {
     "_id": "A-5200-10",
@@ -397,7 +436,8 @@
     "points": 150,
     "dueDate": "2025-03-23",
     "availableFrom": "2025-03-17",
-    "availableUntil": "2025-03-26"
+    "availableUntil": "2025-03-26",
+    "published": true
   },
   {
     "_id": "A-5800-01",
@@ -407,7 +447,8 @@
     "points": 100,
     "dueDate": "2025-01-19",
     "availableFrom": "2025-01-13",
-    "availableUntil": "2025-01-22"
+    "availableUntil": "2025-01-22",
+    "published": true
   },
   {
     "_id": "A-5800-02",
@@ -417,7 +458,8 @@
     "points": 100,
     "dueDate": "2025-01-26",
     "availableFrom": "2025-01-20",
-    "availableUntil": "2025-01-29"
+    "availableUntil": "2025-01-29",
+    "published": true
   },
   {
     "_id": "A-5800-03",
@@ -427,7 +469,8 @@
     "points": 100,
     "dueDate": "2025-02-02",
     "availableFrom": "2025-01-27",
-    "availableUntil": "2025-02-05"
+    "availableUntil": "2025-02-05",
+    "published": true
   },
   {
     "_id": "A-5800-04",
@@ -437,7 +480,8 @@
     "points": 100,
     "dueDate": "2025-02-09",
     "availableFrom": "2025-02-03",
-    "availableUntil": "2025-02-12"
+    "availableUntil": "2025-02-12",
+    "published": true
   },
   {
     "_id": "A-5800-05",
@@ -447,7 +491,8 @@
     "points": 100,
     "dueDate": "2025-02-16",
     "availableFrom": "2025-02-10",
-    "availableUntil": "2025-02-19"
+    "availableUntil": "2025-02-19",
+    "published": true
   },
   {
     "_id": "A-5800-06",
@@ -457,7 +502,8 @@
     "points": 100,
     "dueDate": "2025-02-23",
     "availableFrom": "2025-02-17",
-    "availableUntil": "2025-02-26"
+    "availableUntil": "2025-02-26",
+    "published": true
   },
   {
     "_id": "A-5800-07",
@@ -467,7 +513,8 @@
     "points": 100,
     "dueDate": "2025-03-02",
     "availableFrom": "2025-02-24",
-    "availableUntil": "2025-03-05"
+    "availableUntil": "2025-03-05",
+    "published": true
   },
   {
     "_id": "A-5800-08",
@@ -477,7 +524,8 @@
     "points": 100,
     "dueDate": "2025-03-09",
     "availableFrom": "2025-03-03",
-    "availableUntil": "2025-03-12"
+    "availableUntil": "2025-03-12",
+    "published": true
   },
   {
     "_id": "A-5800-09",
@@ -487,7 +535,8 @@
     "points": 100,
     "dueDate": "2025-03-16",
     "availableFrom": "2025-03-10",
-    "availableUntil": "2025-03-19"
+    "availableUntil": "2025-03-19",
+    "published": true
   },
   {
     "_id": "A-5800-10",
@@ -497,7 +546,8 @@
     "points": 150,
     "dueDate": "2025-03-23",
     "availableFrom": "2025-03-17",
-    "availableUntil": "2025-03-26"
+    "availableUntil": "2025-03-26",
+    "published": true
   },
   {
     "_id": "A-6620-01",
@@ -507,7 +557,8 @@
     "points": 100,
     "dueDate": "2025-01-19",
     "availableFrom": "2025-01-13",
-    "availableUntil": "2025-01-22"
+    "availableUntil": "2025-01-22",
+    "published": true
   },
   {
     "_id": "A-6620-02",
@@ -517,7 +568,8 @@
     "points": 100,
     "dueDate": "2025-01-26",
     "availableFrom": "2025-01-20",
-    "availableUntil": "2025-01-29"
+    "availableUntil": "2025-01-29",
+    "published": true
   },
   {
     "_id": "A-6620-03",
@@ -527,7 +579,8 @@
     "points": 100,
     "dueDate": "2025-02-02",
     "availableFrom": "2025-01-27",
-    "availableUntil": "2025-02-05"
+    "availableUntil": "2025-02-05",
+    "published": true
   },
   {
     "_id": "A-6620-04",
@@ -537,7 +590,8 @@
     "points": 100,
     "dueDate": "2025-02-09",
     "availableFrom": "2025-02-03",
-    "availableUntil": "2025-02-12"
+    "availableUntil": "2025-02-12",
+    "published": true
   },
   {
     "_id": "A-6620-05",
@@ -547,7 +601,8 @@
     "points": 100,
     "dueDate": "2025-02-16",
     "availableFrom": "2025-02-10",
-    "availableUntil": "2025-02-19"
+    "availableUntil": "2025-02-19",
+    "published": true
   },
   {
     "_id": "A-6620-06",
@@ -557,7 +612,8 @@
     "points": 100,
     "dueDate": "2025-02-23",
     "availableFrom": "2025-02-17",
-    "availableUntil": "2025-02-26"
+    "availableUntil": "2025-02-26",
+    "published": true
   },
   {
     "_id": "A-6620-07",
@@ -567,7 +623,8 @@
     "points": 100,
     "dueDate": "2025-03-02",
     "availableFrom": "2025-02-24",
-    "availableUntil": "2025-03-05"
+    "availableUntil": "2025-03-05",
+    "published": true
   },
   {
     "_id": "A-6620-08",
@@ -577,7 +634,8 @@
     "points": 100,
     "dueDate": "2025-03-09",
     "availableFrom": "2025-03-03",
-    "availableUntil": "2025-03-12"
+    "availableUntil": "2025-03-12",
+    "published": true
   },
   {
     "_id": "A-6620-09",
@@ -587,7 +645,8 @@
     "points": 100,
     "dueDate": "2025-03-16",
     "availableFrom": "2025-03-10",
-    "availableUntil": "2025-03-19"
+    "availableUntil": "2025-03-19",
+    "published": true
   },
   {
     "_id": "A-6620-10",
@@ -597,7 +656,8 @@
     "points": 150,
     "dueDate": "2025-03-23",
     "availableFrom": "2025-03-17",
-    "availableUntil": "2025-03-26"
+    "availableUntil": "2025-03-26",
+    "published": true
   },
   {
     "_id": "A-6510-01",
@@ -607,7 +667,8 @@
     "points": 100,
     "dueDate": "2025-01-19",
     "availableFrom": "2025-01-13",
-    "availableUntil": "2025-01-22"
+    "availableUntil": "2025-01-22",
+    "published": true
   },
   {
     "_id": "A-6510-02",
@@ -617,7 +678,8 @@
     "points": 100,
     "dueDate": "2025-01-26",
     "availableFrom": "2025-01-20",
-    "availableUntil": "2025-01-29"
+    "availableUntil": "2025-01-29",
+    "published": true
   },
   {
     "_id": "A-6510-03",
@@ -627,7 +689,8 @@
     "points": 100,
     "dueDate": "2025-02-02",
     "availableFrom": "2025-01-27",
-    "availableUntil": "2025-02-05"
+    "availableUntil": "2025-02-05",
+    "published": true
   },
   {
     "_id": "A-6510-04",
@@ -637,7 +700,8 @@
     "points": 100,
     "dueDate": "2025-02-09",
     "availableFrom": "2025-02-03",
-    "availableUntil": "2025-02-12"
+    "availableUntil": "2025-02-12",
+    "published": true
   },
   {
     "_id": "A-6510-05",
@@ -647,7 +711,8 @@
     "points": 100,
     "dueDate": "2025-02-16",
     "availableFrom": "2025-02-10",
-    "availableUntil": "2025-02-19"
+    "availableUntil": "2025-02-19",
+    "published": true
   },
   {
     "_id": "A-6510-06",
@@ -657,7 +722,8 @@
     "points": 100,
     "dueDate": "2025-02-23",
     "availableFrom": "2025-02-17",
-    "availableUntil": "2025-02-26"
+    "availableUntil": "2025-02-26",
+    "published": true
   },
   {
     "_id": "A-6510-07",
@@ -667,7 +733,8 @@
     "points": 100,
     "dueDate": "2025-03-02",
     "availableFrom": "2025-02-24",
-    "availableUntil": "2025-03-05"
+    "availableUntil": "2025-03-05",
+    "published": true
   },
   {
     "_id": "A-6510-08",
@@ -677,7 +744,8 @@
     "points": 100,
     "dueDate": "2025-03-09",
     "availableFrom": "2025-03-03",
-    "availableUntil": "2025-03-12"
+    "availableUntil": "2025-03-12",
+    "published": true
   },
   {
     "_id": "A-6510-09",
@@ -687,7 +755,8 @@
     "points": 100,
     "dueDate": "2025-03-16",
     "availableFrom": "2025-03-10",
-    "availableUntil": "2025-03-19"
+    "availableUntil": "2025-03-19",
+    "published": true
   },
   {
     "_id": "A-6510-10",
@@ -697,7 +766,8 @@
     "points": 150,
     "dueDate": "2025-03-23",
     "availableFrom": "2025-03-17",
-    "availableUntil": "2025-03-26"
+    "availableUntil": "2025-03-26",
+    "published": true
   },
   {
     "_id": "A-5700-01",
@@ -707,7 +777,8 @@
     "points": 100,
     "dueDate": "2025-01-19",
     "availableFrom": "2025-01-13",
-    "availableUntil": "2025-01-22"
+    "availableUntil": "2025-01-22",
+    "published": true
   },
   {
     "_id": "A-5700-02",
@@ -717,7 +788,8 @@
     "points": 100,
     "dueDate": "2025-01-26",
     "availableFrom": "2025-01-20",
-    "availableUntil": "2025-01-29"
+    "availableUntil": "2025-01-29",
+    "published": true
   },
   {
     "_id": "A-5700-03",
@@ -727,7 +799,8 @@
     "points": 100,
     "dueDate": "2025-02-02",
     "availableFrom": "2025-01-27",
-    "availableUntil": "2025-02-05"
+    "availableUntil": "2025-02-05",
+    "published": true
   },
   {
     "_id": "A-5700-04",
@@ -737,7 +810,8 @@
     "points": 100,
     "dueDate": "2025-02-09",
     "availableFrom": "2025-02-03",
-    "availableUntil": "2025-02-12"
+    "availableUntil": "2025-02-12",
+    "published": true
   },
   {
     "_id": "A-5700-05",
@@ -747,7 +821,8 @@
     "points": 100,
     "dueDate": "2025-02-16",
     "availableFrom": "2025-02-10",
-    "availableUntil": "2025-02-19"
+    "availableUntil": "2025-02-19",
+    "published": true
   },
   {
     "_id": "A-5700-06",
@@ -757,7 +832,8 @@
     "points": 100,
     "dueDate": "2025-02-23",
     "availableFrom": "2025-02-17",
-    "availableUntil": "2025-02-26"
+    "availableUntil": "2025-02-26",
+    "published": true
   },
   {
     "_id": "A-5700-07",
@@ -767,7 +843,8 @@
     "points": 100,
     "dueDate": "2025-03-02",
     "availableFrom": "2025-02-24",
-    "availableUntil": "2025-03-05"
+    "availableUntil": "2025-03-05",
+    "published": true
   },
   {
     "_id": "A-5700-08",
@@ -777,7 +854,8 @@
     "points": 100,
     "dueDate": "2025-03-09",
     "availableFrom": "2025-03-03",
-    "availableUntil": "2025-03-12"
+    "availableUntil": "2025-03-12",
+    "published": true
   },
   {
     "_id": "A-5700-09",
@@ -787,7 +865,8 @@
     "points": 100,
     "dueDate": "2025-03-16",
     "availableFrom": "2025-03-10",
-    "availableUntil": "2025-03-19"
+    "availableUntil": "2025-03-19",
+    "published": true
   },
   {
     "_id": "A-5700-10",
@@ -797,7 +876,8 @@
     "points": 150,
     "dueDate": "2025-03-23",
     "availableFrom": "2025-03-17",
-    "availableUntil": "2025-03-26"
+    "availableUntil": "2025-03-26",
+    "published": true
   },
   {
     "_id": "A-6140-01",
@@ -807,7 +887,8 @@
     "points": 100,
     "dueDate": "2025-01-19",
     "availableFrom": "2025-01-13",
-    "availableUntil": "2025-01-22"
+    "availableUntil": "2025-01-22",
+    "published": true
   },
   {
     "_id": "A-6140-02",
@@ -817,7 +898,8 @@
     "points": 100,
     "dueDate": "2025-01-26",
     "availableFrom": "2025-01-20",
-    "availableUntil": "2025-01-29"
+    "availableUntil": "2025-01-29",
+    "published": true
   },
   {
     "_id": "A-6140-03",
@@ -827,7 +909,8 @@
     "points": 100,
     "dueDate": "2025-02-02",
     "availableFrom": "2025-01-27",
-    "availableUntil": "2025-02-05"
+    "availableUntil": "2025-02-05",
+    "published": true
   },
   {
     "_id": "A-6140-04",
@@ -837,7 +920,8 @@
     "points": 100,
     "dueDate": "2025-02-09",
     "availableFrom": "2025-02-03",
-    "availableUntil": "2025-02-12"
+    "availableUntil": "2025-02-12",
+    "published": true
   },
   {
     "_id": "A-6140-05",
@@ -847,7 +931,8 @@
     "points": 100,
     "dueDate": "2025-02-16",
     "availableFrom": "2025-02-10",
-    "availableUntil": "2025-02-19"
+    "availableUntil": "2025-02-19",
+    "published": true
   },
   {
     "_id": "A-6140-06",
@@ -857,7 +942,8 @@
     "points": 100,
     "dueDate": "2025-02-23",
     "availableFrom": "2025-02-17",
-    "availableUntil": "2025-02-26"
+    "availableUntil": "2025-02-26",
+    "published": true
   },
   {
     "_id": "A-6140-07",
@@ -867,7 +953,8 @@
     "points": 100,
     "dueDate": "2025-03-02",
     "availableFrom": "2025-02-24",
-    "availableUntil": "2025-03-05"
+    "availableUntil": "2025-03-05",
+    "published": true
   },
   {
     "_id": "A-6140-08",
@@ -877,7 +964,8 @@
     "points": 100,
     "dueDate": "2025-03-09",
     "availableFrom": "2025-03-03",
-    "availableUntil": "2025-03-12"
+    "availableUntil": "2025-03-12",
+    "published": true
   },
   {
     "_id": "A-6140-09",
@@ -887,7 +975,8 @@
     "points": 100,
     "dueDate": "2025-03-16",
     "availableFrom": "2025-03-10",
-    "availableUntil": "2025-03-19"
+    "availableUntil": "2025-03-19",
+    "published": true
   },
   {
     "_id": "A-6140-10",
@@ -897,7 +986,8 @@
     "points": 150,
     "dueDate": "2025-03-23",
     "availableFrom": "2025-03-17",
-    "availableUntil": "2025-03-26"
+    "availableUntil": "2025-03-26",
+    "published": true
   },
   {
     "_id": "A-5100-01",
@@ -907,7 +997,8 @@
     "points": 100,
     "dueDate": "2025-01-19",
     "availableFrom": "2025-01-13",
-    "availableUntil": "2025-01-22"
+    "availableUntil": "2025-01-22",
+    "published": true
   },
   {
     "_id": "A-5100-02",
@@ -917,7 +1008,8 @@
     "points": 100,
     "dueDate": "2025-01-26",
     "availableFrom": "2025-01-20",
-    "availableUntil": "2025-01-29"
+    "availableUntil": "2025-01-29",
+    "published": true
   },
   {
     "_id": "A-5100-03",
@@ -927,7 +1019,8 @@
     "points": 100,
     "dueDate": "2025-02-02",
     "availableFrom": "2025-01-27",
-    "availableUntil": "2025-02-05"
+    "availableUntil": "2025-02-05",
+    "published": true
   },
   {
     "_id": "A-5100-04",
@@ -937,7 +1030,8 @@
     "points": 100,
     "dueDate": "2025-02-09",
     "availableFrom": "2025-02-03",
-    "availableUntil": "2025-02-12"
+    "availableUntil": "2025-02-12",
+    "published": true
   },
   {
     "_id": "A-5100-05",
@@ -947,7 +1041,8 @@
     "points": 100,
     "dueDate": "2025-02-16",
     "availableFrom": "2025-02-10",
-    "availableUntil": "2025-02-19"
+    "availableUntil": "2025-02-19",
+    "published": true
   },
   {
     "_id": "A-5100-06",
@@ -957,7 +1052,8 @@
     "points": 100,
     "dueDate": "2025-02-23",
     "availableFrom": "2025-02-17",
-    "availableUntil": "2025-02-26"
+    "availableUntil": "2025-02-26",
+    "published": true
   },
   {
     "_id": "A-5100-07",
@@ -967,7 +1063,8 @@
     "points": 100,
     "dueDate": "2025-03-02",
     "availableFrom": "2025-02-24",
-    "availableUntil": "2025-03-05"
+    "availableUntil": "2025-03-05",
+    "published": true
   },
   {
     "_id": "A-5100-08",
@@ -977,7 +1074,8 @@
     "points": 100,
     "dueDate": "2025-03-09",
     "availableFrom": "2025-03-03",
-    "availableUntil": "2025-03-12"
+    "availableUntil": "2025-03-12",
+    "published": true
   },
   {
     "_id": "A-5100-09",
@@ -987,7 +1085,8 @@
     "points": 100,
     "dueDate": "2025-03-16",
     "availableFrom": "2025-03-10",
-    "availableUntil": "2025-03-19"
+    "availableUntil": "2025-03-19",
+    "published": true
   },
   {
     "_id": "A-5100-10",
@@ -997,7 +1096,8 @@
     "points": 150,
     "dueDate": "2025-03-23",
     "availableFrom": "2025-03-17",
-    "availableUntil": "2025-03-26"
+    "availableUntil": "2025-03-26",
+    "published": true
   },
   {
     "_id": "A-6650-01",
@@ -1007,7 +1107,8 @@
     "points": 100,
     "dueDate": "2025-01-19",
     "availableFrom": "2025-01-13",
-    "availableUntil": "2025-01-22"
+    "availableUntil": "2025-01-22",
+    "published": true
   },
   {
     "_id": "A-6650-02",
@@ -1017,7 +1118,8 @@
     "points": 100,
     "dueDate": "2025-01-26",
     "availableFrom": "2025-01-20",
-    "availableUntil": "2025-01-29"
+    "availableUntil": "2025-01-29",
+    "published": true
   },
   {
     "_id": "A-6650-03",
@@ -1027,7 +1129,8 @@
     "points": 100,
     "dueDate": "2025-02-02",
     "availableFrom": "2025-01-27",
-    "availableUntil": "2025-02-05"
+    "availableUntil": "2025-02-05",
+    "published": true
   },
   {
     "_id": "A-6650-04",
@@ -1037,7 +1140,8 @@
     "points": 100,
     "dueDate": "2025-02-09",
     "availableFrom": "2025-02-03",
-    "availableUntil": "2025-02-12"
+    "availableUntil": "2025-02-12",
+    "published": true
   },
   {
     "_id": "A-6650-05",
@@ -1047,7 +1151,8 @@
     "points": 100,
     "dueDate": "2025-02-16",
     "availableFrom": "2025-02-10",
-    "availableUntil": "2025-02-19"
+    "availableUntil": "2025-02-19",
+    "published": true
   },
   {
     "_id": "A-6650-06",
@@ -1057,7 +1162,8 @@
     "points": 100,
     "dueDate": "2025-02-23",
     "availableFrom": "2025-02-17",
-    "availableUntil": "2025-02-26"
+    "availableUntil": "2025-02-26",
+    "published": true
   },
   {
     "_id": "A-6650-07",
@@ -1067,7 +1173,8 @@
     "points": 100,
     "dueDate": "2025-03-02",
     "availableFrom": "2025-02-24",
-    "availableUntil": "2025-03-05"
+    "availableUntil": "2025-03-05",
+    "published": true
   },
   {
     "_id": "A-6650-08",
@@ -1077,7 +1184,8 @@
     "points": 100,
     "dueDate": "2025-03-09",
     "availableFrom": "2025-03-03",
-    "availableUntil": "2025-03-12"
+    "availableUntil": "2025-03-12",
+    "published": true
   },
   {
     "_id": "A-6650-09",
@@ -1087,7 +1195,8 @@
     "points": 100,
     "dueDate": "2025-03-16",
     "availableFrom": "2025-03-10",
-    "availableUntil": "2025-03-19"
+    "availableUntil": "2025-03-19",
+    "published": true
   },
   {
     "_id": "A-6650-10",
@@ -1097,6 +1206,7 @@
     "points": 150,
     "dueDate": "2025-03-23",
     "availableFrom": "2025-03-17",
-    "availableUntil": "2025-03-26"
+    "availableUntil": "2025-03-26",
+    "published": true
   }
 ]

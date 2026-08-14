@@ -1,9 +1,8 @@
 "use client";
 
 // The Dashboard screen.
-// 4.9 Faculty can add, edit, update and delete courses with the form
-// at the top. 4.13 A student sees the Enrollments button instead, and
-// an Enroll or Unenroll button on every card.
+// 4.9 Faculty adds, edits, updates and deletes courses with the form on top.
+// 4.13 A student gets the Enrollments button and Enroll or Unenroll instead.
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
