@@ -1,3 +1,4 @@
+// The new ES6 way to write a function.
 const subtract = (a: number, b: number) => {
   return a - b;
 };

@@ -1,3 +1,4 @@
+// The ... operator copies an array or an object into a new one.
 export default function Spreading() {
   const arr1 = [ 1, 2, 3 ];
   const arr2 = [ ...arr1, 4, 5, 6 ];

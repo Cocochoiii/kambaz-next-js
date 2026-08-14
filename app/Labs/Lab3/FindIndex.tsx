@@ -1,3 +1,4 @@
+// findIndex() returns the place of the item, not the item.
 export default function FindIndex() {
   let numberArray1 = [1, 2, 4, 5, 6];
   let stringArray1 = ['string1','string3'];

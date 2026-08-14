@@ -1,25 +1,36 @@
-export default function PositionsEx(){
+// Relative moves an element a little. Absolute puts it inside its
+// relative parent. Fixed keeps it in one place when I scroll.
+export default function Positions() {
   return (
     <div>
       <div id="wd-css-position-relative">
-        <h2>Relative</h2>
+        <h2>Relative position</h2>
         <div className="wd-bg-color-gray">
-          <div className="wd-bg-color-yellow wd-dimension-portrait"><div className="wd-pos-relative-nudge-down-right">Portrait</div></div>
-          <div className="wd-pos-relative-nudge-up-right wd-bg-color-blue wd-fg-color-white wd-dimension-landscape">Landscape</div>
+          <div className="wd-bg-color-yellow wd-dimension-portrait">
+            <div className="wd-pos-relative-nudge-down-right">Portrait</div>
+          </div>
+          <div className="wd-pos-relative-nudge-up-right wd-bg-color-blue wd-fg-color-white wd-dimension-landscape">
+            Landscape
+          </div>
           <div className="wd-bg-color-red wd-dimension-square">Square</div>
         </div>
       </div>
+
       <div id="wd-css-position-absolute">
         <h2>Absolute position</h2>
         <div className="wd-pos-relative">
           <div className="wd-pos-absolute-10-10 wd-bg-color-yellow wd-dimension-portrait">Portrait</div>
           <div className="wd-pos-absolute-50-50 wd-bg-color-blue wd-fg-color-white wd-dimension-landscape">Landscape</div>
           <div className="wd-pos-absolute-120-20 wd-bg-color-red wd-dimension-square">Square</div>
-        </div><br/><br/><br/><br/><br/><br/><br/>
+        </div>
+        <br /><br /><br /><br /><br /><br /><br />
       </div>
+
       <div id="wd-css-position-fixed">
         <h2>Fixed position</h2>
-        <div className="wd-pos-fixed wd-dimension-square wd-bg-color-blue wd-fg-color-white">Fixed position</div>
+        <div className="wd-pos-fixed wd-dimension-square wd-bg-color-blue wd-fg-color-white">
+          Fixed position
+        </div>
       </div>
     </div>
   );

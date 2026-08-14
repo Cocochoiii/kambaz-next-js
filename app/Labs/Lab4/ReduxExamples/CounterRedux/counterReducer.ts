@@ -1,20 +1,22 @@
+// The counter slice. The two reducer functions make the next state.
+// The toolkit lets me write state.count = ... and stays immutable.
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    count: 0,
+  count: 123,
 };
 
 const counterSlice = createSlice({
-    name: "counter",
-    initialState,
-    reducers: {
-        increment: (state) => {
-            state.count = state.count + 1;
-        },
-        decrement: (state) => {
-            state.count = state.count - 1;
-        },
+  name: "counter",
+  initialState,
+  reducers: {
+    increment: (state) => {
+      state.count = state.count + 1;
     },
+    decrement: (state) => {
+      state.count = state.count - 1;
+    },
+  },
 });
 
 export const { increment, decrement } = counterSlice.actions;

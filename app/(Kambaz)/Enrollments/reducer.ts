@@ -1,30 +1,35 @@
+// The enrollments slice. The server owns the list now.
+// The shape stays { user, course }, so other screens still work.
 import { createSlice } from "@reduxjs/toolkit";
-import { enrollments } from "../Database";
-import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-    enrollments: enrollments,
+  enrollments: [] as any[],
 };
 
 const enrollmentsSlice = createSlice({
-    name: "enrollments",
-    initialState,
-    reducers: {
-        enrollCourse: (state, { payload }) => {
-            const newEnrollment = {
-                _id: uuidv4(),
-                user: payload.user,
-                course: payload.course
-            };
-            state.enrollments = [...state.enrollments, newEnrollment] as any;
-        },
-        unenrollCourse: (state, { payload }) => {
-            state.enrollments = state.enrollments.filter(
-                (e: any) => !(e.user === payload.user && e.course === payload.course)
-            );
-        },
+  name: "enrollments",
+  initialState,
+  reducers: {
+    // Built from the courses the server sent.
+    setEnrollments: (state, { payload: enrollments }) => {
+      state.enrollments = enrollments;
     },
+    enrollUser: (state, { payload }) => {
+      const newEnrollment = {
+        _id: `${payload.userId}-${payload.courseId}`,
+        user: payload.userId,
+        course: payload.courseId,
+      };
+      state.enrollments = [...state.enrollments, newEnrollment] as any;
+    },
+    unenrollUser: (state, { payload }) => {
+      state.enrollments = state.enrollments.filter(
+        (e: any) => !(e.user === payload.userId && e.course === payload.courseId)
+      );
+    },
+  },
 });
 
-export const { enrollCourse, unenrollCourse } = enrollmentsSlice.actions;
+export const { setEnrollments, enrollUser, unenrollUser } =
+  enrollmentsSlice.actions;
 export default enrollmentsSlice.reducer;

@@ -1,86 +1,95 @@
 "use client";
 
-import Link from "next/link";
+// The Sign up screen.
+// The server makes the account and signs me in.
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
+import { Alert, Button, Form } from "react-bootstrap";
 import { setCurrentUser } from "../reducer";
+import { setEnrollments } from "../../Enrollments/reducer";
 import * as client from "../client";
-import { Form, Button } from "react-bootstrap";
 
 export default function Signup() {
-    const [user, setUser] = useState<any>({
-        username: "",
-        password: "",
-        verifyPassword: "",
-        role: "STUDENT",
-    });
-    const dispatch = useDispatch();
-    const router = useRouter();
+  const [user, setUser] = useState({
+    username: "",
+    password: "",
+    verify: "",
+    role: "STUDENT",
+  });
+  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const router = useRouter();
 
-    const signup = async () => {
-        if (!user.username || !user.password) {
-            alert("Please enter username and password");
-            return;
-        }
-        if (user.password !== user.verifyPassword) {
-            alert("Passwords do not match");
-            return;
-        }
-        try {
-            const currentUser = await client.signup(user);
-            dispatch(setCurrentUser(currentUser));
-            router.push("/Dashboard");
-        } catch (err: any) {
-            alert(err?.response?.data?.message || "Unable to sign up");
-        }
-    };
+  const signup = async () => {
+    if (!user.username || !user.password) {
+      setError("Please type a username and a password");
+      return;
+    }
+    if (user.password !== user.verify) {
+      setError("The two passwords are not the same");
+      return;
+    }
+    try {
+      const currentUser = await client.signup({
+        username: user.username,
+        password: user.password,
+        role: user.role,
+      });
+      dispatch(setCurrentUser(currentUser));
+      // A new user has no courses yet.
+      dispatch(setEnrollments([]));
+      router.push("/Account/Profile");
+    } catch (err: any) {
+      setError(err?.response?.data?.message || "Unable to sign up");
+    }
+  };
 
-    return (
-        <div id="wd-signup-screen" className="mx-auto" style={{ maxWidth: 420 }}>
-            <h1 className="mb-3">Signup</h1>
+  return (
+    <div id="wd-signup-screen">
+      <h1>Sign up</h1>
 
-            <Form.Control
-                placeholder="username"
-                className="mb-2"
-                id="wd-su-username"
-                value={user.username}
-                onChange={(e) => setUser({ ...user, username: e.target.value })}
-            />
-            <Form.Control
-                placeholder="password"
-                type="password"
-                className="mb-2"
-                id="wd-su-password"
-                value={user.password}
-                onChange={(e) => setUser({ ...user, password: e.target.value })}
-            />
-            <Form.Control
-                placeholder="verify password"
-                type="password"
-                className="mb-2"
-                id="wd-su-password-verify"
-                value={user.verifyPassword}
-                onChange={(e) => setUser({ ...user, verifyPassword: e.target.value })}
-            />
+      {error && <Alert variant="danger" id="wd-signup-error">{error}</Alert>}
 
-            <Form.Select
-                value={user.role}
-                id="wd-su-role"
-                className="mb-3"
-                onChange={(e) => setUser({ ...user, role: e.target.value })}
-            >
-                <option value="USER">User</option>
-                <option value="ADMIN">Admin</option>
-                <option value="FACULTY">Faculty</option>
-                <option value="STUDENT">Student</option>
-            </Form.Select>
-
-            <Button onClick={signup} className="btn btn-primary w-100 mb-2" id="wd-signup-btn">
-                Signup
-            </Button>
-
-            <Link href="/Account/Signin" className="link-primary">Signin</Link>
-        </div>
-    );
+      <Form.Control
+        id="wd-su-username"
+        placeholder="username"
+        className="mb-2"
+        value={user.username}
+        onChange={(e) => setUser({ ...user, username: e.target.value })}
+      />
+      <Form.Control
+        id="wd-su-password"
+        placeholder="password"
+        type="password"
+        className="mb-2"
+        value={user.password}
+        onChange={(e) => setUser({ ...user, password: e.target.value })}
+      />
+      <Form.Control
+        id="wd-su-password-verify"
+        placeholder="verify password"
+        type="password"
+        className="mb-2"
+        value={user.verify}
+        onChange={(e) => setUser({ ...user, verify: e.target.value })}
+      />
+      <Form.Select
+        id="wd-su-role"
+        className="form-control mb-2"
+        value={user.role}
+        onChange={(e) => setUser({ ...user, role: e.target.value })}
+      >
+        <option value="STUDENT">Student</option>
+        <option value="FACULTY">Faculty</option>
+        <option value="ADMIN">Admin</option>
+        <option value="USER">User</option>
+      </Form.Select>
+      <Button id="wd-signup-btn" onClick={signup} className="btn btn-primary w-100 mb-2">
+        Sign up
+      </Button>
+      <Link id="wd-signin-link" href="/Account/Signin">Sign in</Link>
+    </div>
+  );
 }

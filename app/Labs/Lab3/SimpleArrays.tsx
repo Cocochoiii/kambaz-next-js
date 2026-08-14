@@ -1,3 +1,4 @@
+// An array holds many values in one variable.
 export default function SimpleArrays() {
   var functionScoped = 2; let blockScoped = 5;
   const constant1 = functionScoped - blockScoped;

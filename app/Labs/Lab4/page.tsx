@@ -1,5 +1,4 @@
-"use client";
-
+// Lab 4. The exercises of Chapter 4, in the order of the book.
 import ClickEvent from "./ClickEvent";
 import PassingDataOnEvent from "./PassingDataOnEvent";
 import PassingFunctions from "./PassingFunctions";
@@ -12,27 +11,32 @@ import ObjectStateVariable from "./ObjectStateVariable";
 import ArrayStateVariable from "./ArrayStateVariable";
 import ParentStateComponent from "./ParentStateComponent";
 import ReduxExamples from "./ReduxExamples";
+import SayHelloButton from "./SayHelloButton";
 
 export default function Lab4() {
-    function sayHello() {
-        alert("Hello");
-    }
+  return (
+    <div id="wd-lab4" className="container">
+      <h2>Lab 4 - State and Redux</h2>
 
-    return (
-        <div id="wd-lab4">
-            <h2>Lab 4</h2>
-            <ClickEvent />
-            <PassingDataOnEvent />
-            <PassingFunctions theFunction={sayHello} />
-            <EventObject />
-            <Counter />
-            <BooleanStateVariables />
-            <StringStateVariables />
-            <DateStateVariable />
-            <ObjectStateVariable />
-            <ArrayStateVariable />
-            <ParentStateComponent />
-            <ReduxExamples />
-        </div>
-    );
+      {/* Event handling */}
+      <ClickEvent />
+      <PassingDataOnEvent />
+      <SayHelloButton />
+      <EventObject />
+
+      {/* Component state */}
+      <Counter />
+      <BooleanStateVariables />
+      <StringStateVariables />
+      <DateStateVariable />
+      <ObjectStateVariable />
+      <ArrayStateVariable />
+
+      {/* Sharing state between components */}
+      <ParentStateComponent />
+
+      {/* Application state with Redux */}
+      <ReduxExamples />
+    </div>
+  );
 }

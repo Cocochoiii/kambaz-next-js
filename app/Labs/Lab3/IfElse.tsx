@@ -1,3 +1,4 @@
+// && and the ternary operator decide what to show.
 export default function IfElse() {
   let true1 = true, false1 = false;
   return (

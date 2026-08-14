@@ -1,201 +1,191 @@
 "use client";
 
+// The Modules screen.
+// The modules come from the server for the course I opened.
+// Every change goes to the server first, so a refresh shows the same.
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import ListGroup from "react-bootstrap/ListGroup";
-import { BsGripVertical } from "react-icons/bs";
-import { Form } from "react-bootstrap";
-import LessonControlButtons from "./LessonControlButtons";
-import ModuleControlButtons from "./ModuleControlButtons";
+import { ListGroup, Form } from "react-bootstrap";
+import { BsGripVertical, BsChevronDown, BsChevronRight } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
 import ModulesControls from "./ModulesControls";
-import { useSelector, useDispatch } from "react-redux";
-import { setModules, addModule, deleteModule, updateModule, editModule } from "./reducer";
+import ModuleControlButtons from "./ModuleControlButtons";
+import LessonControlButtons from "./LessonControlButtons";
+import {
+  setModules,
+  addModule,
+  deleteModule,
+  updateModule,
+  editModule,
+} from "./reducer";
 import * as coursesClient from "../../client";
 import * as modulesClient from "./client";
 
-export default function ModulesPage() {
-    const { cid } = useParams<{ cid: string }>();
-    const { modules } = useSelector((state: any) => state.modulesReducer);
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const dispatch = useDispatch();
-    const [moduleName, setModuleName] = useState("");
-    // Track which lesson is being renamed inline.
-    const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
-    const [editingLessonName, setEditingLessonName] = useState("");
+export default function Modules() {
+  // useParams can be empty, so I check it first.
+  const params = useParams<{ cid: string }>();
+  const cid = params ? params.cid : "";
 
-    // Load this course's modules from the server when the course changes.
-    const loadModules = async () => {
-        const mods = await coursesClient.findModulesForCourse(cid);
-        dispatch(setModules(mods));
-    };
-    useEffect(() => {
-        loadModules();
-    }, [cid]);
+  const [moduleName, setModuleName] = useState("");
+  const [folded, setFolded] = useState<Record<string, boolean>>({});
+  const { modules } = useSelector((state: any) => state.modulesReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const dispatch = useDispatch();
 
-    const createModule = async () => {
-        const newModule = await coursesClient.createModuleForCourse(cid, { name: moduleName, course: cid });
-        dispatch(addModule(newModule));
-        setModuleName("");
-    };
-    const removeModule = async (moduleId: string) => {
-        await modulesClient.deleteModule(moduleId);
-        dispatch(deleteModule(moduleId));
-    };
-    const saveModule = async (module: any) => {
-        await modulesClient.updateModule(module);
-        dispatch(updateModule(module));
-    };
+  const isFaculty = currentUser?.role === "FACULTY";
+  const courseModules = modules.filter((module: any) => module.course === cid);
 
-    // Module publish is the parent switch: toggling it sets every lesson to match.
-    const findModule = (moduleId: string) => modules.find((m: any) => m._id === moduleId);
-    const togglePublish = (moduleId: string) => {
-        const m = findModule(moduleId);
-        const next = !(m.published !== false);
-        const lessons = (m.lessons || []).map((l: any) => ({ ...l, published: next }));
-        saveModule({ ...m, published: next, lessons });
-    };
-    const addLesson = (moduleId: string) => {
-        const m = findModule(moduleId);
-        const lesson = { _id: crypto.randomUUID(), name: "New Lesson", published: true };
-        saveModule({ ...m, lessons: [...(m.lessons || []), lesson] });
-    };
-    const toggleLessonPublish = (moduleId: string, lessonId: string) => {
-        const m = findModule(moduleId);
-        const lessons = m.lessons.map((l: any) =>
-            l._id === lessonId ? { ...l, published: !(l.published !== false) } : l
-        );
-        saveModule({ ...m, lessons });
-    };
-    const deleteLesson = (moduleId: string, lessonId: string) => {
-        const m = findModule(moduleId);
-        saveModule({ ...m, lessons: m.lessons.filter((l: any) => l._id !== lessonId) });
-    };
-    const startEditLesson = (lesson: any) => {
-        setEditingLessonId(lesson._id);
-        setEditingLessonName(lesson.name);
-    };
-    const saveEditLesson = (moduleId: string) => {
-        const m = findModule(moduleId);
-        const lessons = m.lessons.map((l: any) =>
-            l._id === editingLessonId ? { ...l, name: editingLessonName } : l
-        );
-        saveModule({ ...m, lessons });
-        setEditingLessonId(null);
-    };
+  // Read the modules of this course.
+  const fetchModules = async () => {
+    const found = await coursesClient.findModulesForCourse(cid);
+    dispatch(setModules(found));
+  };
 
-    // Bulk publish/unpublish every module in this course (optionally its lessons too).
-    const bulkPublish = async (published: boolean, includeItems: boolean) => {
-        const mods = modules.filter((m: any) => m.course === cid);
-        for (const m of mods) {
-            const lessons = includeItems ? (m.lessons || []).map((l: any) => ({ ...l, published })) : m.lessons;
-            await saveModule({ ...m, published, lessons });
-        }
-    };
+  useEffect(() => {
+    if (cid) {
+      fetchModules();
+    }
+  }, [cid]);
 
-    const courseModules = modules.filter((m: any) => m.course === cid);
-    const [collapsed, setCollapsed] = useState<boolean[]>(() => courseModules.map(() => false));
-    const allCollapsed = collapsed.every(Boolean);
-    const toggleAll = () => setCollapsed(collapsed.map(() => !allCollapsed));
-    const toggleOne = (i: number) => setCollapsed((prev) => prev.map((c, idx) => (idx === i ? !c : c)));
+  // Create. The server gives the id.
+  const createModule = async () => {
+    if (!moduleName) {
+      return;
+    }
+    const created = await coursesClient.createModuleForCourse(cid, {
+      name: moduleName,
+      course: cid,
+    });
+    dispatch(addModule(created));
+    setModuleName("");
+  };
 
-    const isFaculty = (currentUser?.role ?? "").toString().toUpperCase() === "FACULTY";
+  // Delete.
+  const removeModule = async (moduleId: string) => {
+    await modulesClient.deleteModule(moduleId);
+    dispatch(deleteModule(moduleId));
+  };
 
-    return (
-        <div id="wd-courses-modules">
-            {isFaculty ? (
-                <ModulesControls
-                    onToggleAll={toggleAll}
-                    allCollapsed={allCollapsed}
-                    moduleName={moduleName}
-                    setModuleName={setModuleName}
-                    addModule={createModule}
-                    bulkPublish={bulkPublish}
+  // Update. Rename and publish both end up here.
+  const saveModule = async (module: any) => {
+    await modulesClient.updateModule(module);
+    dispatch(updateModule(module));
+  };
+
+  // Folded modules live in one object. No key means open.
+  const isFolded = (moduleId: string) => folded[moduleId] === true;
+  const foldOne = (moduleId: string) =>
+    setFolded({ ...folded, [moduleId]: !isFolded(moduleId) });
+
+  // Collapse All is on when every module is folded.
+  const allFolded =
+    courseModules.length > 0 && courseModules.every((m: any) => isFolded(m._id));
+  const foldAll = () => {
+    const next: Record<string, boolean> = { ...folded };
+    courseModules.forEach((m: any) => { next[m._id] = !allFolded; });
+    setFolded(next);
+  };
+
+  // Publish and unpublish only flip a flag, so I reuse saveModule.
+  const toggleModule = (module: any) =>
+    saveModule({ ...module, published: !module.published });
+  const toggleLesson = (module: any, lessonId: string) =>
+    saveModule({
+      ...module,
+      lessons: module.lessons.map((lesson: any) =>
+        lesson._id === lessonId
+          ? { ...lesson, published: !lesson.published }
+          : lesson
+      ),
+    });
+
+  return (
+    <div id="wd-courses-modules">
+      <ModulesControls
+        isFaculty={isFaculty}
+        allCollapsed={allFolded}
+        toggleAll={foldAll}
+        moduleName={moduleName}
+        setModuleName={setModuleName}
+        addModule={createModule}
+      />
+      <br /><br /><br /><br />
+
+      <ListGroup className="rounded-0" id="wd-modules">
+        {courseModules.map((module: any) => (
+          <ListGroup.Item key={module._id} className="wd-module p-0 mb-5 fs-5 border-gray">
+            <div className="wd-title p-3 ps-2 bg-secondary">
+              <BsGripVertical className="me-2 fs-3" />
+
+              {/* The arrow folds the module, the same way Canvas does. */}
+              <span
+                role="button"
+                aria-label={isFolded(module._id) ? "Expand module" : "Collapse module"}
+                aria-expanded={!isFolded(module._id)}
+                className="me-2"
+                onClick={() => foldOne(module._id)}
+              >
+                {isFolded(module._id) ? <BsChevronRight /> : <BsChevronDown />}
+              </span>
+
+              {/* The title is a text field only while I edit it. */}
+              {!module.editing && (
+                <span role="button" onClick={() => foldOne(module._id)}>
+                  {module.name}
+                </span>
+              )}
+              {module.editing && (
+                <Form.Control
+                  className="w-50 d-inline-block"
+                  defaultValue={module.name}
+                  onChange={(e) =>
+                    dispatch(updateModule({ ...module, name: e.target.value }))
+                  }
+                  onKeyDown={(e) => {
+                    // Enter saves the name and closes the field.
+                    if (e.key === "Enter") {
+                      saveModule({ ...module, editing: false });
+                    }
+                  }}
                 />
-            ) : (
-                <div id="wd-modules-toolbar" className="btn-toolbar gap-2 mb-3">
-                    <button id="wd-modules-collapse-all" className="btn btn-secondary" onClick={toggleAll}>
-                        {allCollapsed ? "Expand All" : "Collapse All"}
-                    </button>
-                </div>
-            )}
+              )}
 
-            <ListGroup id="wd-modules" className="rounded-0">
-                {courseModules.map((module: any, i: number) => (
-                    <ListGroup.Item key={module._id} className="wd-module p-0 mb-5 fs-5 border-gray">
-                        <button
-                            className="w-100 text-start border-0 p-0"
-                            onClick={() => toggleOne(i)}
-                            aria-expanded={!collapsed[i]}
-                            aria-controls={`wd-module-panel-${i}`}
-                        >
-                            <div className="wd-title p-3 ps-2 bg-secondary">
-                                <BsGripVertical className="me-2 wd-grip" />
-                                {!module.editing && module.name}
-                                {module.editing && isFaculty && (
-                                    <Form.Control
-                                        className="w-50 d-inline-block"
-                                        onClick={(e) => e.stopPropagation()}
-                                        onChange={(e) => dispatch(updateModule({ ...module, name: e.target.value }))}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") saveModule({ ...module, editing: false });
-                                        }}
-                                        defaultValue={module.name}
-                                    />
-                                )}
-                                {isFaculty && (
-                                    <ModuleControlButtons
-                                        moduleId={module._id}
-                                        published={module.published !== false}
-                                        deleteModule={(moduleId) => removeModule(moduleId)}
-                                        editModule={(moduleId) => dispatch(editModule(moduleId))}
-                                        togglePublish={(moduleId) => togglePublish(moduleId)}
-                                        addLesson={(moduleId) => addLesson(moduleId)}
-                                    />
-                                )}
-                            </div>
-                        </button>
+              {isFaculty && (
+                <ModuleControlButtons
+                  moduleId={module._id}
+                  published={module.published !== false}
+                  deleteModule={(moduleId) => removeModule(moduleId)}
+                  editModule={(moduleId) => dispatch(editModule(moduleId))}
+                  togglePublish={() => toggleModule(module)}
+                />
+              )}
+            </div>
 
-                        {module.lessons && (
-                            <div id={`wd-module-panel-${i}`} hidden={collapsed[i]}>
-                                <ListGroup className="wd-lessons rounded-0">
-                                    <ListGroup.Item className="wd-lesson p-3 ps-1 d-flex align-items-center">
-                                        <BsGripVertical className="me-2 wd-grip" />
-                                        <span className="wd-title ms-2">LEARNING OBJECTIVES</span>
-                                    </ListGroup.Item>
-
-                                    {module.lessons.map((lesson: any) => (
-                                        <ListGroup.Item key={lesson._id} className="wd-lesson p-3 ps-1 d-flex align-items-center">
-                                            <BsGripVertical className="me-2 wd-grip" />
-                                            {editingLessonId === lesson._id ? (
-                                                <Form.Control
-                                                    className="w-50 d-inline-block"
-                                                    autoFocus
-                                                    value={editingLessonName}
-                                                    onChange={(e) => setEditingLessonName(e.target.value)}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === "Enter") saveEditLesson(module._id);
-                                                    }}
-                                                    onBlur={() => saveEditLesson(module._id)}
-                                                />
-                                            ) : (
-                                                lesson.name
-                                            )}
-                                            {isFaculty && (
-                                                <LessonControlButtons
-                                                    published={lesson.published !== false}
-                                                    onTogglePublish={() => toggleLessonPublish(module._id, lesson._id)}
-                                                    onEdit={() => startEditLesson(lesson)}
-                                                    onDelete={() => deleteLesson(module._id, lesson._id)}
-                                                />
-                                            )}
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
-                            </div>
-                        )}
-                    </ListGroup.Item>
+            {/* The lessons are hidden while the module is folded. */}
+            {!isFolded(module._id) && (
+              <ListGroup className="wd-lessons rounded-0">
+                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                  <BsGripVertical className="me-2 fs-3" />
+                  LEARNING OBJECTIVES
+                  <LessonControlButtons published={module.published !== false} />
+                </ListGroup.Item>
+                {module.lessons && module.lessons.map((lesson: any) => (
+                  <ListGroup.Item key={lesson._id} className="wd-lesson p-3 ps-1">
+                    <BsGripVertical className="me-2 fs-3" />
+                    {lesson.name}
+                    <LessonControlButtons
+                      published={lesson.published !== false}
+                      togglePublish={
+                        isFaculty ? () => toggleLesson(module, lesson._id) : undefined
+                      }
+                    />
+                  </ListGroup.Item>
                 ))}
-            </ListGroup>
-        </div>
-    );
+              </ListGroup>
+            )}
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+    </div>
+  );
 }

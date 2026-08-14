@@ -1,84 +1,43 @@
 "use client";
 
+// The buttons at the right end of a module title.
+// Pencil renames. Trash removes. The green check publishes.
+import { IoEllipsisVertical } from "react-icons/io5";
 import { BsPlus } from "react-icons/bs";
-import { FaCheckCircle, FaBan } from "react-icons/fa";
-import { FaTrash, FaPencil } from "react-icons/fa6";
-import KebabMenu from "@/app/(Kambaz)/KebabMenu";
+import { FaTrash } from "react-icons/fa";
+import { FaPencil } from "react-icons/fa6";
+import PublishToggle from "./PublishToggle";
 
-// Module row controls for faculty. Every icon does a real action.
 export default function ModuleControlButtons({
-    moduleId,
-    published,
-    deleteModule,
-    editModule,
-    togglePublish,
-    addLesson,
+  moduleId,
+  published,
+  deleteModule,
+  editModule,
+  togglePublish,
 }: {
-    moduleId: string;
-    published: boolean;
-    deleteModule: (moduleId: string) => void;
-    editModule: (moduleId: string) => void;
-    togglePublish: (moduleId: string) => void;
-    addLesson: (moduleId: string) => void;
+  moduleId: string;
+  published: boolean;
+  deleteModule: (moduleId: string) => void;
+  editModule: (moduleId: string) => void;
+  togglePublish: (moduleId: string) => void;
 }) {
-    const stop = (e: any) => e.stopPropagation();
-    return (
-        <div className="float-end d-flex align-items-center gap-3">
-            <FaPencil
-                role="button"
-                title="Edit"
-                className="text-primary"
-                onClick={(e) => {
-                    stop(e);
-                    editModule(moduleId);
-                }}
-            />
-            <FaTrash
-                role="button"
-                title="Delete"
-                className="text-danger"
-                onClick={(e) => {
-                    stop(e);
-                    deleteModule(moduleId);
-                }}
-            />
-            {/* Green check when published, click to toggle publish state */}
-            {published ? (
-                <FaCheckCircle
-                    role="button"
-                    title="Published (click to unpublish)"
-                    className="text-success fs-5"
-                    onClick={(e) => {
-                        stop(e);
-                        togglePublish(moduleId);
-                    }}
-                />
-            ) : (
-                <FaBan
-                    role="button"
-                    title="Unpublished (click to publish)"
-                    className="text-secondary fs-5"
-                    onClick={(e) => {
-                        stop(e);
-                        togglePublish(moduleId);
-                    }}
-                />
-            )}
-            <BsPlus
-                role="button"
-                title="Add lesson"
-                className="fs-3"
-                onClick={(e) => {
-                    stop(e);
-                    addLesson(moduleId);
-                }}
-            />
-            <KebabMenu
-                items={[
-                    { label: "Edit", onClick: () => editModule(moduleId) },
-                    { label: "Delete", onClick: () => deleteModule(moduleId), danger: true },
-                ]}
-            />
-        </div>
-    );
+  return (
+    <div className="float-end">
+      <FaPencil
+        role="button"
+        aria-label="Edit module"
+        className="text-primary me-3"
+        onClick={() => editModule(moduleId)}
+      />
+      <FaTrash
+        role="button"
+        aria-label="Delete module"
+        className="text-danger me-2 mb-1"
+        onClick={() => deleteModule(moduleId)}
+      />
+      <PublishToggle published={published} onToggle={() => togglePublish(moduleId)} />
+      <BsPlus className="fs-4" />
+      <IoEllipsisVertical className="fs-4" />
+    </div>
+  );
 }

@@ -1,3 +1,4 @@
+// One row of the todo list. The todo arrives as a property.
 import { ListGroupItem } from "react-bootstrap";
 const TodoItem = ({ todo = { done: true, title: 'Buy milk', status: 'COMPLETED' } }) => {
   return (

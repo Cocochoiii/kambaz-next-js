@@ -1,3 +1,4 @@
+// I pass a and b as attributes and this component adds them.
 export default function Add({ a, b }: { a: number; b: number }) {
   return (
     <div id="wd-add">
