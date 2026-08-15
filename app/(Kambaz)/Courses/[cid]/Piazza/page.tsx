@@ -116,7 +116,12 @@ export default function Piazza() {
     await load();
   };
 
+  // A new post must show up in the list right away.
+  // So I drop the folder filter and the unanswered filter first.
   const afterCreate = async (post: any) => {
+    setFolderFilter(ALL_FOLDERS);
+    setOnlyUnanswered(false);
+    setSearch("");
     await load();
     setSelectedId(post._id);
     setMode("view");
@@ -282,7 +287,6 @@ export default function Piazza() {
               currentUser={currentUser}
               folders={folders}
               users={people}
-              isInstructor={isInstructor}
               onCancel={backToGlance}
               onCreated={afterCreate}
             />

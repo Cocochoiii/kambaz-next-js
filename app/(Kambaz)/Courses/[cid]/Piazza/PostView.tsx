@@ -34,6 +34,7 @@ export default function PostView({
   const [studentAnswer, setStudentAnswer] = useState("");
   const [instructorAnswer, setInstructorAnswer] = useState("");
   const [newDiscussion, setNewDiscussion] = useState("");
+  const [postError, setPostError] = useState("");
 
   // One comment at a time is open for editing.
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -49,6 +50,7 @@ export default function PostView({
   // A new post opens, so I reset the screen and count the reader once.
   useEffect(() => {
     setEditingPost(false);
+    setPostError("");
     setDraftSummary(post.summary || "");
     setDraftDetails(post.details || "");
     setEditingId(null);
@@ -120,9 +122,15 @@ export default function PostView({
   };
 
   const savePost = async () => {
-    if (!draftSummary.trim() || !stripHtml(draftDetails).trim()) {
+    if (!draftSummary.trim()) {
+      setPostError("A summary is required.");
       return;
     }
+    if (!stripHtml(draftDetails).trim()) {
+      setPostError("Details are required.");
+      return;
+    }
+    setPostError("");
     await client.updatePost({ ...post, summary: draftSummary.trim(), details: draftDetails });
     setEditingPost(false);
     onChanged();
@@ -208,6 +216,8 @@ export default function PostView({
             <Form.Control
               as="textarea"
               rows={2}
+              aria-label="Edit this comment"
+              placeholder="Edit this comment"
               value={editText}
               onChange={(event) => setEditText(event.target.value)}
             />
@@ -252,13 +262,20 @@ export default function PostView({
         <div className="flex-grow-1">
           {post.pinned && <span className="badge bg-warning text-dark mb-1">Pinned</span>}
           {editingPost ? (
-            <Form.Control
-              className="fw-bold mb-2"
-              type="text"
-              maxLength={100}
-              value={draftSummary}
-              onChange={(event) => setDraftSummary(event.target.value)}
-            />
+            <>
+              <Form.Label htmlFor="wd-pazza-edit-summary" className="fw-semibold">
+                Summary <span className="text-danger">*</span>
+              </Form.Label>
+              <Form.Control
+                id="wd-pazza-edit-summary"
+                className="fw-bold mb-2"
+                type="text"
+                maxLength={100}
+                placeholder="Enter a one line summary, 100 characters or less"
+                value={draftSummary}
+                onChange={(event) => setDraftSummary(event.target.value)}
+              />
+            </>
           ) : (
             <h4 className="fw-bold mb-1">{post.summary}</h4>
           )}
@@ -301,6 +318,7 @@ export default function PostView({
       {editingPost ? (
         <div>
           <RichText value={draftDetails} onChange={setDraftDetails} tall />
+          {postError && <div className="text-danger small mt-1">{postError}</div>}
           <div className="mt-2 d-flex gap-2">
             <Button className="wd-pazza-btn" onClick={savePost}>Save</Button>
             <Button variant="light" onClick={() => setEditingPost(false)}>Cancel</Button>
@@ -398,6 +416,8 @@ export default function PostView({
               <Form.Control
                 as="textarea"
                 rows={2}
+                aria-label="Edit this discussion"
+                placeholder="Edit this discussion"
                 value={editText}
                 onChange={(event) => setEditText(event.target.value)}
               />

@@ -180,6 +180,7 @@ export default function ManageClass() {
                     <Form.Control
                       id={`wd-pazza-rename-${folder._id}`}
                       type="text"
+                      placeholder="Folder name"
                       value={editName}
                       style={{ maxWidth: 300 }}
                       onChange={(event) => setEditName(event.target.value)}

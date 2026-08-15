@@ -7,6 +7,29 @@ Sign in as **sstrange / 678** for the instructor view.
 Sign in as **coco / 123** for the student view.
 Open **CS5610 Web Development**, then click **Piazza** on the left.
 
+## What the seed puts in every course
+
+All eleven courses hold the same shape, so any course demos the same.
+
+| Item | Count |
+|---|---|
+| Posts | 13 |
+| Questions / Notes | 9 / 4 |
+| Questions with an answer | 6 |
+| Questions still open | 3 |
+| Followup discussions | 3, two of them carry a reply |
+| Private to instructors | 1 |
+| Pinned notes | 2 |
+| Folders used | all 8 |
+| Today / Yesterday / Last Week | 3 / 3 / 2, on any weekday |
+
+Every author is really enrolled in that course, and the text names
+the real assignments and learning activities of that course.
+
+The private post in CS5610 belongs to **Natasha Romanoff**.
+Sign in as sstrange and the board shows 13 posts.
+Sign in as coco and it shows 12. That one missing post is the demo.
+
 ## Questions and Answers Screen
 
 | # | Rubric row | Where it is | How I show it |

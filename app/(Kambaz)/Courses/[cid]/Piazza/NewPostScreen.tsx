@@ -15,7 +15,6 @@ export default function NewPostScreen({
   currentUser,
   folders,
   users,
-  isInstructor,
   onCancel,
   onCreated,
 }: {
@@ -23,7 +22,6 @@ export default function NewPostScreen({
   currentUser: any;
   folders: any[];
   users: any[];
-  isInstructor: boolean;
   onCancel: () => void;
   onCreated: (post: any) => void;
 }) {
@@ -164,11 +162,9 @@ export default function NewPostScreen({
       <Form.Group className="mb-3">
         <div className="d-flex justify-content-between align-items-center">
           <Form.Label className="fw-semibold mb-0">Select Folder(s) {required}</Form.Label>
-          {isInstructor && (
-            <Link href={`/Courses/${cid}/Piazza/ManageClass`} className="small">
-              Manage and reorder folders
-            </Link>
-          )}
+          <Link href={`/Courses/${cid}/Piazza/ManageClass`} className="small">
+            Manage and reorder folders
+          </Link>
         </div>
         <div className="wd-pazza-folder-picker mt-2">
           {folders.map((folder: any) => (
