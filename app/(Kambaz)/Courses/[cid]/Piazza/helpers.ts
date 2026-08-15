@@ -1,51 +1,119 @@
-import { isToday, isYesterday, startOfWeek, endOfWeek, format, subWeeks, isWithinInterval } from "date-fns";
+// Small helpers every Pazza screen shares.
 
-// A Pazza "instructor" is any non-student role.
-export const isInstructorRole = (role?: string) => (role || "").toUpperCase() !== "STUDENT";
+// In Pazza anyone who is not a student counts as an instructor.
+// So a TA can answer in the instructor section too.
+export function isInstructorRole(role?: string): boolean {
+    const name = (role || "").toUpperCase();
+    return name !== "" && name !== "STUDENT";
+}
 
-// Strip HTML tags down to plain text (used for list previews).
-export const stripHtml = (html: string) => {
-    if (typeof document === "undefined") return (html || "").replace(/<[^>]+>/g, " ");
-    const d = document.createElement("div");
-    d.innerHTML = html || "";
-    return d.textContent || d.innerText || "";
-};
+// The person at the keyboard. Student View turns a teacher into a student.
+export function isPazzaInstructor(currentUser: any, viewAsStudent?: boolean): boolean {
+    return isInstructorRole(currentUser?.role) && !viewAsStudent;
+}
 
-// A short one-line preview of a post's details.
-export const preview = (html: string, max = 160) => {
-    const t = stripHtml(html).replace(/\s+/g, " ").trim();
-    return t.length > max ? t.slice(0, max) + "…" : t;
-};
+// The name Pazza prints next to a post.
+export function displayName(user: any): string {
+    const full = [user?.firstName, user?.lastName].filter(Boolean).join(" ");
+    return full || user?.username || user?._id || "User";
+}
 
-// A compact date/time label for posts and comments.
-export const timeLabel = (iso?: string) => {
-    if (!iso) return "";
-    return new Date(iso).toLocaleString(undefined, {
-        month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
-    });
-};
+// The details are HTML, so I cut the tags for the list preview.
+export function stripHtml(html?: string): string {
+    if (!html) { return ""; }
+    if (typeof document === "undefined") {
+        return html.replace(/<[^>]+>/g, " ");
+    }
+    const box = document.createElement("div");
+    box.innerHTML = html;
+    return box.textContent || "";
+}
+
+// One short line of the post body.
+export function preview(html?: string, max = 140): string {
+    const text = stripHtml(html).replace(/\s+/g, " ").trim();
+    return text.length > max ? `${text.slice(0, max)}...` : text;
+}
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// A short stamp like "Mar 4, 10:15 AM".
+export function timeLabel(iso?: string): string {
+    if (!iso) { return ""; }
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) { return ""; }
+    const month = MONTHS[date.getMonth()];
+    const day = date.getDate();
+    let hour = date.getHours();
+    const half = hour < 12 ? "AM" : "PM";
+    hour = hour % 12;
+    if (hour === 0) { hour = 12; }
+    const minute = String(date.getMinutes()).padStart(2, "0");
+    return `${month} ${day}, ${hour}:${minute} ${half}`;
+}
+
+// Midnight of a date. I compare days, not clock times.
+function startOfDay(date: Date): Date {
+    const copy = new Date(date);
+    copy.setHours(0, 0, 0, 0);
+    return copy;
+}
+
+// The Monday of the week a date falls in.
+function startOfWeek(date: Date): Date {
+    const copy = startOfDay(date);
+    const weekday = (copy.getDay() + 6) % 7;
+    copy.setDate(copy.getDate() - weekday);
+    return copy;
+}
+
+function addDays(date: Date, days: number): Date {
+    const copy = new Date(date);
+    copy.setDate(copy.getDate() + days);
+    return copy;
+}
+
+function monthDay(date: Date): string {
+    return `${date.getMonth() + 1}/${date.getDate()}`;
+}
 
 export type PostGroup = { key: string; label: string; posts: any[] };
 
-// Group posts (reverse chronological) into Today / Yesterday / Last Week / weekly ranges.
-export const groupPosts = (posts: any[]): PostGroup[] => {
+// The sidebar shows Today, then Yesterday, then Last Week.
+// Older posts land in a group named after their week, like 3/3 - 3/9.
+export function groupPosts(posts: any[]): PostGroup[] {
     const groups: PostGroup[] = [];
-    const push = (key: string, label: string, p: any) => {
-        let g = groups.find((x) => x.key === key);
-        if (!g) { g = { key, label, posts: [] }; groups.push(g); }
-        g.posts.push(p);
+    const push = (key: string, label: string, post: any) => {
+        let group = groups.find((one) => one.key === key);
+        if (!group) {
+            group = { key, label, posts: [] };
+            groups.push(group);
+        }
+        group.posts.push(post);
     };
-    const now = new Date();
-    const lwStart = startOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
-    const lwEnd = endOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
-    posts.forEach((p) => {
-        const d = new Date(p.createdAt);
-        if (isToday(d)) return push("today", "Today", p);
-        if (isYesterday(d)) return push("yesterday", "Yesterday", p);
-        if (isWithinInterval(d, { start: lwStart, end: lwEnd })) return push("lastweek", "Last Week", p);
-        const ws = startOfWeek(d, { weekStartsOn: 1 });
-        const we = endOfWeek(d, { weekStartsOn: 1 });
-        push(format(ws, "yyyy-MM-dd"), `${format(ws, "M/d")} - ${format(we, "M/d")}`, p);
+
+    const today = startOfDay(new Date());
+    const yesterday = addDays(today, -1);
+    const thisWeek = startOfWeek(today);
+    const lastWeek = addDays(thisWeek, -7);
+
+    posts.forEach((post) => {
+        const made = new Date(post.createdAt);
+        const day = startOfDay(made);
+        if (day.getTime() === today.getTime()) {
+            push("today", "Today", post);
+        } else if (day.getTime() === yesterday.getTime()) {
+            push("yesterday", "Yesterday", post);
+        } else if (day >= lastWeek && day < thisWeek) {
+            push("lastweek", "Last Week", post);
+        } else {
+            const weekStart = startOfWeek(made);
+            const weekEnd = addDays(weekStart, 6);
+            const key = weekStart.toISOString().slice(0, 10);
+            push(key, `${monthDay(weekStart)} - ${monthDay(weekEnd)}`, post);
+        }
     });
+
     return groups;
-};
+}

@@ -1,8 +1,6 @@
-"use client";
+// "/Account/Users" is the list on its own.
+import Users from "./Users";
 
-import PeopleTable from "./PeopleTable";
-
-// Global Users screen: lists all users with role/name filters.
 export default function UsersPage() {
-    return <PeopleTable />;
+  return <Users />;
 }

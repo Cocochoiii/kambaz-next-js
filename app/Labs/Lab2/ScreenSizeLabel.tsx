@@ -1,4 +1,6 @@
-export default function ScreenSizeLabel(){
+// Bootstrap can show and hide content at different screen sizes.
+// Only one line is visible, so the box tells me the screen size.
+export default function ScreenSizeLabel() {
   return (
     <div id="wd-screen-size-label">
       <div className="d-block d-sm-none">XS - Extra Small (&lt;576px)</div>

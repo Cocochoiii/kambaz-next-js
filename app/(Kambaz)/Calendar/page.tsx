@@ -1,343 +1,335 @@
 "use client";
 
-import { useMemo, useState } from "react";
+// The Calendar screen. Canvas has a month grid and an agenda.
+// The Calendar keeps no data. The server collects the assignment due
+// dates, the Zoom meetings and the announcements of my courses.
+import { useEffect, useState } from "react";
+import { Button, ListGroup, Nav, Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
-import { IoChevronBack, IoChevronForward, IoCalendarClearOutline } from "react-icons/io5";
+import * as client from "./client";
 
-// helpers
-type CalEvent = {
-    id: string;
-    title: string;
-    date: string;      // ISO "YYYY-MM-DD"
-    course?: string;
-    color?: string;
-};
+// I cut the date myself, so the server and the browser agree.
+const MONTHS = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday",
+              "Thursday", "Friday", "Saturday"];
+const SHORT_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
-const iso = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-const firstOfMonth = (d: Date) => new Date(d.getFullYear(), d.getMonth(), 1);
-
-function monthMatrix(anchor: Date): Date[][] {
-    const first = firstOfMonth(anchor);
-    const start = new Date(first);
-    start.setDate(first.getDate() - first.getDay()); // back to Sunday
-
-    const weeks: Date[][] = [];
-    const cur = new Date(start);
-    for (let w = 0; w < 6; w++) {
-        const row: Date[] = [];
-        for (let d = 0; d < 7; d++) {
-            row.push(new Date(cur));
-            cur.setDate(cur.getDate() + 1);
-        }
-        weeks.push(row);
-    }
-    return weeks;
+// Two digits, so the text matches the dates the server sends.
+function pad(n: number) {
+  return n < 10 ? `0${n}` : `${n}`;
 }
 
-/** Course colors */
-const COURSE_COLORS: Record<string, string> = {
-    CS5610: "#3b82f6",
-    CS5520: "#8b5cf6",
-    CS5004: "#f59e0b",
-    CS5200: "#06b6d4",
-    CS5800: "#ef4444",
-    CS6620: "#a855f7",
-    CS6510: "#10b981",
+// A key like 2025-01-19. I compare these as plain text.
+function dayKey(year: number, month: number, date: number) {
+  return `${year}-${pad(month + 1)}-${pad(date)}`;
+}
+
+// A day title like "Monday, January 19, 2025".
+function dayTitle(day: string) {
+  const [year, month, date] = day.split("-");
+  // Noon keeps the day the same in every time zone.
+  const weekday = new Date(`${day}T12:00:00`).getDay();
+  return `${DAYS[weekday]}, ${MONTHS[Number(month) - 1]} ${Number(date)}, ${year}`;
+}
+
+function clockOf(date: string) {
+  const clock = date.slice(11, 16);
+  return clock ? clock : "all day";
+}
+
+// One color per kind of event, the way Canvas colors its dots.
+const DOTS: Record<string, string> = {
+  assignment: "text-danger",
+  meeting: "text-primary",
+  announcement: "text-secondary",
+};
+const LABELS: Record<string, string> = {
+  assignment: "Assignment due",
+  meeting: "Zoom meeting",
+  announcement: "Announcement",
 };
 
-// inline fallback styles so the grid always renders
-const GRID_HEAD_STYLE: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "repeat(7, 1fr)",
-    gap: 2,
-    background: "#f8f9fa",
-    border: "1px solid #e5e7eb",
-    borderBottom: "none",
-};
-const GRID_BODY_STYLE: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "repeat(7, 1fr)",
-    gap: 2,
-    gridAutoRows: "140px",
-    border: "1px solid #e5e7eb",
-    background: "#fff",
-};
-const CELL_STYLE: React.CSSProperties = {
-    position: "relative",
-    padding: "6px 8px 8px",
-    borderTop: "1px solid #e5e7eb",
-    borderRight: "1px solid #e5e7eb",
-    overflow: "hidden",
-};
-const DATE_STYLE: React.CSSProperties = { fontSize: 12, fontWeight: 600, color: "#6b7280" };
-const TODAY_BADGE_STYLE: React.CSSProperties = {
-    color: "#111827",
-    background: "#e0e7ff",
-    padding: "2px 6px",
-    borderRadius: 6,
-    display: "inline-block",
-};
-const PILL_STYLE: React.CSSProperties = {
-    fontSize: 12,
-    padding: "2px 6px",
-    borderRadius: 6,
-    background: "#f3f4f6",
-    whiteSpace: "nowrap",
-};
-const DOT = (bg: string): React.CSSProperties => ({
-    width: 8,
-    height: 8,
-    borderRadius: 999,
-    display: "inline-block",
-    background: bg,
-});
+export default function Calendar() {
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
-export default function CalendarPage() {
-    const [view, setView] = useState<"week" | "month" | "agenda">("month");
-    const [cursor, setCursor] = useState<Date>(new Date());
+  const [events, setEvents] = useState<any[]>([]);
+  const [tab, setTab] = useState("month");
+  const [onlyComing, setOnlyComing] = useState(true);
 
-    // Your Redux data
-    const { assignments } = useSelector((s: any) => s.assignmentsReducer);
-    const { courses } = useSelector((s: any) => s.coursesReducer);
+  // The clock only runs in the browser.
+  // Reading it while rendering makes the server and the browser disagree.
+  // So I read it after the screen loads.
+  const [today, setToday] = useState("");
+  const [cursor, setCursor] = useState({ year: 0, month: 0 });
+  const [picked, setPicked] = useState("");
 
-    const courseLabels: string[] = useMemo(
-        () => courses.map((c: any) => c.number ?? `CS${c._id}`),
-        [courses]
+  const fetchEvents = async () => {
+    const found = await client.findMyEvents();
+    setEvents(found);
+  };
+
+  useEffect(() => {
+    const now = new Date();
+    setToday(dayKey(now.getFullYear(), now.getMonth(), now.getDate()));
+    setCursor({ year: now.getFullYear(), month: now.getMonth() });
+    if (currentUser) {
+      fetchEvents();
+    }
+  }, [currentUser]);
+
+  // The courses can be from an older term.
+  // An empty month looks broken, so I open on the next event.
+  // If every event is past, I open on the last one.
+  useEffect(() => {
+    if (events.length === 0) {
+      return;
+    }
+    const coming = events.filter(
+      (event: any) => event.date.slice(0, 10) >= today
     );
+    const focus = coming.length > 0 ? coming[0] : events[events.length - 1];
+    const [year, month] = focus.date.slice(0, 7).split("-");
+    setCursor({ year: Number(year), month: Number(month) - 1 });
+    setOnlyComing(coming.length > 0);
+  }, [events]);
 
-    const [enabledCals, setEnabledCals] = useState<Record<string, boolean>>(
-        () => Object.fromEntries(courseLabels.map((num) => [num, true]))
-    );
+  const eventsOn = (day: string) =>
+    events.filter((event: any) => event.date.slice(0, 10) === day);
 
-    const events: CalEvent[] = useMemo(() => {
-        return assignments
-            .filter((a: any) => !!a.dueDate)
-            .map((a: any) => {
-                const courseNum =
-                    courses.find((c: any) => c._id === a.course)?.number ?? `CS${a.course}`;
-                return {
-                    id: a._id,
-                    title: a.title,
-                    date: (a.dueDate as string).slice(0, 10), // normalize to YYYY-MM-DD
-                    course: courseNum,
-                    color: COURSE_COLORS[courseNum] || "#64748b",
-                } as CalEvent;
-            });
-    }, [assignments, courses]);
+  // ---- the month grid ----
+  // getDay of the first day says how many empty boxes come first.
+  // Day 0 of the next month is the last day of this one.
+  const firstWeekday = new Date(cursor.year, cursor.month, 1).getDay();
+  const daysInMonth = new Date(cursor.year, cursor.month + 1, 0).getDate();
 
-    const weeks = useMemo(() => monthMatrix(cursor), [cursor]);
-    const monthLabel = `${cursor.toLocaleString("default", { month: "long" })} ${cursor.getFullYear()}`;
-    const todayIso = iso(new Date());
-    const inMonth = (d: Date) => d.getMonth() === cursor.getMonth();
+  const boxes: (number | null)[] = [];
+  for (let i = 0; i < firstWeekday; i++) {
+    boxes.push(null);
+  }
+  for (let date = 1; date <= daysInMonth; date++) {
+    boxes.push(date);
+  }
+  // The last row needs empty boxes too, so every row has seven.
+  while (boxes.length % 7 !== 0) {
+    boxes.push(null);
+  }
+  const weeks: (number | null)[][] = [];
+  for (let i = 0; i < boxes.length; i += 7) {
+    weeks.push(boxes.slice(i, i + 7));
+  }
 
-    const goToday = () => setCursor(new Date());
-    const goPrev  = () => setCursor(d => new Date(d.getFullYear(), d.getMonth() - 1, 1));
-    const goNext  = () => setCursor(d => new Date(d.getFullYear(), d.getMonth() + 1, 1));
+  const goMonth = (step: number) => {
+    const month = cursor.month + step;
+    if (month < 0) {
+      setCursor({ year: cursor.year - 1, month: 11 });
+    } else if (month > 11) {
+      setCursor({ year: cursor.year + 1, month: 0 });
+    } else {
+      setCursor({ year: cursor.year, month });
+    }
+    setPicked("");
+  };
 
-    const eventsByDay = useMemo(() => {
-        const map: Record<string, CalEvent[]> = {};
-        for (const ev of events) {
-            if (ev.course && enabledCals[ev.course] === false) continue;
-            (map[ev.date] ||= []).push(ev);
-        }
-        Object.values(map).forEach(arr => arr.sort((a, b) => a.title.localeCompare(b.title)));
-        return map;
-    }, [events, enabledCals]);
+  const goToday = () => {
+    const now = new Date();
+    setCursor({ year: now.getFullYear(), month: now.getMonth() });
+    setPicked(today);
+  };
 
-    const [moreOpen, setMoreOpen] = useState<{ date?: string; items: CalEvent[] }>({ items: [] });
-    const openMore = (date: string, items: CalEvent[]) => setMoreOpen({ date, items });
-    const closeMore = () => setMoreOpen({ items: [] });
+  // ---- the agenda ----
+  const shown = onlyComing && today
+    ? events.filter((event: any) => event.date.slice(0, 10) >= today)
+    : events;
 
-    return (
-        <div id="wd-calendar" className="container-fluid">
-            {/* Toolbar */}
-            <div className="d-flex align-items-center gap-2 mb-3">
-                <Button variant="light" className="border" onClick={goToday}>Today</Button>
-                <ButtonGroup>
-                    <Button variant="light" className="border" onClick={goPrev}><IoChevronBack /></Button>
-                    <Button variant="light" className="border" onClick={goNext}><IoChevronForward /></Button>
-                </ButtonGroup>
-                <h5 className="mb-0 ms-2 fw-semibold">{monthLabel}</h5>
+  // One group per day. The list already arrives in date order.
+  const agendaDays: string[] = [];
+  shown.forEach((event: any) => {
+    const day = event.date.slice(0, 10);
+    if (!agendaDays.includes(day)) {
+      agendaDays.push(day);
+    }
+  });
 
-                <div className="ms-auto">
-                    <ButtonGroup>
-                        <Button variant={view === "week" ? "secondary" : "light"} className="border" onClick={() => setView("week")}>Week</Button>
-                        <Button variant={view === "month" ? "secondary" : "light"} className="border" onClick={() => setView("month")}>Month</Button>
-                        <Button variant={view === "agenda" ? "secondary" : "light"} className="border" onClick={() => setView("agenda")}>Agenda</Button>
-                    </ButtonGroup>
-                    <Button variant="light" className="border ms-2">
-                        <IoCalendarClearOutline className="me-1" /> +
-                    </Button>
-                </div>
+  // The clock is not read yet on the very first render.
+  if (!today) {
+    return <div id="wd-calendar"><h2>Calendar</h2></div>;
+  }
+
+  return (
+    <div id="wd-calendar">
+      <h2 className="mb-3">Calendar</h2>
+
+      {/* The tab I am on is active. */}
+      <Nav variant="tabs" className="mb-3">
+        <Nav.Item>
+          <Nav.Link id="wd-month-tab" active={tab === "month"}
+                    onClick={() => setTab("month")}>
+            Month
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link id="wd-agenda-tab" active={tab === "agenda"}
+                    onClick={() => setTab("agenda")}>
+            Agenda
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
+
+      {/* A short legend, so the colors mean something. */}
+      <div className="mb-3 text-muted small" id="wd-calendar-legend">
+        {Object.keys(LABELS).map((type) => (
+          <span key={type} className="me-3">
+            <span className={DOTS[type]}>&#9679;</span> {LABELS[type]}
+          </span>
+        ))}
+      </div>
+
+      {tab === "month" && (
+        <div id="wd-calendar-month">
+          <div className="clearfix mb-2">
+            <div className="float-end">
+              <Button id="wd-prev-month" variant="outline-secondary" size="sm"
+                      className="me-2" onClick={() => goMonth(-1)}>
+                Previous
+              </Button>
+              <Button id="wd-today" variant="outline-danger" size="sm"
+                      className="me-2" onClick={goToday}>
+                Today
+              </Button>
+              <Button id="wd-next-month" variant="outline-secondary" size="sm"
+                      onClick={() => goMonth(1)}>
+                Next
+              </Button>
             </div>
+            <h4 className="float-start mb-0" id="wd-month-title">
+              {MONTHS[cursor.month]} {cursor.year}
+            </h4>
+          </div>
 
-            {/* 2-column layout */}
-            <div className="row">
-                {/* Main */}
-                <div className="col-12 col-lg-9">
-                    {/* Weekday header (desktop) */}
-                    <div className="d-none d-lg-block">
-                        <div className="row g-0 border border-bottom-0 rounded-top bg-light text-center small fw-semibold">
-                            {["SUN","MON","TUE","WED","THU","FRI","SAT"].map((d) => (
-                                <div key={d} className="col py-2">{d}</div>
-                            ))}
+          <Table bordered className="wd-month-table">
+            <thead>
+              <tr>
+                {SHORT_DAYS.map((day) => (
+                  <th key={day} className="text-center bg-secondary">{day}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {weeks.map((week, index) => (
+                <tr key={index}>
+                  {week.map((date, box) => {
+                    // An empty box belongs to the month before or after.
+                    if (date === null) {
+                      return <td key={box} className="bg-light" />;
+                    }
+                    const day = dayKey(cursor.year, cursor.month, date);
+                    const dayEvents = eventsOn(day);
+                    return (
+                      <td
+                        key={box}
+                        role="button"
+                        onClick={() => setPicked(day)}
+                        className={day === picked ? "table-active" : ""}
+                        style={{ height: "96px", verticalAlign: "top" }}
+                      >
+                        <div className={day === today
+                          ? "fw-bold text-danger"
+                          : "text-muted small"}>
+                          {date}
                         </div>
-                    </div>
-
-                    {/* Month grid */}
-                    {view === "month" && (
-                        <div style={GRID_BODY_STYLE}>
-                            {weeks.flat().map((day, idx) => {
-                                const key = iso(day);
-                                const items = eventsByDay[key] ?? [];
-                                const faded = !inMonth(day);
-                                const isToday = key === todayIso;
-
-                                const visible = items.slice(0, 3);
-                                const hiddenCount = Math.max(0, items.length - visible.length);
-
-                                // remove right border on last column
-                                const cellStyle = {
-                                    ...CELL_STYLE,
-                                    borderRight: (idx + 1) % 7 === 0 ? "none" : CELL_STYLE.borderRight,
-                                    background: faded ? "#fafafa" : "#fff",
-                                    color: faded ? "#9ca3af" : "inherit",
-                                } as React.CSSProperties;
-
-                                return (
-                                    <div key={idx} style={cellStyle}>
-                                        <div style={isToday ? { ...DATE_STYLE, ...TODAY_BADGE_STYLE } : DATE_STYLE}>
-                                            {day.getDate()}
-                                        </div>
-
-                                        {visible.map((ev) => (
-                                            <div key={ev.id} className="text-truncate mt-1" style={PILL_STYLE} title={`${ev.title} - ${ev.course ?? ""}`}>
-                                                <span className="me-1" style={DOT(ev.color || "#64748b")} />
-                                                {ev.title}
-                                            </div>
-                                        ))}
-
-                                        {hiddenCount > 0 && (
-                                            <button className="btn btn-link p-0 small mt-1" onClick={() => openMore(key, items)}>
-                                                +{hiddenCount} more
-                                            </button>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
-
-                    {view === "agenda" && (
-                        <div className="border rounded p-3 bg-white">
-                            <div className="small text-muted mb-2">Agenda</div>
-                            {events
-                                .slice()
-                                .sort((a, b) => a.date.localeCompare(b.date))
-                                .map((ev) => (
-                                    <div key={ev.id} className="d-flex align-items-center py-2 border-top">
-                                        <div className="me-3 small text-muted" style={{ width: 100 }}>{ev.date}</div>
-                                        <div>
-                                            <span className="me-2" style={DOT(ev.color || "#64748b")} />
-                                            <strong className="me-2">{ev.title}</strong>
-                                            <span className="text-muted">{ev.course}</span>
-                                        </div>
-                                    </div>
-                                ))}
-                        </div>
-                    )}
-
-                    {view === "week" && (
-                        <div className="border rounded p-4 bg-white text-muted">
-                            Week view not implemented.
-                        </div>
-                    )}
-                </div>
-
-                {/* Sidebar */}
-                <div className="col-12 col-lg-3 mt-4 mt-lg-0">
-                    <div className="border rounded p-2 bg-white mb-3">
-                        <div className="d-flex align-items-center justify-content-between px-2">
-                            <strong className="small">{monthLabel}</strong>
-                            <div>
-                                <Button size="sm" variant="light" className="border me-1" onClick={goPrev}><IoChevronBack /></Button>
-                                <Button size="sm" variant="light" className="border" onClick={goNext}><IoChevronForward /></Button>
-                            </div>
-                        </div>
-
-                        {/* Mini calendar */}
-                        <div
-                            style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 2 }}
-                            className="mt-2"
-                        >
-                            {["S","M","T","W","T","F","S"].map((d) => (
-                                <div key={d} className="text-center text-muted small">{d}</div>
-                            ))}
-                            {weeks.flat().map((d, i) => {
-                                const dim = d.getMonth() !== cursor.getMonth();
-                                const isToday = iso(d) === todayIso;
-                                return (
-                                    <div key={i} className={`text-center py-1 small ${dim ? "text-muted" : ""}`}>
-                    <span
-                        className={isToday ? "" : ""}
-                        style={{
-                            display: "inline-block",
-                            width: 24,
-                            height: 24,
-                            lineHeight: "24px",
-                            borderRadius: 6,
-                            background: isToday ? "#e0e7ff" : "transparent",
-                            fontWeight: isToday ? 600 : 400,
-                        }}
-                    >
-                      {d.getDate()}
-                    </span>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    <div className="border rounded p-3 bg-white">
-                        <div className="small fw-semibold mb-2">CALENDARS</div>
-                        {courseLabels.map((label) => (
-                            <div key={label} className="d-flex align-items-center mb-2">
-                                <span className="me-2" style={DOT(COURSE_COLORS[label] || "#64748b")} />
-                                <Form.Check
-                                    type="checkbox"
-                                    id={`cal-${label}`}
-                                    label={label}
-                                    checked={enabledCals[label] ?? true}
-                                    onChange={(e) =>
-                                        setEnabledCals((prev) => ({ ...prev, [label]: e.currentTarget.checked }))
-                                    }
-                                />
-                            </div>
+                        {/* Three fit in a box. The rest are a count. */}
+                        {dayEvents.slice(0, 3).map((event: any) => (
+                          <div key={event._id} className="small text-truncate">
+                            <span className={DOTS[event.type]}>&#9679;</span>{" "}
+                            {event.title}
+                          </div>
                         ))}
-                    </div>
-                </div>
-            </div>
+                        {dayEvents.length > 3 && (
+                          <div className="small text-muted">
+                            + {dayEvents.length - 3} more
+                          </div>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
 
-            {/* +N more modal */}
-            <Modal show={moreOpen.items.length > 0} onHide={closeMore} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Events - {moreOpen.date}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {moreOpen.items.map((ev) => (
-                        <div key={ev.id} className="d-flex align-items-center mb-2">
-                            <span className="me-2" style={DOT(ev.color || "#64748b")} />
-                            <div className="fw-semibold me-2">{ev.title}</div>
-                            <span className="text-muted small">{ev.course}</span>
-                        </div>
-                    ))}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={closeMore}>Close</Button>
-                </Modal.Footer>
-            </Modal>
+          {/* The day I clicked, in full. */}
+          {picked && (
+            <div id="wd-picked-day" className="mt-3">
+              <h5>{dayTitle(picked)}</h5>
+              <ListGroup className="rounded-0">
+                {eventsOn(picked).map((event: any) => (
+                  <ListGroup.Item key={event._id} className="wd-calendar-event">
+                    <span className={`${DOTS[event.type]} me-2`}>&#9679;</span>
+                    <b>{event.title}</b>
+                    <span className="float-end text-muted small">
+                      {clockOf(event.date)}
+                    </span>
+                    <div className="text-muted small ms-4">
+                      {event.courseName} · {LABELS[event.type]} · {event.detail}
+                    </div>
+                  </ListGroup.Item>
+                ))}
+                {eventsOn(picked).length === 0 && (
+                  <ListGroup.Item className="text-muted">
+                    Nothing on this day.
+                  </ListGroup.Item>
+                )}
+              </ListGroup>
+            </div>
+          )}
         </div>
-    );
+      )}
+
+      {tab === "agenda" && (
+        <div id="wd-calendar-agenda">
+          <div className="clearfix mb-2">
+            <Button
+              id="wd-toggle-past"
+              variant="secondary"
+              size="sm"
+              className="float-end"
+              onClick={() => setOnlyComing(!onlyComing)}
+            >
+              {onlyComing ? "Show everything" : "Upcoming only"}
+            </Button>
+          </div>
+
+          {agendaDays.length === 0 && (
+            <div className="text-muted" id="wd-no-events">
+              Nothing on the calendar.
+            </div>
+          )}
+
+          {agendaDays.map((day) => (
+            <div key={day} className="mb-4 wd-calendar-day">
+              <h5 className={day === today ? "text-danger" : ""}>
+                {dayTitle(day)}
+                {day === today && <span className="ms-2">Today</span>}
+              </h5>
+              <ListGroup className="rounded-0">
+                {eventsOn(day).map((event: any) => (
+                  <ListGroup.Item key={event._id} className="wd-calendar-event">
+                    <span className={`${DOTS[event.type]} me-2`}>&#9679;</span>
+                    <b>{event.title}</b>
+                    <span className="float-end text-muted small">
+                      {clockOf(event.date)}
+                    </span>
+                    <div className="text-muted small ms-4">
+                      {event.courseName} · {LABELS[event.type]} · {event.detail}
+                    </div>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }

@@ -1,356 +1,241 @@
 "use client";
 
+// The Assignment Editor screen.
+// When the id is "new" Save posts. If not, Save puts.
+// Either way the change stays after a refresh.
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Button, Col, Form, Row, Table } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
-import { addAssignment, updateAssignment } from "../reducer";
+import { Row, Col, Form, Button } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { setAssignments, addAssignment, updateAssignment } from "../reducer";
+import * as coursesClient from "../../../client";
 import * as assignmentsClient from "../client";
-import * as submissionsClient from "../../../../Submissions/client";
 import { useIsFaculty } from "../../../../Account/roles";
 
-// One row of the faculty grading table, with its own grade/feedback inputs.
-function GradeRow({ submission, maxPoints, onGrade }: any) {
-    const [grade, setGrade] = useState<string>(submission.grade ?? "");
-    const [feedback, setFeedback] = useState<string>(submission.feedback ?? "");
-    return (
-        <tr>
-            <td className="align-middle">{submission.userName || submission.user}</td>
-            <td className="align-middle text-truncate" style={{ maxWidth: 260 }}>{submission.text}</td>
-            <td className="align-middle">
-                <div className="d-flex align-items-center gap-1">
-                    <Form.Control
-                        type="number"
-                        size="sm"
-                        value={grade}
-                        onChange={(e) => setGrade(e.target.value)}
-                        style={{ width: 80 }}
-                    />
-                    <span className="text-muted small">/ {maxPoints}</span>
-                </div>
-            </td>
-            <td className="align-middle">
-                <Form.Control size="sm" value={feedback} onChange={(e) => setFeedback(e.target.value)} />
-            </td>
-            <td className="align-middle">
-                <Button
-                    size="sm"
-                    variant="danger"
-                    onClick={() => onGrade(submission._id, grade === "" ? 0 : Number(grade), feedback)}
-                >
-                    Save
-                </Button>
-            </td>
-        </tr>
-    );
-}
-
 export default function AssignmentEditor() {
-    const { cid, aid } = useParams<{ cid: string; aid: string }>();
-    const router = useRouter();
-    const dispatch = useDispatch();
-    const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const params = useParams<{ cid: string; aid: string }>();
+  const cid = params ? params.cid : "";
+  const aid = params ? params.aid : "";
+  const router = useRouter();
+  const dispatch = useDispatch();
 
-    const isNew = aid === "new";
-    const existingAssignment = assignments.find((a: any) => a._id === aid);
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const isNew = aid === "new";
+  const existing = assignments.find((a: any) => a._id === aid);
 
-    const [assignment, setAssignment] = useState({
-        title: "",
-        description: "",
-        points: 100,
-        dueDate: "",
-        availableFrom: "",
-        availableUntil: "",
-        course: cid,
-        ...existingAssignment,
-    });
-
-    useEffect(() => {
-        if (!isNew && existingAssignment) {
-            setAssignment(existingAssignment);
+  // A new empty assignment, or a copy of the one I opened.
+  const [assignment, setAssignment] = useState<any>(
+    isNew || !existing
+      ? {
+          title: "New Assignment",
+          description: "New Description",
+          points: 100,
+          dueDate: "",
+          availableFrom: "",
+          availableUntil: "",
+          course: cid,
         }
-    }, [existingAssignment, isNew]);
+      : { ...existing }
+  );
 
-    const isFaculty = useIsFaculty();
-
-    // Student side: the current user's own submission for this assignment.
-    const [mySubmission, setMySubmission] = useState<any>(null);
-    const [submissionText, setSubmissionText] = useState("");
-    // Faculty side: every submission for this assignment (for grading).
-    const [submissions, setSubmissions] = useState<any[]>([]);
-
-    useEffect(() => {
-        const load = async () => {
-            if (isNew) return;
-            try {
-                if (isFaculty) {
-                    setSubmissions(await submissionsClient.findSubmissionsForAssignment(aid));
-                } else if (currentUser) {
-                    const mine = await submissionsClient.findSubmissionsForUser(currentUser._id);
-                    const found = mine.find((s: any) => s.assignment === aid);
-                    if (found) {
-                        setMySubmission(found);
-                        setSubmissionText(found.text || "");
-                    }
-                }
-            } catch {
-                // ignore load errors and show the empty state
-            }
-        };
-        load();
-    }, [isFaculty, isNew, aid, currentUser]);
-
-    // Submission window for the student view (based on available dates).
-    const nowMs = Date.now();
-    const notYetOpen = !!assignment.availableFrom && nowMs < new Date(assignment.availableFrom).getTime();
-    const closed = !!assignment.availableUntil && nowMs > new Date(assignment.availableUntil).getTime();
-
-    // Student submits (or resubmits) their work.
-    const handleSubmit = async () => {
-        if (!currentUser) return;
-        const displayName = [currentUser.firstName, currentUser.lastName].filter(Boolean).join(" ") || currentUser.username || currentUser._id;
-        const saved = await submissionsClient.submitAssignment(aid, {
-            user: currentUser._id,
-            userName: displayName,
-            course: cid,
-            title: assignment.title,
-            points: assignment.points,
-            text: submissionText,
-        });
-        setMySubmission(saved);
-    };
-
-    // Students see a read-only detail page plus their submission box.
-    if (!isFaculty) {
-        return (
-            <div id="wd-assignment-details" className="container-fluid">
-                <h2 className="text-danger">{assignment.title}</h2>
-                <hr />
-                <p style={{ whiteSpace: "pre-wrap" }}>{assignment.description}</p>
-                <ul className="list-unstyled">
-                    <li className="mb-1"><b>Points:</b> {assignment.points}</li>
-                    <li className="mb-1">
-                        <b>Due:</b>{" "}
-                        {assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString() : "-"}
-                    </li>
-                </ul>
-
-                <hr />
-                <h4>Your Submission</h4>
-                {mySubmission?.status === "graded" && (
-                    <div className="alert alert-success">
-                        <b>Grade:</b> {mySubmission.grade} / {assignment.points}
-                        {mySubmission.feedback && (
-                            <div className="mt-1"><b>Feedback:</b> {mySubmission.feedback}</div>
-                        )}
-                    </div>
-                )}
-                {mySubmission && mySubmission.status !== "graded" && (
-                    <p className="text-muted small">
-                        Submitted {new Date(mySubmission.submittedAt).toLocaleString()} — waiting for a grade.
-                    </p>
-                )}
-                {notYetOpen ? (
-                    <p className="text-muted">
-                        Not available until {new Date(assignment.availableFrom).toLocaleDateString()}.
-                    </p>
-                ) : closed ? (
-                    <p className="text-muted">
-                        This assignment is closed
-                        {assignment.availableUntil ? ` (closed ${new Date(assignment.availableUntil).toLocaleDateString()})` : ""}.
-                    </p>
-                ) : (
-                    <>
-                        <Form.Control
-                            as="textarea"
-                            rows={4}
-                            className="mb-2"
-                            value={submissionText}
-                            onChange={(e) => setSubmissionText(e.target.value)}
-                            placeholder="Type your submission here"
-                        />
-                        <Button variant="danger" onClick={handleSubmit}>
-                            {mySubmission ? "Resubmit" : "Submit"}
-                        </Button>
-                    </>
-                )}
-                <Button
-                    variant="secondary"
-                    className="mt-3"
-                    onClick={() => router.push(`/Courses/${cid}/Assignments`)}
-                >
-                    Back to Assignments
-                </Button>
-            </div>
-        );
+  // The store can be empty on a direct URL. So I read again.
+  const fetchAssignments = async () => {
+    const found = await coursesClient.findAssignmentsForCourse(cid);
+    dispatch(setAssignments(found));
+    const mine = found.find((a: any) => a._id === aid);
+    if (mine) {
+      setAssignment({ ...mine });
     }
+  };
 
-    const handleSave = async () => {
-        if (isNew) {
-            const created = await assignmentsClient.createAssignment(cid, assignment);
-            dispatch(addAssignment(created));
-        } else {
-            await assignmentsClient.updateAssignment(assignment);
-            dispatch(updateAssignment(assignment));
-        }
-        router.push(`/Courses/${cid}/Assignments`);
-    };
+  useEffect(() => {
+    if (cid && !isNew) {
+      fetchAssignments();
+    }
+  }, [cid, aid]);
 
-    const handleCancel = () => router.push(`/Courses/${cid}/Assignments`);
+  const isFaculty = useIsFaculty();
 
-    // Faculty grades one submission, then refreshes that row in place.
-    const handleGrade = async (sid: string, grade: number, feedback: string) => {
-        const updated = await submissionsClient.gradeSubmission(sid, { grade, feedback });
-        setSubmissions((prev) => prev.map((s) => (s._id === sid ? updated : s)));
-    };
-
-    // one label/field pair per row: label on the left, field on the right
-    const field = (labelId: string, label: string, control: React.ReactNode) => (
-        <Row className="mb-3 align-items-center">
-            <Col md={3} className="text-md-end">
-                <Form.Label htmlFor={labelId} className="mb-0">{label}</Form.Label>
-            </Col>
-            <Col md={9}>{control}</Col>
-        </Row>
-    );
-
+  // A student only reads the assignment. There is no form for them.
+  if (!isFaculty) {
     return (
-        <div id="wd-assignments-editor" className="container-fluid">
-            <Form>
-                <Form.Group className="mb-3">
-                    <Form.Label htmlFor="wd-name" className="fw-semibold">Assignment Name</Form.Label>
-                    <Form.Control
-                        id="wd-name"
-                        value={assignment.title}
-                        onChange={(e) => setAssignment({ ...assignment, title: e.target.value })}
-                    />
-                </Form.Group>
-
-                <Form.Group className="mb-4">
-                    <Form.Control
-                        as="textarea"
-                        id="wd-description"
-                        rows={6}
-                        value={assignment.description}
-                        onChange={(e) => setAssignment({ ...assignment, description: e.target.value })}
-                    />
-                </Form.Group>
-
-                {field("wd-points", "Points",
-                    <Form.Control
-                        id="wd-points"
-                        type="number"
-                        value={assignment.points}
-                        onChange={(e) =>
-                            setAssignment({
-                                ...assignment,
-                                points: Number.isNaN(parseInt(e.target.value, 10)) ? 0 : parseInt(e.target.value, 10),
-                            })
-                        }
-                        style={{ maxWidth: 160 }}
-                    />
-                )}
-
-                {field("wd-group", "Assignment Group",
-                    <Form.Select id="wd-group" style={{ maxWidth: 300 }}>
-                        <option>ASSIGNMENTS</option>
-                        <option>QUIZZES</option>
-                        <option>EXAMS</option>
-                        <option>PROJECT</option>
-                    </Form.Select>
-                )}
-
-                {field("wd-display-grade-as", "Display Grade as",
-                    <Form.Select id="wd-display-grade-as" style={{ maxWidth: 300 }}>
-                        <option>Percentage</option>
-                        <option>Points</option>
-                    </Form.Select>
-                )}
-
-                {field("wd-submission-type", "Submission Type",
-                    <>
-                        <Form.Select id="wd-submission-type" style={{ maxWidth: 300 }} className="mb-2">
-                            <option>Online</option>
-                            <option>On Paper</option>
-                        </Form.Select>
-                        <div className="ps-1">
-                            <Form.Check id="wd-text-entry" label="Text Entry" defaultChecked />
-                            <Form.Check id="wd-website-url" label="Website URL" defaultChecked />
-                            <Form.Check id="wd-media-recordings" label="Media Recordings" />
-                            <Form.Check id="wd-student-annotation" label="Student Annotation" />
-                            <Form.Check id="wd-file-upload" label="File Uploads" />
-                        </div>
-                    </>
-                )}
-
-                {field("wd-assign-to", "Assign to",
-                    <Form.Control id="wd-assign-to" defaultValue="Everyone" style={{ maxWidth: 300 }} />
-                )}
-
-                {field("wd-due-date", "Due",
-                    <Form.Control
-                        id="wd-due-date"
-                        type="date"
-                        value={assignment.dueDate}
-                        onChange={(e) => setAssignment({ ...assignment, dueDate: e.target.value })}
-                        style={{ maxWidth: 260 }}
-                    />
-                )}
-
-                {field("wd-available-from", "Available from",
-                    <Form.Control
-                        id="wd-available-from"
-                        type="date"
-                        value={assignment.availableFrom}
-                        onChange={(e) => setAssignment({ ...assignment, availableFrom: e.target.value })}
-                        style={{ maxWidth: 260 }}
-                    />
-                )}
-
-                {field("wd-available-until", "Until",
-                    <Form.Control
-                        id="wd-available-until"
-                        type="date"
-                        value={assignment.availableUntil}
-                        onChange={(e) => setAssignment({ ...assignment, availableUntil: e.target.value })}
-                        style={{ maxWidth: 260 }}
-                    />
-                )}
-
-                <hr />
-                <div className="d-flex gap-2 justify-content-end">
-                    <Button variant="light" onClick={handleCancel}>Cancel</Button>
-                    <Button variant="danger" onClick={handleSave}>Save</Button>
-                </div>
-            </Form>
-
-            {!isNew && (
-                <div className="mt-5">
-                    <h4>Submissions ({submissions.length})</h4>
-                    <hr />
-                    {submissions.length === 0 ? (
-                        <p className="text-muted">No submissions yet.</p>
-                    ) : (
-                        <Table hover responsive>
-                            <thead>
-                                <tr>
-                                    <th>Student</th>
-                                    <th>Submission</th>
-                                    <th>Grade</th>
-                                    <th>Feedback</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {submissions.map((s) => (
-                                    <GradeRow key={s._id} submission={s} maxPoints={assignment.points} onGrade={handleGrade} />
-                                ))}
-                            </tbody>
-                        </Table>
-                    )}
-                </div>
-            )}
-        </div>
+      <div id="wd-assignment-details">
+        <h2 className="text-danger">{assignment.title}</h2>
+        <hr />
+        <p style={{ whiteSpace: "pre-wrap" }}>{assignment.description}</p>
+        <ul className="list-unstyled">
+          <li className="mb-1"><b>Points:</b> {assignment.points}</li>
+          <li className="mb-1"><b>Due:</b> {assignment.dueDate || "-"}</li>
+          <li className="mb-1"><b>Available from:</b> {assignment.availableFrom || "-"}</li>
+          <li className="mb-1"><b>Until:</b> {assignment.availableUntil || "-"}</li>
+        </ul>
+        <hr />
+        <Link href={`/Courses/${cid}/Assignments`} className="btn btn-secondary">
+          Back to Assignments
+        </Link>
+      </div>
     );
+  }
+
+  const save = async () => {
+    if (isNew) {
+      const created = await coursesClient.createAssignmentForCourse(cid, {
+        ...assignment,
+        course: cid,
+      });
+      dispatch(addAssignment(created));
+    } else {
+      await assignmentsClient.updateAssignment(assignment);
+      dispatch(updateAssignment(assignment));
+    }
+    router.push(`/Courses/${cid}/Assignments`);
+  };
+
+  return (
+    <div id="wd-assignments-editor">
+      <Form>
+        <Form.Group className="mb-3" controlId="wd-name">
+          <Form.Label>Assignment Name</Form.Label>
+          <Form.Control
+            value={assignment.title || ""}
+            onChange={(e) => setAssignment({ ...assignment, title: e.target.value })}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-4" controlId="wd-description">
+          <Form.Control
+            as="textarea"
+            rows={8}
+            value={assignment.description || ""}
+            onChange={(e) => setAssignment({ ...assignment, description: e.target.value })}
+          />
+        </Form.Group>
+
+        <Row className="mb-3">
+          <Col md={3} className="text-md-end pt-md-2">
+            <Form.Label htmlFor="wd-points">Points</Form.Label>
+          </Col>
+          <Col md={9}>
+            <Form.Control
+              id="wd-points"
+              type="number"
+              value={assignment.points ?? 0}
+              onChange={(e) =>
+                setAssignment({
+                  ...assignment,
+                  points: e.target.value === "" ? 0 : parseInt(e.target.value),
+                })
+              }
+            />
+          </Col>
+        </Row>
+
+        <Row className="mb-3">
+          <Col md={3} className="text-md-end pt-md-2">
+            <Form.Label htmlFor="wd-group">Assignment Group</Form.Label>
+          </Col>
+          <Col md={9}>
+            <Form.Select id="wd-group" defaultValue="ASSIGNMENTS" className="form-control">
+              <option value="ASSIGNMENTS">ASSIGNMENTS</option>
+              <option value="QUIZZES">QUIZZES</option>
+              <option value="EXAMS">EXAMS</option>
+              <option value="PROJECT">PROJECT</option>
+            </Form.Select>
+          </Col>
+        </Row>
+
+        <Row className="mb-3">
+          <Col md={3} className="text-md-end pt-md-2">
+            <Form.Label htmlFor="wd-display-grade-as">Display Grade as</Form.Label>
+          </Col>
+          <Col md={9}>
+            <Form.Select id="wd-display-grade-as" defaultValue="PERCENTAGE" className="form-control">
+              <option value="PERCENTAGE">Percentage</option>
+              <option value="POINTS">Points</option>
+            </Form.Select>
+          </Col>
+        </Row>
+
+        <Row className="mb-3">
+          <Col md={3} className="text-md-end pt-md-2">
+            <Form.Label htmlFor="wd-submission-type">Submission Type</Form.Label>
+          </Col>
+          <Col md={9}>
+            <div className="border rounded p-3">
+              <Form.Select id="wd-submission-type" defaultValue="ONLINE" className="form-control mb-3">
+                <option value="ONLINE">Online</option>
+                <option value="ON_PAPER">On Paper</option>
+              </Form.Select>
+              <Form.Label className="fw-bold">Online Entry Options</Form.Label>
+              <Form.Check id="wd-text-entry" label="Text Entry" defaultChecked />
+              <Form.Check id="wd-website-url" label="Website URL" defaultChecked />
+              <Form.Check id="wd-media-recordings" label="Media Recordings" />
+              <Form.Check id="wd-student-annotation" label="Student Annotation" />
+              <Form.Check id="wd-file-upload" label="File Uploads" />
+            </div>
+          </Col>
+        </Row>
+
+        <Row className="mb-3">
+          <Col md={3} className="text-md-end pt-md-2">
+            <Form.Label htmlFor="wd-assign-to">Assign</Form.Label>
+          </Col>
+          <Col md={9}>
+            <div className="border rounded p-3">
+              <Form.Group className="mb-3" controlId="wd-assign-to">
+                <Form.Label className="fw-bold">Assign to</Form.Label>
+                <Form.Control defaultValue="Everyone" />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="wd-due-date">
+                <Form.Label className="fw-bold">Due</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={assignment.dueDate || ""}
+                  onChange={(e) => setAssignment({ ...assignment, dueDate: e.target.value })}
+                />
+              </Form.Group>
+
+              <Row>
+                <Col md={6}>
+                  <Form.Group controlId="wd-available-from">
+                    <Form.Label className="fw-bold">Available from</Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={assignment.availableFrom || ""}
+                      onChange={(e) => setAssignment({ ...assignment, availableFrom: e.target.value })}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group controlId="wd-available-until">
+                    <Form.Label className="fw-bold">Until</Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={assignment.availableUntil || ""}
+                      onChange={(e) => setAssignment({ ...assignment, availableUntil: e.target.value })}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+            </div>
+          </Col>
+        </Row>
+
+        <hr />
+
+        {/* Save keeps the changes. Cancel drops them. */}
+        <div className="clearfix mb-3">
+          <Button id="wd-save-btn" onClick={save} className="btn btn-danger float-end">
+            Save
+          </Button>
+          <Link href={`/Courses/${cid}/Assignments`} id="wd-cancel-btn"
+                className="btn btn-secondary me-2 float-end">
+            Cancel
+          </Link>
+        </div>
+      </Form>
+    </div>
+  );
 }

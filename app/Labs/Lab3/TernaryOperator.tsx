@@ -1,3 +1,4 @@
+// The ? : operator picks one of two results.
 export default function TernaryOperator() {
   let loggedIn = true;
   return (
