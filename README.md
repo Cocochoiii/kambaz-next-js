@@ -59,6 +59,7 @@ Faculty and Admin can edit. A Student only reads.
 
 | Screen | Faculty and Admin | Student |
 | --- | --- | --- |
+| Home | the Course Status box on the right | it is not there |
 | Dashboard | the course form, and the card menu | Enroll and Unenroll |
 | Dashboard | every course | only published courses |
 | Modules | add, rename, delete, publish | read only |

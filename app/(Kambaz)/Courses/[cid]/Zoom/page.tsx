@@ -9,6 +9,7 @@ import { Button, Nav, Table } from "react-bootstrap";
 import { FaVideo } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
+import { useIsFaculty } from "../../../Account/roles";
 import MeetingEditor from "./MeetingEditor";
 import { setMeetings, addMeeting, deleteMeeting } from "./reducer";
 import * as coursesClient from "../../client";
@@ -45,7 +46,7 @@ export default function Zoom() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const dispatch = useDispatch();
 
-  const isFaculty = currentUser?.role === "FACULTY";
+  const isFaculty = useIsFaculty();
 
   const courseMeetings = meetings.filter((m: any) => m.course === cid);
   const upcoming = courseMeetings.filter((m: any) => !m.past);

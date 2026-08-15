@@ -31,3 +31,13 @@ grep_check "Course Status publish wired" \
   "wd-publish-course" "app/(Kambaz)/Courses/[cid]/Home/Status.tsx"
 grep_check "announcement Edit wired" \
   "openEdit" "app/(Kambaz)/Courses/[cid]/Announcements/page.tsx"
+grep_check "Student View reaches Zoom" \
+  "useIsFaculty" "app/(Kambaz)/Courses/[cid]/Zoom/page.tsx"
+grep_check "Student View reaches Grades" \
+  "useIsFaculty" "app/(Kambaz)/Courses/[cid]/Grades/page.tsx"
+grep_check "Student View reaches the Inbox" \
+  "useIsFaculty" "app/(Kambaz)/Inbox/page.tsx"
+grep_check "Student View reaches the course tray" \
+  "useIsFaculty" "app/(Kambaz)/Navigation.tsx"
+grep_check "Course Status hides for a student" \
+  "if (!isFaculty)" "app/(Kambaz)/Courses/[cid]/Home/Status.tsx"

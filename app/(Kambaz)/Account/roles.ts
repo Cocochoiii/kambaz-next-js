@@ -9,19 +9,27 @@ function roleOf(currentUser: any) {
   return currentUser && currentUser.role ? currentUser.role : "";
 }
 
-// True for a real Faculty or Admin, even during the preview.
-export function useIsRealFaculty(): boolean {
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
+// The two plain functions. A screen that already reads the store
+// can call these without another hook.
+export function isRealFaculty(currentUser: any): boolean {
   const role = roleOf(currentUser);
   return role === "FACULTY" || role === "ADMIN";
 }
 
-// True only when the screen should show the editing controls.
+export function isFacultyNow(currentUser: any, viewAsStudent: boolean): boolean {
+  return isRealFaculty(currentUser) && !viewAsStudent;
+}
+
+// The two hooks. They read the store for me, so a screen only
+// needs one line. Both shapes give the same answer.
+export function useIsRealFaculty(): boolean {
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  return isRealFaculty(currentUser);
+}
+
 export function useIsFaculty(): boolean {
   const { currentUser, viewAsStudent } = useSelector(
     (state: any) => state.accountReducer
   );
-  const role = roleOf(currentUser);
-  const canEdit = role === "FACULTY" || role === "ADMIN";
-  return canEdit && !viewAsStudent;
+  return isFacultyNow(currentUser, viewAsStudent);
 }

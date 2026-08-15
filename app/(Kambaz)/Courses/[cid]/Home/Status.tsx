@@ -2,7 +2,7 @@
 
 // The Course Status box on the Home screen.
 // Publish and Unpublish are real. They change the course.
-// The buttons under them only show the Canvas layout.
+// Canvas shows this box to a teacher only, so a student sees nothing.
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
@@ -26,6 +26,12 @@ export default function CourseStatus() {
   const course = courses.find((one: any) => one._id === cid);
   const published = course ? course.published !== false : true;
 
+  // A student never sees this box. Student View counts as a student,
+  // so the whole right column goes away during the preview.
+  if (!isFaculty) {
+    return null;
+  }
+
   // One PUT, then the store. The Dashboard card follows right away.
   const setPublished = async (next: boolean) => {
     if (!course || next === published) {
@@ -47,7 +53,6 @@ export default function CourseStatus() {
             variant={published ? "secondary" : "dark"}
             size="lg"
             className="w-100 text-nowrap"
-            disabled={!isFaculty}
             onClick={() => setPublished(false)}
           >
             <MdDoNotDisturbAlt className="me-2 fs-5" /> Unpublish
@@ -59,7 +64,6 @@ export default function CourseStatus() {
             variant={published ? "success" : "outline-success"}
             size="lg"
             className="w-100"
-            disabled={!isFaculty}
             onClick={() => setPublished(true)}
           >
             <FaCheckCircle className="me-2 fs-5" /> Publish

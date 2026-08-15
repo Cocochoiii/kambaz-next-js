@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { Button, Table } from "react-bootstrap";
 import { FaEyeSlash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import { useIsFaculty } from "../../../Account/roles";
 import GradeEditor from "./GradeEditor";
 import { setGrades, saveGrade as saveGradeAction, releaseGrades } from "./reducer";
 import { setAssignments } from "../Assignments/reducer";
@@ -50,7 +51,7 @@ export default function Grades() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const dispatch = useDispatch();
 
-  const isFaculty = currentUser?.role === "FACULTY";
+  const isFaculty = useIsFaculty();
 
   // The cell I am editing, and its score.
   const [cell, setCell] = useState<any>(null);

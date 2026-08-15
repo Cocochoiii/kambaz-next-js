@@ -8,6 +8,7 @@ import { Badge, Button, Col, ListGroup, Row } from "react-bootstrap";
 import { FaTrash } from "react-icons/fa6";
 import { FaUserCircle, FaEnvelope, FaEnvelopeOpen } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import { useIsFaculty } from "../Account/roles";
 import MessageEditor from "./MessageEditor";
 import { setMessages, updateMessage, deleteMessage } from "./reducer";
 import * as client from "./client";
@@ -44,7 +45,7 @@ export default function Inbox() {
   });
 
   const myId = currentUser ? currentUser._id : "";
-  const isFaculty = currentUser?.role === "FACULTY";
+  const isFaculty = useIsFaculty();
 
   // Compose uses my courses. Faculty sees every course.
   const myCourses = isFaculty

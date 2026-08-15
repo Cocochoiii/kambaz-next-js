@@ -7,6 +7,7 @@ import { ListGroup } from "react-bootstrap";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
+import { useIsFaculty } from "./Account/roles";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { IoCalendarOutline } from "react-icons/io5";
 import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
@@ -34,8 +35,11 @@ export default function KambazNavigation() {
   const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
 
   // Faculty sees every course. A student sees only their courses.
+  // Student View counts as a student here too, so the tray matches
+  // what the course screens show during the preview.
+  const isFaculty = useIsFaculty();
   const myCourses =
-    currentUser?.role === "FACULTY"
+    isFaculty
       ? courses
       : courses.filter((course: any) =>
           enrollments.some(
