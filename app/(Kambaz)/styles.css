@@ -149,3 +149,85 @@ html, body {
 .wd-quiz-list-item {
   border-left: 3px solid green !important;
 }
+
+/* The three dots menu. I copied the sizes from Canvas. */
+.wd-kebab-box {
+  position: relative;
+  display: inline-block;
+}
+
+/* A round button, 28 by 28, like every icon button in Canvas. */
+.wd-kebab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: #2d3b45;
+  font-size: 18px;
+  cursor: pointer;
+}
+.wd-kebab:hover {
+  background: rgba(0, 0, 0, .07);
+}
+/* The blue square of the browser is ugly, so I draw my own ring. */
+.wd-kebab:focus {
+  outline: none;
+}
+.wd-kebab:focus-visible {
+  box-shadow: 0 0 0 2px #0374b5;
+}
+
+/* White dots, for the colored top of a Dashboard card. */
+.wd-kebab-light {
+  color: #fff;
+}
+.wd-kebab-light:hover {
+  background: rgba(0, 0, 0, .28);
+}
+
+/* A clear sheet over the page. It catches the click that closes the menu. */
+.wd-kebab-sheet {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1999;
+}
+
+.wd-kebab-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 2000;
+  min-width: 190px;
+  padding: 4px 0;
+  background: #fff;
+  border: 1px solid #c7cdd1;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .12);
+  text-align: left;
+}
+.wd-kebab-menu button {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  border: 0;
+  background: none;
+  color: #2d3b45;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: left;
+  white-space: nowrap;
+}
+.wd-kebab-menu button:hover {
+  background: #f5f5f5;
+}
+.wd-kebab-menu button.wd-kebab-danger {
+  color: #e0061f;
+}

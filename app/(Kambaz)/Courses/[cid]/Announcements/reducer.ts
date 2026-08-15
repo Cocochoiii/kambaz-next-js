@@ -16,6 +16,11 @@ const announcementsSlice = createSlice({
     addAnnouncement: (state, { payload: announcement }) => {
       state.announcements = [announcement, ...state.announcements] as any;
     },
+    updateAnnouncement: (state, { payload: announcement }) => {
+      state.announcements = state.announcements.map((a: any) =>
+        a._id === announcement._id ? announcement : a
+      ) as any;
+    },
     deleteAnnouncement: (state, { payload: announcementId }) => {
       state.announcements = state.announcements.filter(
         (a: any) => a._id !== announcementId
@@ -24,6 +29,10 @@ const announcementsSlice = createSlice({
   },
 });
 
-export const { setAnnouncements, addAnnouncement, deleteAnnouncement } =
-  announcementsSlice.actions;
+export const {
+  setAnnouncements,
+  addAnnouncement,
+  updateAnnouncement,
+  deleteAnnouncement,
+} = announcementsSlice.actions;
 export default announcementsSlice.reducer;

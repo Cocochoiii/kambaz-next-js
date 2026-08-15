@@ -16,7 +16,7 @@ export default function Signup() {
     username: "",
     password: "",
     verify: "",
-    role: "STUDENT",
+    role: "FACULTY",
   });
   const [error, setError] = useState("");
   const dispatch = useDispatch();
@@ -47,7 +47,7 @@ export default function Signup() {
   };
 
   return (
-    <div id="wd-signup-screen">
+    <div id="wd-signup-screen" style={{ maxWidth: 300 }}>
       <h1>Sign up</h1>
 
       {error && <Alert variant="danger" id="wd-signup-error">{error}</Alert>}
@@ -81,8 +81,8 @@ export default function Signup() {
         value={user.role}
         onChange={(e) => setUser({ ...user, role: e.target.value })}
       >
-        <option value="STUDENT">Student</option>
         <option value="FACULTY">Faculty</option>
+        <option value="STUDENT">Student</option>
         <option value="ADMIN">Admin</option>
         <option value="USER">User</option>
       </Form.Select>

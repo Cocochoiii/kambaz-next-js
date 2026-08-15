@@ -44,7 +44,7 @@ export default function Signin() {
   };
 
   return (
-    <div id="wd-signin-screen">
+    <div id="wd-signin-screen" style={{ maxWidth: 300 }}>
       <h1>Sign in</h1>
 
       {error && <Alert variant="danger" id="wd-signin-error">{error}</Alert>}
@@ -79,6 +79,7 @@ export default function Signin() {
       <div className="text-muted small mt-3" id="wd-signin-accounts">
         <div><b>Faculty:</b> iron_man / stark123</div>
         <div><b>Student:</b> coco / 123</div>
+        <div><b>Admin:</b> admin / admin123</div>
       </div>
     </div>
   );

@@ -33,7 +33,7 @@ export default function KambazNavigation() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
 
-  // Faculty sees every course. A student sees the enrolled ones.
+  // Faculty sees every course. A student sees only their courses.
   const myCourses =
     currentUser?.role === "FACULTY"
       ? courses

@@ -11,6 +11,7 @@ import GradeEditor from "./GradeEditor";
 import { setGrades, saveGrade as saveGradeAction, releaseGrades } from "./reducer";
 import { setAssignments } from "../Assignments/reducer";
 import * as coursesClient from "../../client";
+import { isFacultyNow } from "../../../Account/roles";
 
 // I cut the date myself, so the server and the browser agree.
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -47,10 +48,12 @@ export default function Grades() {
 
   const { grades } = useSelector((state: any) => state.gradesReducer);
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { currentUser, viewAsStudent } = useSelector(
+    (state: any) => state.accountReducer
+  );
   const dispatch = useDispatch();
 
-  const isFaculty = currentUser?.role === "FACULTY";
+  const isFaculty = isFacultyNow(currentUser, viewAsStudent);
 
   // The cell I am editing, and its score.
   const [cell, setCell] = useState<any>(null);

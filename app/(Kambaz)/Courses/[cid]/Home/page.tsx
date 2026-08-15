@@ -1,5 +1,6 @@
 // The Home screen. Modules on the left, Course Status on the right.
 // The Course Status hides first when the window gets narrow.
+// It draws nothing for a student, so the modules take the whole row.
 import Modules from "../Modules/page";
 import CourseStatus from "./Status";
 

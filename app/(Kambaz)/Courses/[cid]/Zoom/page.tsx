@@ -13,6 +13,7 @@ import MeetingEditor from "./MeetingEditor";
 import { setMeetings, addMeeting, deleteMeeting } from "./reducer";
 import * as coursesClient from "../../client";
 import * as meetingsClient from "./client";
+import { isFacultyNow } from "../../../Account/roles";
 
 // I cut the time myself, so the server and the browser agree.
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -42,10 +43,12 @@ export default function Zoom() {
   });
 
   const { meetings } = useSelector((state: any) => state.meetingsReducer);
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { currentUser, viewAsStudent } = useSelector(
+    (state: any) => state.accountReducer
+  );
   const dispatch = useDispatch();
 
-  const isFaculty = currentUser?.role === "FACULTY";
+  const isFaculty = isFacultyNow(currentUser, viewAsStudent);
 
   const courseMeetings = meetings.filter((m: any) => m.course === cid);
   const upcoming = courseMeetings.filter((m: any) => !m.past);

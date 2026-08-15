@@ -92,6 +92,7 @@ They read the server too, in the same way as the modules.
 | Zoom | the server. Faculty can add and remove |
 | People | the server joins the users and the enrollments |
 | Grade Book | the server. Faculty can change a score and release |
+| Users | the server. Admin and Faculty can add, edit and delete a user |
 | Inbox | the server. I can read, send and delete a message |
 | Calendar | the server. A month grid and an agenda |
 
@@ -101,6 +102,19 @@ has two tabs. Month draws a grid, and a click on a day opens that day.
 Agenda groups everything by day in one long list.
 
 Piazza is still an empty screen.
+
+## What Faculty can do
+
+A Faculty or an Admin sees controls that a Student does not.
+
+- Publish or unpublish a course, a module, a lesson and an assignment
+- A three dots menu on a card and on a row, the way Canvas does it
+- Rename, duplicate, move and delete a lesson
+- Publish All, which sends one PUT for every module
+- Student View, a preview that hides all of those controls again
+
+A Student never sees a course, a module or an assignment that is not
+published.
 
 No screen reads a JSON file any more. All the data lives on the server.
 

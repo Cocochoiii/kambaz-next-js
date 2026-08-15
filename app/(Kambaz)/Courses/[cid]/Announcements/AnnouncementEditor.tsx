@@ -1,7 +1,8 @@
 "use client";
 
-// The dialog for a new announcement. It is the same shape as ModuleEditor.
+// The dialog for one announcement. It is the same shape as ModuleEditor.
 // The two fields live in the Announcements screen.
+// The same dialog posts a new one and saves an old one.
 import { Modal, Form, Button } from "react-bootstrap";
 
 export default function AnnouncementEditor({
@@ -11,6 +12,7 @@ export default function AnnouncementEditor({
   announcement,
   setAnnouncement,
   addAnnouncement,
+  buttonLabel = "Post Announcement",
 }: {
   show: boolean;
   handleClose: () => void;
@@ -18,6 +20,7 @@ export default function AnnouncementEditor({
   announcement: { title: string; content: string };
   setAnnouncement: (announcement: { title: string; content: string }) => void;
   addAnnouncement: () => void;
+  buttonLabel?: string;
 }) {
   return (
     <Modal show={show} onHide={handleClose}>
@@ -55,7 +58,7 @@ export default function AnnouncementEditor({
             handleClose();
           }}
         >
-          Post Announcement
+          {buttonLabel}
         </Button>
       </Modal.Footer>
     </Modal>

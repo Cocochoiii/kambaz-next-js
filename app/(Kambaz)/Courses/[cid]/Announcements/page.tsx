@@ -10,7 +10,14 @@ import { FaTrash } from "react-icons/fa6";
 import { BsThreeDots, BsSearch } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import AnnouncementEditor from "./AnnouncementEditor";
-import { setAnnouncements, addAnnouncement, deleteAnnouncement } from "./reducer";
+import KebabMenu from "../../../KebabMenu";
+import { isFacultyNow } from "../../../Account/roles";
+import {
+  setAnnouncements,
+  addAnnouncement,
+  updateAnnouncement,
+  deleteAnnouncement,
+} from "./reducer";
 import * as coursesClient from "../../client";
 import * as announcementsClient from "./client";
 
@@ -30,13 +37,15 @@ export default function Announcements() {
 
   const [search, setSearch] = useState("");
   const [show, setShow] = useState(false);
-  const [announcement, setAnnouncement] = useState({ title: "", content: "" });
+  const [announcement, setAnnouncement] = useState<any>({ title: "", content: "" });
 
   const { announcements } = useSelector((state: any) => state.announcementsReducer);
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { currentUser, viewAsStudent } = useSelector(
+    (state: any) => state.accountReducer
+  );
   const dispatch = useDispatch();
 
-  const isFaculty = currentUser?.role === "FACULTY";
+  const isFaculty = isFacultyNow(currentUser, viewAsStudent);
 
   // Keep this course, then keep what matches the search.
   const shown = announcements
@@ -57,18 +66,47 @@ export default function Announcements() {
     }
   }, [cid]);
 
-  const post = async () => {
+  // The same dialog posts a new announcement and saves an old one.
+  // An announcement with an _id already exists, so I save it.
+  const save = async () => {
     if (!announcement.title) { return; }
+    if (announcement._id) {
+      const updated = await announcementsClient.updateAnnouncement(announcement);
+      dispatch(updateAnnouncement(updated ? updated : announcement));
+    } else {
+      const created = await coursesClient.createAnnouncementForCourse(cid, {
+        ...announcement,
+        author: currentUser
+          ? `${currentUser.firstName} ${currentUser.lastName}`
+          : "Instructor",
+        section: "All Sections",
+        read: false,
+      });
+      dispatch(addAnnouncement(created));
+    }
+    setAnnouncement({ title: "", content: "" });
+  };
+
+  const openNew = () => {
+    setAnnouncement({ title: "", content: "" });
+    setShow(true);
+  };
+
+  const openEdit = (item: any) => {
+    setAnnouncement(item);
+    setShow(true);
+  };
+
+  // Copy one announcement. The server gives the copy a new id.
+  const duplicate = async (item: any) => {
     const created = await coursesClient.createAnnouncementForCourse(cid, {
-      ...announcement,
-      author: currentUser
-        ? `${currentUser.firstName} ${currentUser.lastName}`
-        : "Instructor",
-      section: "All Sections",
+      title: `${item.title} (copy)`,
+      content: item.content,
+      author: item.author,
+      section: item.section,
       read: false,
     });
     dispatch(addAnnouncement(created));
-    setAnnouncement({ title: "", content: "" });
   };
 
   const remove = async (announcementId: string) => {
@@ -86,7 +124,7 @@ export default function Announcements() {
           <button
             id="wd-add-announcement"
             className="btn btn-lg btn-danger float-end"
-            onClick={() => setShow(true)}
+            onClick={openNew}
           >
             + Announcement
           </button>
@@ -108,10 +146,11 @@ export default function Announcements() {
       <AnnouncementEditor
         show={show}
         handleClose={() => setShow(false)}
-        dialogTitle="New Announcement"
+        dialogTitle={announcement._id ? "Edit Announcement" : "New Announcement"}
         announcement={announcement}
         setAnnouncement={setAnnouncement}
-        addAnnouncement={post}
+        addAnnouncement={save}
+        buttonLabel={announcement._id ? "Save" : "Post Announcement"}
       />
 
       <ul id="wd-announcement-list" className="list-group rounded-0">
@@ -137,7 +176,22 @@ export default function Announcements() {
                   onClick={() => remove(item._id)}
                 />
               )}
-              <BsThreeDots className="fs-4" />
+              {isFaculty ? (
+                <KebabMenu
+                  variant="dark"
+                  items={[
+                    { label: "Edit", onClick: () => openEdit(item) },
+                    { label: "Duplicate", onClick: () => duplicate(item) },
+                    {
+                      label: "Delete",
+                      danger: true,
+                      onClick: () => remove(item._id),
+                    },
+                  ]}
+                />
+              ) : (
+                <BsThreeDots className="fs-4" />
+              )}
             </div>
           </li>
         ))}

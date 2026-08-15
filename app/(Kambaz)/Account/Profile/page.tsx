@@ -47,7 +47,7 @@ export default function Profile() {
   }
 
   return (
-    <div id="wd-profile-screen">
+    <div id="wd-profile-screen" style={{ maxWidth: 300 }}>
       <h1>Profile</h1>
 
       {message && <Alert variant="info" id="wd-profile-message">{message}</Alert>}

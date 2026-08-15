@@ -34,17 +34,15 @@ export const signout = async () => {
   return data;
 };
 
-export const updateUser = async (user: any) => {
-  const { data } = await axiosWithCredentials.put(
-    `${USERS_API}/${user._id}`,
-    user
-  );
-  return data;
-};
-
 // The courses of the user who is signed in.
 export const findMyCourses = async () => {
   const { data } = await axiosWithCredentials.get(`${USERS_API}/current/courses`);
+  return data;
+};
+
+// The courses of any user, by their key.
+export const findCoursesForUser = async (userId: string) => {
+  const { data } = await axiosWithCredentials.get(`${USERS_API}/${userId}/courses`);
   return data;
 };
 
@@ -54,5 +52,46 @@ export const createCourse = async (course: any) => {
     `${USERS_API}/current/courses`,
     course
   );
+  return data;
+};
+
+// The Users screen. Every user in the database.
+export const findAllUsers = async () => {
+  const { data } = await axiosWithCredentials.get(USERS_API);
+  return data;
+};
+
+// The server filters by role. The role goes in the query string.
+export const findUsersByRole = async (role: string) => {
+  const { data } = await axiosWithCredentials.get(`${USERS_API}?role=${role}`);
+  return data;
+};
+
+// The server filters by a part of the first or the last name.
+export const findUsersByPartialName = async (name: string) => {
+  const { data } = await axiosWithCredentials.get(`${USERS_API}?name=${name}`);
+  return data;
+};
+
+export const findUserById = async (userId: string) => {
+  const { data } = await axiosWithCredentials.get(`${USERS_API}/${userId}`);
+  return data;
+};
+
+export const createUser = async (user: any) => {
+  const { data } = await axiosWithCredentials.post(USERS_API, user);
+  return data;
+};
+
+export const updateUser = async (user: any) => {
+  const { data } = await axiosWithCredentials.put(
+    `${USERS_API}/${user._id}`,
+    user
+  );
+  return data;
+};
+
+export const deleteUser = async (userId: string) => {
+  const { data } = await axiosWithCredentials.delete(`${USERS_API}/${userId}`);
   return data;
 };

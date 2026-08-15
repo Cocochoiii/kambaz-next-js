@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import MessageEditor from "./MessageEditor";
 import { setMessages, updateMessage, deleteMessage } from "./reducer";
 import * as client from "./client";
+import { isFacultyNow } from "../Account/roles";
 
 // I cut the date myself, so the server and the browser agree.
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -31,7 +32,9 @@ function longDate(date?: string) {
 
 export default function Inbox() {
   const { messages } = useSelector((state: any) => state.messagesReducer);
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { currentUser, viewAsStudent } = useSelector(
+    (state: any) => state.accountReducer
+  );
   const { courses } = useSelector((state: any) => state.coursesReducer);
   const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
   const dispatch = useDispatch();
@@ -44,7 +47,7 @@ export default function Inbox() {
   });
 
   const myId = currentUser ? currentUser._id : "";
-  const isFaculty = currentUser?.role === "FACULTY";
+  const isFaculty = isFacultyNow(currentUser, viewAsStudent);
 
   // Compose uses my courses. Faculty sees every course.
   const myCourses = isFaculty

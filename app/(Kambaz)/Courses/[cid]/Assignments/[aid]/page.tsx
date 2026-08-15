@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAssignments, addAssignment, updateAssignment } from "../reducer";
 import * as coursesClient from "../../../client";
 import * as assignmentsClient from "../client";
+import { isFacultyNow } from "../../../../Account/roles";
 
 export default function AssignmentEditor() {
   const params = useParams<{ cid: string; aid: string }>();
@@ -53,6 +54,32 @@ export default function AssignmentEditor() {
       fetchAssignments();
     }
   }, [cid, aid]);
+
+  const { currentUser, viewAsStudent } = useSelector(
+    (state: any) => state.accountReducer
+  );
+  const isFaculty = isFacultyNow(currentUser, viewAsStudent);
+
+  // A student only reads the assignment. There is no form for them.
+  if (!isFaculty) {
+    return (
+      <div id="wd-assignment-details">
+        <h2 className="text-danger">{assignment.title}</h2>
+        <hr />
+        <p style={{ whiteSpace: "pre-wrap" }}>{assignment.description}</p>
+        <ul className="list-unstyled">
+          <li className="mb-1"><b>Points:</b> {assignment.points}</li>
+          <li className="mb-1"><b>Due:</b> {assignment.dueDate || "-"}</li>
+          <li className="mb-1"><b>Available from:</b> {assignment.availableFrom || "-"}</li>
+          <li className="mb-1"><b>Until:</b> {assignment.availableUntil || "-"}</li>
+        </ul>
+        <hr />
+        <Link href={`/Courses/${cid}/Assignments`} className="btn btn-secondary">
+          Back to Assignments
+        </Link>
+      </div>
+    );
+  }
 
   const save = async () => {
     if (isNew) {
