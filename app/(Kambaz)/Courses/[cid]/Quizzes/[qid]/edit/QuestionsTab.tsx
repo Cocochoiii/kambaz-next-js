@@ -1,78 +1,129 @@
 "use client";
 
+// The Questions tab of the Quiz Editor.
+// A new question lands at the bottom of the list in preview mode.
+// Edit opens one question. The list is saved with the quiz.
 import { useState } from "react";
 import { Button } from "react-bootstrap";
-import { v4 as uuid } from "uuid";
-import { totalPoints } from "../../helpers";
+import { FaPlus, FaTrash } from "react-icons/fa6";
 import QuestionEditor from "./QuestionEditor";
+import { newId, questionsOf, totalPoints } from "../../helpers";
 
-const typeLabel = (t: string) =>
-    t === "TRUE_FALSE" ? "True/False" : t === "FILL_BLANK" ? "Fill in the Blank" : "Multiple Choice";
+// The name of a type, for the preview card.
+function typeName(type: string) {
+  if (type === "TRUE_FALSE") { return "True/False"; }
+  if (type === "FILL_BLANK") { return "Fill in the Blank"; }
+  return "Multiple Choice";
+}
 
-// A fresh multiple-choice question (the default type).
-const blankQuestion = () => ({
-    _id: uuid(),
+// A brand new question. Multiple choice is the default type.
+function blankQuestion() {
+  return {
+    _id: newId(),
     type: "MULTIPLE_CHOICE",
     title: "New Question",
     points: 1,
     question: "",
     choices: [
-        { _id: uuid(), text: "", correct: true },
-        { _id: uuid(), text: "", correct: false },
+      { _id: newId(), text: "", correct: true },
+      { _id: newId(), text: "", correct: false },
     ],
     correctAnswer: true,
     answers: [""],
-});
+  };
+}
 
-// Questions tab: show the question list, add a new one, and edit or delete each.
-export default function QuestionsTab({ quiz, setQuiz }: any) {
-    const questions: any[] = Array.isArray(quiz.questions) ? quiz.questions : [];
-    const [editingId, setEditingId] = useState<string | null>(null);
+export default function QuestionsTab({
+  quiz,
+  setQuiz,
+}: {
+  quiz: any;
+  setQuiz: (quiz: any) => void;
+}) {
+  const questions = questionsOf(quiz);
+  // Only one question is open at a time. Null means none is open.
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-    const setQuestions = (qs: any[]) =>
-        setQuiz((prev: any) => ({ ...prev, questions: qs, points: qs.reduce((s, q) => s + (Number(q.points) || 0), 0) }));
+  // The points of the quiz follow the points of the questions.
+  const setQuestions = (list: any[]) => {
+    const points = list.reduce((sum, q) => sum + (Number(q.points) || 0), 0);
+    setQuiz({ ...quiz, questions: list, points });
+  };
 
-    const addQuestion = () => {
-        // New questions appear as a preview card; click Edit to edit them.
-        setQuestions([...questions, blankQuestion()]);
-    };
-    const saveQuestion = (updated: any) => {
-        setQuestions(questions.map((q) => (q._id === updated._id ? updated : q)));
-        setEditingId(null);
-    };
-    const removeQuestion = (id: string) => setQuestions(questions.filter((q) => q._id !== id));
+  const addQuestion = () => {
+    setQuestions([...questions, blankQuestion()]);
+  };
 
-    return (
-        <div>
-            <div className="text-muted mb-3">Points {totalPoints(quiz)}</div>
+  const saveQuestion = (question: any) => {
+    setQuestions(questions.map((q: any) => (q._id === question._id ? question : q)));
+    setEditingId(null);
+  };
 
-            {questions.length === 0 && <div className="text-muted mb-3">No questions yet.</div>}
+  const removeQuestion = (questionId: string) => {
+    if (window.confirm("Are you sure you want to remove this question?")) {
+      setQuestions(questions.filter((q: any) => q._id !== questionId));
+    }
+  };
 
-            {questions.map((q) => (
-                <div key={q._id} className="border rounded mb-3">
-                    {editingId === q._id ? (
-                        <QuestionEditor question={q} onSave={saveQuestion} onCancel={() => setEditingId(null)} />
-                    ) : (
-                        <div className="p-3">
-                            <div className="d-flex justify-content-between align-items-start">
-                                <div className="fw-semibold">
-                                    {q.title} <span className="text-muted small">· {typeLabel(q.type)}</span>
-                                </div>
-                                <div className="d-flex gap-2 align-items-center">
-                                    <span className="text-muted small">{Number(q.points) || 0} pts</span>
-                                    <Button size="sm" variant="outline-secondary" onClick={() => setEditingId(q._id)}>Edit</Button>
-                                    <Button size="sm" variant="outline-danger" onClick={() => removeQuestion(q._id)}>Delete</Button>
-                                </div>
-                            </div>
-                            {q.question && <div className="mt-2" dangerouslySetInnerHTML={{ __html: q.question }} />}
-                        </div>
-                    )}
-                </div>
-            ))}
+  return (
+    <div id="wd-quiz-questions">
+      <p className="fw-bold">Points {totalPoints(quiz)}</p>
 
-            <div className="text-center">
-                <Button variant="outline-secondary" onClick={addQuestion}>+ New Question</Button>
-            </div>
+      {questions.length === 0 && (
+        <p className="text-muted">
+          There are no questions yet. Click + New Question to add one.
+        </p>
+      )}
+
+      {questions.map((question: any) => (
+        <div key={question._id} className="border mb-3">
+          {editingId === question._id ? (
+            <QuestionEditor
+              question={question}
+              onSave={saveQuestion}
+              onCancel={() => setEditingId(null)}
+            />
+          ) : (
+            <>
+              {/* The preview card a new question shows first. */}
+              <div className="bg-secondary p-2 d-flex align-items-center">
+                <b className="flex-fill">
+                  {question.title} <span className="fw-normal">
+                    ({typeName(question.type)})
+                  </span>
+                </b>
+                <span className="me-3">{Number(question.points) || 0} pts</span>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="me-2"
+                  onClick={() => setEditingId(question._id)}
+                >
+                  Edit
+                </Button>
+                <FaTrash
+                  role="button"
+                  aria-label="Delete question"
+                  className="text-danger"
+                  onClick={() => removeQuestion(question._id)}
+                />
+              </div>
+              <div className="p-3">
+                <div
+                  dangerouslySetInnerHTML={{ __html: question.question || "" }}
+                />
+              </div>
+            </>
+          )}
         </div>
-    );
+      ))}
+
+      <div className="text-center">
+        <Button id="wd-new-question-btn" variant="secondary" onClick={addQuestion}>
+          <FaPlus className="me-2" />
+          New Question
+        </Button>
+      </div>
+    </div>
+  );
 }

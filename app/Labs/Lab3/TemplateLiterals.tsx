@@ -1,3 +1,4 @@
+// Back ticks let me put ${expressions} inside a string.
 export default function TemplateLiterals() {
   const five = 2 + 3;
   const result1 = "2 + 3 = " + five;

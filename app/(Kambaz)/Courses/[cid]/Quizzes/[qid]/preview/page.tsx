@@ -1,80 +1,132 @@
 "use client";
 
+// The Quiz Preview screen. Only a faculty comes here.
+// I answer the quiz like a student and I see the score.
+// Nothing is saved, because a preview is not a real attempt.
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
-import * as quizzesClient from "../../client";
-import { totalPoints } from "../../helpers";
 import QuizRunner from "../../QuizRunner";
-import { TopInfoRow, Instructions, AttemptHistory, SubmissionDetails } from "../../QuizChrome";
+import * as quizzesClient from "../../client";
+import { questionsOf, totalPoints } from "../../helpers";
+import { useIsFaculty } from "../../../../../Account/roles";
 
-// Faculty preview: take the quiz and see the score. Nothing is stored.
+function sameText(one: any, two: any) {
+  return String(one || "").trim().toLowerCase() ===
+    String(two || "").trim().toLowerCase();
+}
+
+// The same rule the server uses. Here it only makes the preview score.
+function isCorrect(question: any, given: any) {
+  if (question.type === "TRUE_FALSE") {
+    return given === true || given === false
+      ? given === (question.correctAnswer === true)
+      : false;
+  }
+  if (question.type === "FILL_BLANK") {
+    return (question.answers || []).some((answer: string) =>
+      sameText(answer, given)
+    );
+  }
+  const right = (question.choices || [])
+    .filter((choice: any) => choice.correct)
+    .map((choice: any) => choice._id);
+  const picked = given || [];
+  if (right.length === 0 || picked.length !== right.length) { return false; }
+  return right.every((id: string) => picked.includes(id));
+}
+
 export default function QuizPreview() {
-    const { cid, qid } = useParams<{ cid: string; qid: string }>();
-    const router = useRouter();
-    const [quiz, setQuiz] = useState<any>(null);
-    const [result, setResult] = useState<any>(null);
-    const { currentUser, viewAsStudent } = useSelector((s: any) => s.accountReducer);
-    const notFaculty = !!currentUser && (String(currentUser.role).toUpperCase() !== "FACULTY" || !!viewAsStudent);
+  const params = useParams<{ cid: string; qid: string }>();
+  const cid = params ? params.cid : "";
+  const qid = params ? params.qid : "";
+  const router = useRouter();
+  const isFaculty = useIsFaculty();
 
-    useEffect(() => {
-        (async () => setQuiz(await quizzesClient.getQuiz(qid).catch(() => null)))();
-    }, [qid]);
+  const [quiz, setQuiz] = useState<any>(null);
+  // done holds the answers and the score of the preview.
+  const [done, setDone] = useState<any>(null);
 
-    useEffect(() => {
-        // Preview is a faculty-only screen.
-        if (notFaculty) router.replace(`/Courses/${cid}/Quizzes/${qid}`);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [notFaculty]);
-    if (notFaculty) return null;
-    if (!quiz) return <div className="p-4 text-muted">Loading…</div>;
+  const fetchQuiz = async () => {
+    const found = await quizzesClient.findQuizById(qid);
+    setQuiz(found);
+  };
 
-    const points = totalPoints(quiz);
-    const showCorrect = !!quiz.showCorrectAnswers;
-
-    const onSubmit = async (arr: any[], meta: any, localScore: number) => {
-        const answersMap = Object.fromEntries(arr.map((x: any) => [x.questionId, x.answer]));
-        setResult({ answersMap, score: localScore, timeTaken: meta?.timeTaken || 0, submittedAt: new Date().toISOString() });
-        return { score: localScore };
-    };
-
-    const header = (
-        <div className="d-flex justify-content-between align-items-center mb-2">
-            <h3 className="mb-0">{quiz.title}</h3>
-            <Button variant="secondary" onClick={() => router.push(`/Courses/${cid}/Quizzes/${qid}/edit?tab=questions`)}>Edit Quiz</Button>
-        </div>
-    );
-
-    if (result) {
-        const synthetic = [{ _id: "preview", attemptNumber: 1, score: result.score, timeTaken: result.timeTaken, submittedAt: result.submittedAt }];
-        return (
-            <div className="p-4">
-                {header}
-                <div className="text-muted small mb-2">Preview — this attempt is not stored.</div>
-                <div className="row">
-                    <div className="col-lg-8">
-                        <TopInfoRow quiz={quiz} />
-                        <Instructions quiz={quiz} />
-                        <AttemptHistory attempts={synthetic} points={points} />
-                        <QuizRunner quiz={quiz} mode="review" initialAnswers={result.answersMap} showCorrect={showCorrect} />
-                        <div className="mt-3"><Button variant="dark" onClick={() => setResult(null)}>Retake Preview</Button></div>
-                    </div>
-                    <div className="col-lg-4">
-                        <SubmissionDetails last={synthetic[0]} best={result.score} points={points} />
-                    </div>
-                </div>
-            </div>
-        );
+  useEffect(() => {
+    if (qid) {
+      fetchQuiz();
     }
+  }, [qid]);
 
-    return (
-        <div className="p-4">
-            {header}
-            <div className="text-muted small mb-2">Preview of the published version — answers are not stored.</div>
-            <TopInfoRow quiz={quiz} />
-            <Instructions quiz={quiz} />
-            <QuizRunner quiz={quiz} mode="preview" onSubmit={onSubmit} showCorrect={showCorrect} />
-        </div>
-    );
+  // Preview is a faculty screen. A student goes to the details screen.
+  useEffect(() => {
+    if (!isFaculty) {
+      router.replace(`/Courses/${cid}/Quizzes/${qid}`);
+    }
+  }, [isFaculty, cid, qid, router]);
+
+  if (!isFaculty) {
+    return null;
+  }
+  if (!quiz) {
+    return <div id="wd-quiz-preview">Loading...</div>;
+  }
+
+  const points = totalPoints(quiz);
+
+  // I count the score here, because nothing goes to the server.
+  const finish = (list: any[]) => {
+    const map: any = {};
+    let score = 0;
+    for (const item of list) {
+      map[item.questionId] = item.answer;
+    }
+    for (const question of questionsOf(quiz)) {
+      if (isCorrect(question, map[question._id])) {
+        score = score + (Number(question.points) || 0);
+      }
+    }
+    setDone({ answers: map, score });
+  };
+
+  return (
+    <div id="wd-quiz-preview">
+      <div className="clearfix mb-3">
+        <Link
+          href={`/Courses/${cid}/Quizzes/${qid}/edit?tab=questions`}
+          id="wd-edit-quiz-from-preview"
+          className="btn btn-secondary float-end"
+        >
+          Edit Quiz
+        </Link>
+        <h2 className="m-0">{quiz.title}</h2>
+      </div>
+
+      <p className="text-muted">
+        This is a preview. My answers are not saved.
+      </p>
+      <hr />
+
+      {done ? (
+        <>
+          <p className="fw-bold">
+            Score: {done.score} out of {points}
+          </p>
+          <QuizRunner key="review" quiz={quiz} mode="review"
+                      initialAnswers={done.answers} />
+          <Button variant="secondary" onClick={() => setDone(null)}>
+            Preview Again
+          </Button>
+        </>
+      ) : (
+        <QuizRunner
+          key="preview"
+          quiz={quiz}
+          mode="preview"
+          onSubmit={(list: any[]) => finish(list)}
+        />
+      )}
+    </div>
+  );
 }

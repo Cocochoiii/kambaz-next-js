@@ -1,195 +1,354 @@
 "use client";
 
+// The Grades screen. Canvas shows two screens, so I do too.
+// Faculty sees the whole table. A student sees only their own scores.
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { useSelector } from "react-redux";
-import { useState, useEffect } from "react";
-import { Table, Button } from "react-bootstrap";
-import { FaFileExport } from "react-icons/fa";
-import * as assignmentsClient from "../Assignments/client";
-import * as submissionsClient from "../../../Submissions/client";
-import * as accountClient from "../../../Account/client";
+import { Button, Table } from "react-bootstrap";
+import { FaEyeSlash } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
 import { useIsFaculty } from "../../../Account/roles";
+import GradeEditor from "./GradeEditor";
+import { setGrades, saveGrade as saveGradeAction, releaseGrades } from "./reducer";
+import { setAssignments } from "../Assignments/reducer";
+import * as coursesClient from "../../client";
 
-// Escape one CSV cell.
-const csvCell = (value: any) => {
-    const s = String(value ?? "");
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-};
-// Trigger a client-side CSV download.
-const downloadCsv = (text: string, filename: string) => {
-    const blob = new Blob([text], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(url);
-};
+// I cut the date myself, so the server and the browser agree.
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function shortDate(date?: string | null) {
+  if (!date) { return "-"; }
+  const [, month, day] = date.slice(0, 10).split("-");
+  return `${MONTHS[Number(month) - 1]} ${Number(day)}`;
+}
+
+// Canvas shows only the part before the colon.
+function shortName(title: string) {
+  return title.split(":")[0];
+}
+
+// The letter for a percentage, the same scale Canvas uses.
+function letterGrade(percent: number) {
+  if (percent >= 93) { return "A"; }
+  if (percent >= 90) { return "A-"; }
+  if (percent >= 87) { return "B+"; }
+  if (percent >= 83) { return "B"; }
+  if (percent >= 80) { return "B-"; }
+  if (percent >= 77) { return "C+"; }
+  if (percent >= 73) { return "C"; }
+  if (percent >= 70) { return "C-"; }
+  if (percent >= 60) { return "D"; }
+  return "F";
+}
 
 export default function Grades() {
-    const { cid } = useParams<{ cid: string }>();
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const isFaculty = useIsFaculty();
+  const params = useParams<{ cid: string }>();
+  const cid = params ? params.cid : "";
 
-    const [assignments, setAssignments] = useState<any[]>([]);
-    const [submissions, setSubmissions] = useState<any[]>([]);
-    const [students, setStudents] = useState<any[]>([]);
+  const { grades } = useSelector((state: any) => state.gradesReducer);
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const dispatch = useDispatch();
 
-    // Load the course assignments, its submissions, and (for faculty) students.
-    useEffect(() => {
-        const load = async () => {
-            const [a, s] = await Promise.all([
-                assignmentsClient.findAssignmentsForCourse(cid).catch(() => []),
-                submissionsClient.findSubmissionsForCourse(cid).catch(() => []),
-            ]);
-            setAssignments(a);
-            setSubmissions(s);
-            if (isFaculty) {
-                const people = await accountClient.findUsersForCourse(cid).catch(() => []);
-                setStudents(people.filter((u: any) => (u.role || "").toUpperCase() === "STUDENT"));
-            }
-        };
-        load();
-    }, [cid, isFaculty]);
+  const isFaculty = useIsFaculty();
 
-    // A graded submission for one (student, assignment) pair, if any.
-    const gradedSub = (userId: string, assignmentId: string) =>
-        submissions.find(
-            (s: any) => s.user === userId && s.assignment === assignmentId && s.status === "graded"
-        );
+  // The cell I am editing, and its score.
+  const [cell, setCell] = useState<any>(null);
+  const [score, setScore] = useState("");
 
-    // Total percent for a student across graded assignments only.
-    const totalFor = (userId?: string) => {
-        let earned = 0;
-        let possible = 0;
-        assignments.forEach((a: any) => {
-            const sub = gradedSub(userId || "", a._id);
-            if (sub) {
-                earned += Number(sub.grade) || 0;
-                possible += Number(a.points) || 0;
-            }
-        });
-        const pct = possible ? (earned / possible) * 100 : 0;
-        return pct.toFixed(1);
-    };
+  // The roster and the weights are read only, so useState is enough.
+  const [students, setStudents] = useState<any[]>([]);
+  const [weights, setWeights] = useState<any>(null);
 
-    // Faculty gradebook export.
-    const handleExport = () => {
-        const header = ["Student", "ID", ...assignments.map((a: any) => a.title), "Total %"];
-        const rows = students.map((st: any) => {
-            const cells = assignments.map((a: any) => {
-                const sub = gradedSub(st._id, a._id);
-                return sub ? sub.grade : "";
-            });
-            return [`${st.firstName} ${st.lastName}`, st._id, ...cells, totalFor(st._id)];
-        });
-        const csv = [header, ...rows].map((r) => r.map(csvCell).join(",")).join("\n");
-        downloadCsv(csv, `${cid}-grades.csv`);
-    };
+  // Everything on this screen comes from the server now.
+  const fetchGradeBook = async () => {
+    const foundAssignments = await coursesClient.findAssignmentsForCourse(cid);
+    dispatch(setAssignments(foundAssignments));
 
-    // Student view: their own grades and total.
-    if (!isFaculty) {
-        const myGraded = (assignmentId: string) =>
-            submissions.find(
-                (s: any) => s.user === currentUser?._id && s.assignment === assignmentId && s.status === "graded"
-            );
-        return (
-            <div id="wd-grades">
-                <h2 className="mb-3" style={{ fontWeight: 300 }}>
-                    Grades for {currentUser?.firstName} {currentUser?.lastName}
-                </h2>
-                <hr />
-                <Table hover>
-                    <thead>
-                        <tr>
-                            <th>Assignment</th>
-                            <th>Due</th>
-                            <th className="text-end">Score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {assignments.map((a: any) => {
-                            const sub = myGraded(a._id);
-                            return (
-                                <tr key={a._id}>
-                                    <td>{a.title}</td>
-                                    <td className="text-nowrap">
-                                        {a.dueDate ? new Date(a.dueDate).toLocaleDateString() : "-"}
-                                    </td>
-                                    <td className="text-end">
-                                        {sub ? (
-                                            <strong>{sub.grade} / {a.points}</strong>
-                                        ) : (
-                                            <span className="text-muted">-</span>
-                                        )}
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </Table>
-                <h4 className="text-end">Total: {totalFor(currentUser?._id)}%</h4>
-            </div>
-        );
+    const foundGrades = await coursesClient.findGradesForCourse(cid);
+    dispatch(setGrades(foundGrades));
+
+    // A TA has no grades, so I keep the students only.
+    const people = await coursesClient.findUsersForCourse(cid);
+    setStudents(people.filter((user: any) => user.role === "STUDENT"));
+
+    const foundWeights = await coursesClient.findGradeCategoriesForCourse(cid);
+    setWeights(foundWeights);
+  };
+
+  useEffect(() => {
+    if (cid) {
+      fetchGradeBook();
     }
+  }, [cid]);
 
-    // Faculty view: student × assignment matrix. Student column and header stay
-    // pinned while scrolling; assignment columns show the short code + points.
-    return (
-        <div id="wd-grades">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <h2 className="mb-0" style={{ fontWeight: 300 }}>Student Grades</h2>
-                <Button variant="primary" onClick={handleExport}>
-                    <FaFileExport className="me-2" /> Export
-                </Button>
-            </div>
-            <hr />
-            <div className="border rounded" style={{ overflow: "auto", maxHeight: "70vh" }}>
-                <Table hover striped className="align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th className="bg-light text-nowrap" style={{ position: "sticky", left: 0, top: 0, zIndex: 3, minWidth: 180 }}>
-                                Student
-                            </th>
-                            {assignments.map((a: any) => (
-                                <th key={a._id} className="text-center bg-light" style={{ position: "sticky", top: 0, zIndex: 1, minWidth: 64 }} title={a.title}>
-                                    <div className="fw-semibold">{a.title.split(":")[0].trim()}</div>
-                                    <small className="text-muted">{a.points}</small>
-                                </th>
-                            ))}
-                            <th className="text-center bg-light" style={{ position: "sticky", top: 0, zIndex: 1, minWidth: 90 }}>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {students.length === 0 ? (
-                            <tr>
-                                <td colSpan={assignments.length + 2} className="text-muted p-3">No students enrolled.</td>
-                            </tr>
-                        ) : (
-                            students.map((st: any) => (
-                                <tr key={st._id}>
-                                    <td className="bg-white text-nowrap" style={{ position: "sticky", left: 0, zIndex: 2 }}>
-                                        <strong>{st.firstName} {st.lastName}</strong>
-                                    </td>
-                                    {assignments.map((a: any) => {
-                                        const sub = gradedSub(st._id, a._id);
-                                        return (
-                                            <td key={a._id} className="text-center">
-                                                {sub ? (
-                                                    <span className="fw-bold">{sub.grade}</span>
-                                                ) : (
-                                                    <span className="text-muted">-</span>
-                                                )}
-                                            </td>
-                                        );
-                                    })}
-                                    <td className="text-center bg-light fw-bold">{totalFor(st._id)}%</td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </Table>
-            </div>
-        </div>
+  const courseAssignments = assignments.filter((a: any) => a.course === cid);
+
+  // Faculty sees every score. A student only sees released ones.
+  const visibleGrades = grades.filter((g: any) =>
+    isFaculty
+      ? g.course === cid
+      : g.course === cid && g.student === currentUser?._id && g.released
+  );
+
+  const gradeFor = (assignmentId: string, studentId: string) =>
+    visibleGrades.find(
+      (g: any) => g.assignment === assignmentId && g.student === studentId
     );
+
+  // The total only counts the assignments that have a score.
+  const total = (studentId: string) => {
+    const scored = visibleGrades.filter(
+      (g: any) => g.student === studentId && g.score !== null
+    );
+    const earned = scored.reduce((sum: number, g: any) => sum + Number(g.score), 0);
+    const possible = scored.reduce((sum: number, g: any) => {
+      const assignment = courseAssignments.find((a: any) => a._id === g.assignment);
+      return sum + Number(assignment ? assignment.points : 0);
+    }, 0);
+    if (possible === 0) { return { percent: "0.0", letter: "N/A" }; }
+    const percent = (earned / possible) * 100;
+    return { percent: percent.toFixed(1), letter: letterGrade(percent) };
+  };
+
+  const openCell = (student: any, assignment: any) => {
+    const grade = gradeFor(assignment._id, student._id);
+    setCell({
+      studentId: student._id,
+      studentName: `${student.firstName} ${student.lastName}`,
+      assignmentId: assignment._id,
+      assignmentTitle: assignment.title,
+      maxPoints: assignment.points,
+    });
+    setScore(grade && grade.score !== null ? String(grade.score) : "");
+  };
+
+  const saveGrade = async () => {
+    // The server changes the grade, or adds it when the cell was empty.
+    const saved = await coursesClient.saveGradeForCourse(cid, {
+      student: cell.studentId,
+      assignment: cell.assignmentId,
+      score: parseFloat(score),
+      submitted: new Date().toISOString().slice(0, 10),
+    });
+    dispatch(saveGradeAction(saved));
+    setCell(null);
+  };
+
+  const release = async () => {
+    if (window.confirm("Release every grade of this course to the students?")) {
+      await coursesClient.releaseGradesForCourse(cid);
+      dispatch(releaseGrades(cid));
+    }
+  };
+
+  const unreleased = grades.some((g: any) => g.course === cid && !g.released);
+
+  // Faculty: one row per student, one column per assignment.
+  if (isFaculty) {
+    return (
+      <div id="wd-grades">
+        <div className="clearfix mb-4">
+          <Button
+            id="wd-release-grades-btn"
+            variant={unreleased ? "danger" : "success"}
+            className="float-end"
+            onClick={release}
+          >
+            {unreleased ? "Release Grades" : "Grades Released"}
+          </Button>
+          <h2 className="mb-0">Student Grades</h2>
+        </div>
+
+        {/* responsive adds a scrollbar for a wide table */}
+        <Table responsive className="mb-0">
+          <thead className="bg-light">
+            <tr>
+              <th style={{ minWidth: "150px" }}>Student</th>
+              {courseAssignments.map((assignment: any) => (
+                <th key={assignment._id} className="text-center"
+                    style={{ minWidth: "64px" }} title={assignment.title}>
+                  {shortName(assignment.title)}
+                  <div className="text-muted fw-normal">{assignment.points} pts</div>
+                </th>
+              ))}
+              <th className="text-center">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.map((student: any) => {
+              const studentTotal = total(student._id);
+              return (
+                <tr key={student._id}>
+                  <td className="bg-light">
+                    <b>{student.firstName} {student.lastName}</b>
+                    <div className="text-muted small">{student.username}</div>
+                  </td>
+                  {courseAssignments.map((assignment: any) => {
+                    const grade = gradeFor(assignment._id, student._id);
+                    return (
+                      <td
+                        key={assignment._id}
+                        role="button"
+                        title="Click to change this score"
+                        className="text-center"
+                        onClick={() => openCell(student, assignment)}
+                      >
+                        {grade && grade.score !== null ? (
+                          <>
+                            <b>{grade.score}</b>
+                            {/* A score the students cannot see yet */}
+                            {!grade.released && (
+                              <FaEyeSlash className="text-warning ms-1" />
+                            )}
+                          </>
+                        ) : (
+                          <span className="text-muted">-</span>
+                        )}
+                      </td>
+                    );
+                  })}
+                  <td className="text-center bg-light">
+                    <b>{studentTotal.percent}%</b>
+                    <div className="text-muted small">{studentTotal.letter}</div>
+                  </td>
+                </tr>
+              );
+            })}
+        </tbody>
+        </Table>
+
+        {students.length === 0 && (
+          <p className="text-muted mt-3">No students are enrolled in this course.</p>
+        )}
+
+        <GradeEditor
+          show={cell !== null}
+          handleClose={() => setCell(null)}
+          studentName={cell ? cell.studentName : ""}
+          assignmentTitle={cell ? cell.assignmentTitle : ""}
+          maxPoints={cell ? cell.maxPoints : 100}
+          score={score}
+          setScore={setScore}
+          saveGrade={saveGrade}
+        />
+      </div>
+    );
+  }
+
+  // Student: my own scores, and the weights on the right.
+  const myTotal = total(currentUser?._id);
+
+  return (
+    <div id="wd-grades">
+      <h2 className="mb-4">
+        Grades for {currentUser?.firstName} {currentUser?.lastName}
+      </h2>
+
+      <div className="d-flex">
+        <div className="flex-fill me-4">
+          <Table className="mb-0">
+            <thead className="bg-light">
+              <tr>
+                <th>Name</th>
+                <th>Due</th>
+                <th>Submitted</th>
+                <th className="text-center">Status</th>
+                <th style={{ width: "180px" }}>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {courseAssignments.map((assignment: any) => {
+                const grade = gradeFor(assignment._id, currentUser?._id);
+                const hasScore = grade && grade.score !== null;
+                const percent = hasScore
+                  ? (Number(grade.score) / Number(assignment.points)) * 100
+                  : 0;
+                return (
+                  <tr key={assignment._id}>
+                    <td>
+                      <b>{assignment.title}</b>
+                      <div className="text-muted small">Assignment</div>
+                    </td>
+                    <td className="text-nowrap">
+                      {shortDate(assignment.dueDate)} by 11:59pm
+                    </td>
+                    <td className="text-nowrap">
+                      {hasScore ? shortDate(grade.submitted) : <span className="text-muted">-</span>}
+                    </td>
+                    <td className="text-center">
+                      {hasScore ? (
+                        <div
+                          className="d-inline-block"
+                          style={{
+                            width: "8px",
+                            height: "8px",
+                            borderRadius: "4px",
+                            backgroundColor: "#0374b5",
+                          }}
+                        />
+                      ) : (
+                        <span className="text-muted">-</span>
+                      )}
+                    </td>
+                    <td>
+                      {hasScore ? (
+                        <>
+                          <b>{grade.score} / {assignment.points}</b>
+                          {/* A bar made with a width and a color */}
+                          <div
+                            className="mt-1"
+                            style={{ height: "8px", backgroundColor: "#e9ecef" }}
+                          >
+                            <div
+                              style={{
+                                height: "8px",
+                                width: `${percent}%`,
+                                backgroundColor: "#0374b5",
+                              }}
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <span className="text-muted">
+                          <FaEyeSlash className="me-1" /> Not released
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </div>
+
+        <div className="d-none d-lg-block" style={{ width: "300px" }}>
+          <div className="border rounded p-3">
+            <h4 className="text-end">
+              Total: {myTotal.percent}% ({myTotal.letter})
+            </h4>
+            <hr />
+            <h6>Assignments are weighted by group:</h6>
+            <Table className="mb-0">
+              <thead>
+                <tr>
+                  <th>Group</th>
+                  <th className="text-end">Weight</th>
+                </tr>
+              </thead>
+              <tbody>
+                {weights && weights.categories.map((category: any) => (
+                  <tr key={category.name}>
+                    <td>{category.name}</td>
+                    <td className="text-end">{category.weight}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

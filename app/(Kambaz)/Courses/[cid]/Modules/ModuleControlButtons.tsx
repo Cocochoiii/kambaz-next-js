@@ -1,84 +1,70 @@
 "use client";
 
+// The buttons at the right end of a module title.
+// Pencil renames. Trash removes. The green check publishes.
+// Plus adds a lesson. The three dots hold the same jobs again.
 import { BsPlus } from "react-icons/bs";
-import { FaCheckCircle, FaBan } from "react-icons/fa";
-import { FaTrash, FaPencil } from "react-icons/fa6";
-import KebabMenu from "@/app/(Kambaz)/KebabMenu";
+import { FaTrash } from "react-icons/fa";
+import { FaPencil } from "react-icons/fa6";
+import PublishToggle from "./PublishToggle";
+import KebabMenu from "../../../KebabMenu";
 
-// Module row controls for faculty. Every icon does a real action.
 export default function ModuleControlButtons({
-    moduleId,
-    published,
-    deleteModule,
-    editModule,
-    togglePublish,
-    addLesson,
+  moduleId,
+  published,
+  deleteModule,
+  editModule,
+  togglePublish,
+  addLesson,
+  duplicateModule,
 }: {
-    moduleId: string;
-    published: boolean;
-    deleteModule: (moduleId: string) => void;
-    editModule: (moduleId: string) => void;
-    togglePublish: (moduleId: string) => void;
-    addLesson: (moduleId: string) => void;
+  moduleId: string;
+  published: boolean;
+  deleteModule: (moduleId: string) => void;
+  editModule: (moduleId: string) => void;
+  togglePublish: (moduleId: string) => void;
+  addLesson: () => void;
+  duplicateModule: () => void;
 }) {
-    const stop = (e: any) => e.stopPropagation();
-    return (
-        <div className="float-end d-flex align-items-center gap-3">
-            <FaPencil
-                role="button"
-                title="Edit"
-                className="text-primary"
-                onClick={(e) => {
-                    stop(e);
-                    editModule(moduleId);
-                }}
-            />
-            <FaTrash
-                role="button"
-                title="Delete"
-                className="text-danger"
-                onClick={(e) => {
-                    stop(e);
-                    deleteModule(moduleId);
-                }}
-            />
-            {/* Green check when published, click to toggle publish state */}
-            {published ? (
-                <FaCheckCircle
-                    role="button"
-                    title="Published (click to unpublish)"
-                    className="text-success fs-5"
-                    onClick={(e) => {
-                        stop(e);
-                        togglePublish(moduleId);
-                    }}
-                />
-            ) : (
-                <FaBan
-                    role="button"
-                    title="Unpublished (click to publish)"
-                    className="text-secondary fs-5"
-                    onClick={(e) => {
-                        stop(e);
-                        togglePublish(moduleId);
-                    }}
-                />
-            )}
-            <BsPlus
-                role="button"
-                title="Add lesson"
-                className="fs-3"
-                onClick={(e) => {
-                    stop(e);
-                    addLesson(moduleId);
-                }}
-            />
-            <KebabMenu
-                items={[
-                    { label: "Edit", onClick: () => editModule(moduleId) },
-                    { label: "Delete", onClick: () => deleteModule(moduleId), danger: true },
-                ]}
-            />
-        </div>
-    );
+  return (
+    <div className="float-end d-inline-flex align-items-center">
+      <FaPencil
+        role="button"
+        aria-label="Edit module"
+        title="Rename this module"
+        className="text-primary me-3"
+        onClick={() => editModule(moduleId)}
+      />
+      <FaTrash
+        role="button"
+        aria-label="Delete module"
+        title="Delete this module"
+        className="text-danger me-2 mb-1"
+        onClick={() => deleteModule(moduleId)}
+      />
+      <PublishToggle published={published} onToggle={() => togglePublish(moduleId)} />
+      <button
+        type="button"
+        aria-label="Add lesson"
+        title="Add a lesson"
+        className="wd-kebab"
+        onClick={addLesson}
+      >
+        <BsPlus className="fs-4" />
+      </button>
+      <KebabMenu
+        variant="dark"
+        items={[
+          { label: "Rename module", onClick: () => editModule(moduleId) },
+          { label: "Add lesson", onClick: addLesson },
+          { label: "Duplicate module", onClick: duplicateModule },
+          {
+            label: published ? "Unpublish module" : "Publish module",
+            onClick: () => togglePublish(moduleId),
+          },
+          { label: "Delete module", danger: true, onClick: () => deleteModule(moduleId) },
+        ]}
+      />
+    </div>
+  );
 }

@@ -1,111 +1,231 @@
 "use client";
 
+// The Quiz Details screen.
+// A faculty reads the summary and opens Preview or Edit.
+// A student only gets a button that starts the quiz.
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
-import { useIsFaculty } from "@/app/(Kambaz)/Account/roles";
+import { useSelector } from "react-redux";
 import * as quizzesClient from "../client";
-import { totalPoints, availability, fmtDate } from "../helpers";
-import { TopInfoRow, Instructions, LockNotice } from "../QuizChrome";
+import { useIsFaculty } from "../../../../Account/roles";
+import {
+  attemptLimit,
+  availability,
+  isPublished,
+  longDate,
+  questionCount,
+  totalPoints,
+} from "../helpers";
 
-function Row({ label, value }: any) {
-    return (
-        <div className="d-flex py-1 border-bottom">
-            <div className="text-end pe-3 fw-semibold flex-shrink-0" style={{ width: 240 }}>{label}</div>
-            <div>{value}</div>
-        </div>
-    );
+// One line of the summary table.
+function Row({ label, value }: { label: string; value: any }) {
+  return (
+    <div className="d-flex border-bottom py-2">
+      <div className="text-end fw-bold pe-3" style={{ width: 260 }}>
+        {label}
+      </div>
+      <div>{value}</div>
+    </div>
+  );
 }
 
-// Quiz Details screen: faculty see a summary and actions (Preview/Edit/Publish);
-// a student sees Start and the score of their last attempt.
 export default function QuizDetails() {
-    const { cid, qid } = useParams<{ cid: string; qid: string }>();
-    const router = useRouter();
-    const isFaculty = useIsFaculty();
-    const { currentUser } = useSelector((s: any) => s.accountReducer);
-    const [quiz, setQuiz] = useState<any>(null);
-    const [last, setLast] = useState<any>(null);
-    const [count, setCount] = useState(0);
+  const params = useParams<{ cid: string; qid: string }>();
+  const cid = params ? params.cid : "";
+  const qid = params ? params.qid : "";
+  const router = useRouter();
 
-    const load = async () => {
-        const q = await quizzesClient.getQuiz(qid).catch(() => null);
-        setQuiz(q);
-        if (!isFaculty && currentUser?._id) {
-            const a = await quizzesClient.getAttempts(qid, currentUser._id).catch(() => null);
-            setLast(a?.last || null); setCount(a?.count || 0);
-        }
-    };
-    useEffect(() => {
-        load();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qid, isFaculty, currentUser?._id]);
-    if (!quiz) return <div className="p-4 text-muted">Loading…</div>;
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const isFaculty = useIsFaculty();
 
-    const points = totalPoints(quiz);
-    const published = quiz.published !== false;
-    const publish = async () => { const u = { ...quiz, published: !published }; await quizzesClient.updateQuiz(u); setQuiz(u); };
-    const av = availability(quiz);
-    const locked = av.state !== "available";
-    const maxAttempts = quiz.multipleAttempts ? Number(quiz.howManyAttempts) || 1 : 1;
-    const canTake = !locked && count < maxAttempts;
+  const [quiz, setQuiz] = useState<any>(null);
+  const [attempts, setAttempts] = useState<any>({ count: 0, last: null });
 
-    if (isFaculty) {
-        return (
-            <div className="p-4" style={{ maxWidth: 900 }}>
-                <div className="d-flex justify-content-center gap-2 border-bottom pb-3 mb-3">
-                    <Button variant="secondary" onClick={() => router.push(`/Courses/${cid}/Quizzes/${qid}/preview`)}>Preview</Button>
-                    <Button variant="secondary" onClick={() => router.push(`/Courses/${cid}/Quizzes/${qid}/edit`)}>Edit</Button>
-                    <Button variant="outline-secondary" onClick={publish}>{published ? "Unpublish" : "Publish"}</Button>
-                </div>
-                <h3 className="mb-0">{quiz.title}</h3>
-                <TopInfoRow quiz={quiz} />
-                <Instructions quiz={quiz} />
-                <Row label="Quiz Type" value={quiz.quizType || "Graded Quiz"} />
-                <Row label="Points" value={points} />
-                <Row label="Assignment Group" value={quiz.assignmentGroup || "Quizzes"} />
-                <Row label="Shuffle Answers" value={quiz.shuffleAnswers === false ? "No" : "Yes"} />
-                <Row label="Time Limit" value={quiz.hasTimeLimit === false ? "None" : `${quiz.timeLimit ?? 20} Minutes`} />
-                <Row label="Multiple Attempts" value={quiz.multipleAttempts ? "Yes" : "No"} />
-                <Row label="How Many Attempts" value={quiz.multipleAttempts ? (quiz.howManyAttempts || 1) : 1} />
-                <Row label="Show Correct Answers" value={quiz.showCorrectAnswers ? "Yes" : "No"} />
-                <Row label="Access Code" value={quiz.accessCode || "—"} />
-                <Row label="One Question at a Time" value={quiz.oneQuestionAtATime === false ? "No" : "Yes"} />
-                <Row label="Webcam Required" value={quiz.webcamRequired ? "Yes" : "No"} />
-                <Row label="Lock Questions After Answering" value={quiz.lockQuestionsAfterAnswering ? "Yes" : "No"} />
-                <Row label="Due Date" value={fmtDate(quiz.dueDate) || "—"} />
-                <Row label="Available Date" value={fmtDate(quiz.availableDate) || "—"} />
-                <Row label="Until Date" value={fmtDate(quiz.untilDate) || "—"} />
-            </div>
-        );
+  const fetchQuiz = async () => {
+    const found = await quizzesClient.findQuizById(qid);
+    setQuiz(found);
+  };
+
+  // A student also needs their own tries, to know if one is left.
+  const fetchAttempts = async () => {
+    if (isFaculty || !currentUser) { return; }
+    const found = await quizzesClient.findAttempts(qid, currentUser._id);
+    setAttempts(found);
+  };
+
+  useEffect(() => {
+    if (qid) {
+      fetchQuiz();
+      fetchAttempts();
     }
+  }, [qid, isFaculty, currentUser]);
 
+  if (!quiz) {
+    return <div id="wd-quiz-details">Loading...</div>;
+  }
+
+  const points = totalPoints(quiz);
+  const open = availability(quiz);
+  const limit = attemptLimit(quiz);
+  const left = limit - attempts.count;
+
+  const togglePublish = async () => {
+    const updated = { ...quiz, published: !isPublished(quiz) };
+    await quizzesClient.updateQuiz(updated);
+    setQuiz(updated);
+  };
+
+  // A quiz that is not published does not exist for a student.
+  // Hiding it in the list is not enough. The address must work too.
+  if (!isFaculty && !isPublished(quiz)) {
     return (
-        <div className="p-4" style={{ maxWidth: 820 }}>
-            <h3 className="mb-0">{quiz.title}</h3>
-            <TopInfoRow quiz={quiz} />
-            <Instructions quiz={quiz} />
-            {locked && <LockNotice quiz={quiz} />}
-            {last && (
-                <div className="my-2">
-                    <div>Score for this quiz: <strong>{last.score}</strong> out of {points}</div>
-                    <div className="text-muted small">Submitted {new Date(last.submittedAt).toLocaleString()}</div>
-                </div>
-            )}
-            <div className="mt-2 d-flex gap-2">
-                {canTake && (
-                    <Button variant="dark" onClick={() => router.push(`/Courses/${cid}/Quizzes/${qid}/take`)}>
-                        {last ? "Take Again" : "Take the Quiz"}
-                    </Button>
-                )}
-                {last && (
-                    <Button variant="outline-secondary" onClick={() => router.push(`/Courses/${cid}/Quizzes/${qid}/take?review=1`)}>
-                        View Last Attempt
-                    </Button>
-                )}
-                {!canTake && !last && !locked && <span className="text-muted">You have used all {maxAttempts} attempt(s).</span>}
-            </div>
-        </div>
+      <div id="wd-quiz-details">
+        <h2>{quiz.title}</h2>
+        <hr />
+        <p className="text-danger">This quiz is not available yet.</p>
+        <Link href={`/Courses/${cid}/Quizzes`} className="btn btn-secondary">
+          Back to Quizzes
+        </Link>
+      </div>
     );
+  }
+
+  // The student screen. No form, only the button that starts the quiz.
+  if (!isFaculty) {
+    return (
+      <div id="wd-quiz-details">
+        <h2>{quiz.title}</h2>
+        <hr />
+        <div dangerouslySetInnerHTML={{ __html: quiz.description || "" }} />
+        <ul className="list-unstyled">
+          <li className="mb-1"><b>Points:</b> {points}</li>
+          <li className="mb-1"><b>Questions:</b> {questionCount(quiz)}</li>
+          <li className="mb-1"><b>Due:</b> {longDate(quiz.dueDate)}</li>
+          <li className="mb-1">
+            <b>Available:</b> {longDate(quiz.availableDate)} - {longDate(quiz.untilDate)}
+          </li>
+          <li className="mb-1">
+            <b>Time Limit:</b>{" "}
+            {quiz.hasTimeLimit === false ? "No time limit" : `${quiz.timeLimit || 20} Minutes`}
+          </li>
+          <li className="mb-1"><b>Allowed Attempts:</b> {limit}</li>
+        </ul>
+
+        {attempts.last && (
+          <p>
+            <b>Your last score:</b> {attempts.last.score} out of {points}
+          </p>
+        )}
+
+        {open.state !== "available" && (
+          <p className="text-danger">{open.label}</p>
+        )}
+
+        <hr />
+        {open.state === "available" && left > 0 && (
+          <Button
+            id="wd-take-quiz-btn"
+            variant="danger"
+            className="me-2"
+            onClick={() => router.push(`/Courses/${cid}/Quizzes/${qid}/take`)}
+          >
+            {attempts.count === 0 ? "Take the Quiz" : "Take the Quiz Again"}
+          </Button>
+        )}
+        {attempts.last && (
+          <Link
+            href={`/Courses/${cid}/Quizzes/${qid}/take?review=true`}
+            id="wd-review-quiz-btn"
+            className="btn btn-secondary me-2"
+          >
+            View Last Attempt
+          </Link>
+        )}
+        {left <= 0 && (
+          <span className="text-muted">You used all {limit} attempts.</span>
+        )}
+      </div>
+    );
+  }
+
+  // The faculty screen. The summary of every quiz property.
+  return (
+    <div id="wd-quiz-details">
+      <div className="text-center mb-3">
+        <Button
+          id="wd-publish-quiz-btn"
+          variant="secondary"
+          className="me-2"
+          onClick={togglePublish}
+        >
+          {isPublished(quiz) ? "Unpublish" : "Publish"}
+        </Button>
+        <Link
+          href={`/Courses/${cid}/Quizzes/${qid}/preview`}
+          id="wd-preview-quiz-btn"
+          className="btn btn-secondary me-2"
+        >
+          Preview
+        </Link>
+        <Link
+          href={`/Courses/${cid}/Quizzes/${qid}/edit`}
+          id="wd-edit-quiz-btn"
+          className="btn btn-danger"
+        >
+          Edit
+        </Link>
+      </div>
+      <hr />
+
+      <h2>{quiz.title}</h2>
+
+      <Row label="Quiz Type" value={quiz.quizType || "Graded Quiz"} />
+      <Row label="Points" value={points} />
+      <Row label="Assignment Group" value={quiz.assignmentGroup || "Quizzes"} />
+      <Row label="Shuffle Answers" value={quiz.shuffleAnswers === false ? "No" : "Yes"} />
+      <Row
+        label="Time Limit"
+        value={quiz.hasTimeLimit === false ? "No" : `${quiz.timeLimit || 20} Minutes`}
+      />
+      <Row label="Multiple Attempts" value={quiz.multipleAttempts ? "Yes" : "No"} />
+      <Row label="How Many Attempts" value={limit} />
+      <Row label="Show Correct Answers" value={quiz.showCorrectAnswers ? "Yes" : "No"} />
+      <Row label="Access Code" value={quiz.accessCode || "None"} />
+      <Row
+        label="One Question at a Time"
+        value={quiz.oneQuestionAtATime === false ? "No" : "Yes"}
+      />
+      <Row label="Webcam Required" value={quiz.webcamRequired ? "Yes" : "No"} />
+      <Row
+        label="Lock Questions After Answering"
+        value={quiz.lockQuestionsAfterAnswering ? "Yes" : "No"}
+      />
+
+      {/* The three dates get their own table, the way Canvas shows them. */}
+      <table className="table mt-4">
+        <thead>
+          <tr>
+            <th>Due</th>
+            <th>For</th>
+            <th>Available from</th>
+            <th>Until</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{longDate(quiz.dueDate)}</td>
+            <td>Everyone</td>
+            <td>{longDate(quiz.availableDate)}</td>
+            <td>{longDate(quiz.untilDate)}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <Link href={`/Courses/${cid}/Quizzes`} className="btn btn-secondary">
+        Back to Quizzes
+      </Link>
+    </div>
+  );
 }

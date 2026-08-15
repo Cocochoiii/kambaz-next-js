@@ -1,36 +1,36 @@
-// API calls for quizzes and quiz attempts.
+// Read, update and delete one quiz. Only the quiz id is needed.
+// The attempts of a quiz live here too.
 import axios from "axios";
 import { HTTP_SERVER } from "@/app/env";
 
-const COURSES_API = `${HTTP_SERVER}/api/courses`;
 const QUIZZES_API = `${HTTP_SERVER}/api/quizzes`;
 
-export const findQuizzesForCourse = async (courseId: string) => {
-    const { data } = await axios.get(`${COURSES_API}/${courseId}/quizzes`);
-    return data;
-};
-export const createQuiz = async (courseId: string, quiz: any) => {
-    const { data } = await axios.post(`${COURSES_API}/${courseId}/quizzes`, quiz);
-    return data;
-};
-export const updateQuiz = async (quiz: any) => {
-    const { data } = await axios.put(`${QUIZZES_API}/${quiz._id}`, quiz);
-    return data;
-};
-export const deleteQuiz = async (quizId: string) => {
-    const { data } = await axios.delete(`${QUIZZES_API}/${quizId}`);
-    return data;
+export const findQuizById = async (quizId: string) => {
+  const { data } = await axios.get(`${QUIZZES_API}/${quizId}`);
+  return data;
 };
 
-export const getQuiz = async (quizId: string) => {
-    const { data } = await axios.get(`${QUIZZES_API}/${quizId}`);
-    return data;
+export const updateQuiz = async (quiz: any) => {
+  const { data } = await axios.put(`${QUIZZES_API}/${quiz._id}`, quiz);
+  return data;
 };
-export const getAttempts = async (quizId: string, userId: string) => {
-    const { data } = await axios.get(`${QUIZZES_API}/${quizId}/attempts`, { params: { userId } });
-    return data; // { count, last }
+
+export const deleteQuiz = async (quizId: string) => {
+  const { data } = await axios.delete(`${QUIZZES_API}/${quizId}`);
+  return data;
 };
-export const submitAttempt = async (quizId: string, payload: any) => {
-    const { data } = await axios.post(`${QUIZZES_API}/${quizId}/attempts`, payload);
-    return data;
+
+// The attempts of the signed in student on one quiz.
+// The server answers with the count, the last one and the best score.
+export const findAttempts = async (quizId: string, userId: string) => {
+  const { data } = await axios.get(`${QUIZZES_API}/${quizId}/attempts`, {
+    params: { userId },
+  });
+  return data;
+};
+
+// The server grades the answers. I never send a score.
+export const createAttempt = async (quizId: string, attempt: any) => {
+  const { data } = await axios.post(`${QUIZZES_API}/${quizId}/attempts`, attempt);
+  return data;
 };

@@ -1,183 +1,292 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+// One screen answers a quiz three ways.
+// take is a student. preview is a faculty.
+// review only reads an attempt that is done.
+import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import { questionsOf } from "./helpers";
 
-const shuffle = <T,>(arr: T[]): T[] => {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-};
-
-// How much of the points an answer earns, from 0 to 1. Multiple choice can
-// have many correct options and gives partial credit.
-const fractionOf = (q: any, given: any): number => {
-    if (q.type === "TRUE_FALSE") return typeof given === "boolean" && given === !!q.correctAnswer ? 1 : 0;
-    if (q.type === "FILL_BLANK") {
-        const n = (s: any) => String(s ?? "").trim().toLowerCase();
-        return given != null && String(given).length > 0 && (q.answers || []).some((a: string) => n(a) === n(given)) ? 1 : 0;
-    }
-    const correct = (q.choices || []).filter((c: any) => c.correct).map((c: any) => c._id);
-    const sel = Array.isArray(given) ? given : given != null ? [given] : [];
-    if (correct.length === 0) return 0;
-    const cc = sel.filter((id: string) => correct.includes(id)).length;
-    const wc = sel.filter((id: string) => !correct.includes(id)).length;
-    return Math.max(0, Math.min(1, (cc - wc) / correct.length));
-};
-
-const scoreOf = (questions: any[], answers: Record<string, any>) =>
-    Math.round(questions.reduce((s, q) => s + fractionOf(q, answers[q._id]) * (Number(q.points) || 0), 0) * 100) / 100;
-
-const correctText = (q: any): string => {
-    if (q.type === "TRUE_FALSE") return q.correctAnswer ? "True" : "False";
-    if (q.type === "FILL_BLANK") return (q.answers || []).join(", ");
-    return (q.choices || []).filter((c: any) => c.correct).map((c: any) => c.text).join(", ");
-};
-
-function QuestionCard({ q, index, total, value, onChange, locked, fraction, showCorrect, choiceOrder }: any) {
-    const multi = (q.choices || []).filter((c: any) => c.correct).length > 1;
-    const selected: string[] = Array.isArray(value) ? value : value != null ? [value] : [];
-    const toggle = (id: string) => {
-        if (locked) return;
-        if (multi) {
-            const s = new Set(selected);
-            if (s.has(id)) s.delete(id); else s.add(id);
-            onChange([...s]);
-        } else {
-            onChange([id]);
-        }
-    };
-    const mark = locked ? fraction >= 1 : null;
-    const border = mark === true ? "#198754" : mark === false ? "#dc3545" : "#dee2e6";
-    const ordered = (choiceOrder || (q.choices || []).map((_: any, i: number) => i)).map((i: number) => (q.choices || [])[i]).filter(Boolean);
-    return (
-        <div className="border rounded p-3 mb-3" style={{ borderColor: border }}>
-            <div className="d-flex justify-content-between">
-                <div className="fw-semibold">Question {index + 1} <span className="text-muted small">of {total}</span></div>
-                <div className="d-flex align-items-center gap-2">
-                    <span className="text-muted small">{Number(q.points) || 0} pts</span>
-                    {mark === true && <FaCheck className="text-success" />}
-                    {mark === false && <FaTimes className="text-danger" />}
-                </div>
-            </div>
-            {q.title && <div className="fw-semibold mt-1">{q.title}</div>}
-            {q.question && <div className="mt-1" dangerouslySetInnerHTML={{ __html: q.question }} />}
-            <div className="mt-2">
-                {q.type === "TRUE_FALSE" && (
-                    <>
-                        <Form.Check type="radio" name={`ans-${q._id}`} label="True" disabled={locked}
-                            checked={value === true} onChange={() => !locked && onChange(true)} />
-                        <Form.Check type="radio" name={`ans-${q._id}`} label="False" disabled={locked}
-                            checked={value === false} onChange={() => !locked && onChange(false)} />
-                    </>
-                )}
-                {q.type === "FILL_BLANK" && (
-                    <Form.Control disabled={locked} value={value || ""} placeholder="Your answer"
-                        onChange={(e) => onChange(e.target.value)} style={{ maxWidth: 360 }} />
-                )}
-                {(q.type === "MULTIPLE_CHOICE" || !q.type) && ordered.map((c: any) => (
-                    <Form.Check key={c._id} type={multi ? "checkbox" : "radio"} name={`ans-${q._id}`} disabled={locked}
-                        label={<span dangerouslySetInnerHTML={{ __html: c.text || "" }} />}
-                        checked={selected.includes(c._id)} onChange={() => toggle(c._id)} />
-                ))}
-            </div>
-            {locked && showCorrect && mark === false && (
-                <div className="small text-success mt-2">Correct answer: {correctText(q)}</div>
-            )}
-        </div>
-    );
+// I mix a copy of the list, so the first order stays safe.
+function mix(list: any[]) {
+  const copy = [...list];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const keep = copy[i];
+    copy[i] = copy[j];
+    copy[j] = keep;
+  }
+  return copy;
 }
 
-// mode: "take" (student) | "preview" (faculty, local) | "review" (read-only)
-export default function QuizRunner({ quiz, mode, initialAnswers, showCorrect, onSubmit }: any) {
-    const base: any[] = Array.isArray(quiz.questions) ? quiz.questions : [];
-    const review = mode === "review";
-    const locked = review;
+function sameText(one: any, two: any) {
+  return String(one || "").trim().toLowerCase() ===
+    String(two || "").trim().toLowerCase();
+}
 
-    // Shuffle once for this attempt, so the order does not change on each render.
-    const layout = useMemo(() => {
-        let order = base.map((_, i) => i);
-        if (!review && quiz.shuffleQuestions) order = shuffle(order);
-        const choiceOrder: Record<string, number[]> = {};
-        base.forEach((q) => {
-            let cs = (q.choices || []).map((_: any, i: number) => i);
-            if (!review && quiz.shuffleAnswers) cs = shuffle(cs);
-            choiceOrder[q._id] = cs;
-        });
-        return { order, choiceOrder };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const questions = layout.order.map((i) => base[i]);
-    const [answers, setAnswers] = useState<Record<string, any>>(initialAnswers || {});
-    const [idx, setIdx] = useState(0);
-    const [busy, setBusy] = useState(false);
-    const oneAtATime = quiz.oneQuestionAtATime !== false;
-
-    const hasTimer = mode === "take" && quiz.hasTimeLimit !== false && Number(quiz.timeLimit) > 0;
-    const [remaining, setRemaining] = useState(hasTimer ? Number(quiz.timeLimit) * 60 : 0);
-    const startRef = useRef<number>(Date.now());
-    const submitRef = useRef<() => void>(() => {});
-
-    const setAns = (qid: string, val: any) => { if (!locked && !busy) setAnswers((a) => ({ ...a, [qid]: val })); };
-
-    const doSubmit = async () => {
-        if (busy || locked) return;
-        setBusy(true);
-        const arr = questions.map((q) => ({ questionId: q._id, answer: answers[q._id] ?? null }));
-        const meta = { timeTaken: Math.round((Date.now() - startRef.current) / 1000) };
-        if (onSubmit) await onSubmit(arr, meta, scoreOf(base, answers));
-        // After submit, the parent page shows the results.
-    };
-    submitRef.current = doSubmit;
-
-    useEffect(() => {
-        if (!hasTimer) return;
-        const t = setInterval(() => {
-            setRemaining((r) => { if (r <= 1) { clearInterval(t); submitRef.current(); return 0; } return r - 1; });
-        }, 1000);
-        return () => clearInterval(t);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    if (questions.length === 0) return <div className="text-muted">This quiz has no questions yet.</div>;
-
-    const mmss = `${String(Math.floor(remaining / 60)).padStart(2, "0")}:${String(remaining % 60).padStart(2, "0")}`;
-    const shown = oneAtATime ? [questions[idx]] : questions;
-
-    return (
-        <div>
-            {hasTimer && <div className="text-muted small mb-2">Time remaining: <span className="fw-semibold">{mmss}</span></div>}
-
-            {shown.map((q) => (
-                <QuestionCard key={q._id} q={q} index={questions.indexOf(q)} total={questions.length}
-                    value={answers[q._id]} onChange={(v: any) => setAns(q._id, v)} locked={locked}
-                    fraction={locked ? fractionOf(q, answers[q._id]) : null} showCorrect={showCorrect}
-                    choiceOrder={layout.choiceOrder[q._id]} />
-            ))}
-
-            {oneAtATime && (
-                <div className="d-flex flex-wrap align-items-center gap-2 mt-3">
-                    <Button size="sm" variant="outline-secondary" disabled={idx === 0} onClick={() => setIdx((i) => Math.max(0, i - 1))}>Prev</Button>
-                    <Button size="sm" variant="outline-secondary" disabled={idx === questions.length - 1} onClick={() => setIdx((i) => Math.min(questions.length - 1, i + 1))}>Next</Button>
-                    <span className="mx-2 text-muted small">Jump to:</span>
-                    {questions.map((q, i) => (
-                        <Button key={q._id} size="sm" variant={i === idx ? "dark" : "outline-secondary"} style={{ minWidth: 34 }} onClick={() => setIdx(i)}>
-                            {i + 1}{locked ? (fractionOf(q, answers[q._id]) >= 1 ? " ✓" : " ✗") : ""}
-                        </Button>
-                    ))}
-                </div>
-            )}
-
-            {!locked && (
-                <div className="mt-3">
-                    <Button variant="dark" disabled={busy} onClick={doSubmit}>Submit Quiz</Button>
-                </div>
-            )}
-        </div>
+// The browser marks a done attempt green or red. The score itself
+// always comes from the server, so this is only for the picture.
+function isCorrect(question: any, given: any) {
+  if (question.type === "TRUE_FALSE") {
+    return given === true || given === false
+      ? given === (question.correctAnswer === true)
+      : false;
+  }
+  if (question.type === "FILL_BLANK") {
+    return (question.answers || []).some((answer: string) =>
+      sameText(answer, given)
     );
+  }
+  const right = (question.choices || [])
+    .filter((choice: any) => choice.correct)
+    .map((choice: any) => choice._id);
+  const picked = given || [];
+  if (right.length === 0 || picked.length !== right.length) { return false; }
+  return right.every((id: string) => picked.includes(id));
+}
+
+// The right answer in words, for the review screen.
+function correctText(question: any) {
+  if (question.type === "TRUE_FALSE") {
+    return question.correctAnswer === true ? "True" : "False";
+  }
+  if (question.type === "FILL_BLANK") {
+    return (question.answers || []).join(", ");
+  }
+  return (question.choices || [])
+    .filter((choice: any) => choice.correct)
+    .map((choice: any) => choice.text)
+    .join(", ");
+}
+
+function twoDigits(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+export default function QuizRunner({
+  quiz,
+  mode,
+  initialAnswers,
+  onSubmit,
+}: {
+  quiz: any;
+  mode: "take" | "preview" | "review";
+  initialAnswers?: any;
+  onSubmit?: (answers: any[], timeTaken: number) => void;
+}) {
+  const review = mode === "review";
+  const base = questionsOf(quiz);
+
+  // The order is fixed once, when the screen opens. If it changed on
+  // every key press, the questions would jump around.
+  const [order] = useState(() => {
+    const list = base.map((question: any) => ({
+      question,
+      choices: quiz.shuffleAnswers && !review
+        ? mix(question.choices || [])
+        : question.choices || [],
+    }));
+    return list;
+  });
+
+  const [answers, setAnswers] = useState<any>(initialAnswers || {});
+  const [current, setCurrent] = useState(0);
+  const [sending, setSending] = useState(false);
+  const [startedAt] = useState(() => new Date().getTime());
+
+  const oneAtATime = quiz.oneQuestionAtATime !== false;
+  const hasTimer = mode === "take" && quiz.hasTimeLimit !== false
+    && Number(quiz.timeLimit) > 0;
+  const [left, setLeft] = useState(
+    hasTimer ? Number(quiz.timeLimit) * 60 : 0
+  );
+
+  const send = () => {
+    if (sending || review || !onSubmit) { return; }
+    setSending(true);
+    const list = order.map((row: any) => ({
+      questionId: row.question._id,
+      answer: answers[row.question._id] === undefined
+        ? null
+        : answers[row.question._id],
+    }));
+    const seconds = Math.round((new Date().getTime() - startedAt) / 1000);
+    onSubmit(list, seconds);
+  };
+
+  // The clock. One second at a time. At zero I send the answers.
+  useEffect(() => {
+    if (!hasTimer || sending) { return; }
+    if (left <= 0) {
+      send();
+      return;
+    }
+    const timer = setTimeout(() => setLeft(left - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [left, hasTimer, sending]);
+
+  if (order.length === 0) {
+    return <div className="text-muted">This quiz has no questions yet.</div>;
+  }
+
+  const setAnswer = (questionId: string, value: any) => {
+    if (review || sending) { return; }
+    setAnswers({ ...answers, [questionId]: value });
+  };
+
+  // A multiple choice question with two right choices needs check boxes.
+  const pickChoice = (question: any, choiceId: string) => {
+    const many = (question.choices || [])
+      .filter((choice: any) => choice.correct).length > 1;
+    const picked = answers[question._id] || [];
+    if (!many) {
+      setAnswer(question._id, [choiceId]);
+      return;
+    }
+    setAnswer(
+      question._id,
+      picked.includes(choiceId)
+        ? picked.filter((id: string) => id !== choiceId)
+        : [...picked, choiceId]
+    );
+  };
+
+  const shown = oneAtATime ? [order[current]] : order;
+
+  return (
+    <div id="wd-quiz-runner">
+      {hasTimer && (
+        <div className="mb-2">
+          <b>Time Remaining</b>{" "}
+          {twoDigits(Math.floor(left / 60))}:{twoDigits(left % 60)}
+        </div>
+      )}
+
+      {shown.map((row: any) => {
+        const question = row.question;
+        const given = answers[question._id];
+        const right = review ? isCorrect(question, given) : null;
+        const many = (question.choices || [])
+          .filter((choice: any) => choice.correct).length > 1;
+        const picked = given || [];
+        return (
+          <div key={question._id} className="border mb-3">
+            {/* The gray head of a Canvas question box. */}
+            <div className="bg-secondary p-2 d-flex align-items-center">
+              <b className="flex-fill">
+                {question.title || "Question"}
+                {review && right && <FaCheck className="ms-2 text-success" />}
+                {review && !right && <FaTimes className="ms-2 text-danger" />}
+              </b>
+              <span>{Number(question.points) || 0} pts</span>
+            </div>
+
+            <div className="p-3">
+              <div
+                className="mb-3"
+                dangerouslySetInnerHTML={{ __html: question.question || "" }}
+              />
+
+              {question.type === "TRUE_FALSE" && (
+                <>
+                  <Form.Check
+                    type="radio"
+                    name={`wd-answer-${question._id}`}
+                    label="True"
+                    disabled={review}
+                    checked={given === true}
+                    onChange={() => setAnswer(question._id, true)}
+                  />
+                  <Form.Check
+                    type="radio"
+                    name={`wd-answer-${question._id}`}
+                    label="False"
+                    disabled={review}
+                    checked={given === false}
+                    onChange={() => setAnswer(question._id, false)}
+                  />
+                </>
+              )}
+
+              {question.type === "FILL_BLANK" && (
+                <Form.Control
+                  style={{ maxWidth: 320 }}
+                  placeholder="Your answer"
+                  disabled={review}
+                  value={given || ""}
+                  onChange={(e) => setAnswer(question._id, e.target.value)}
+                />
+              )}
+
+              {question.type === "MULTIPLE_CHOICE" &&
+                row.choices.map((choice: any) => (
+                  <Form.Check
+                    key={choice._id}
+                    type={many ? "checkbox" : "radio"}
+                    name={`wd-answer-${question._id}`}
+                    label={choice.text}
+                    disabled={review}
+                    checked={picked.includes(choice._id)}
+                    onChange={() => pickChoice(question, choice._id)}
+                  />
+                ))}
+
+              {/* Canvas shows the right answer only when I allow it. */}
+              {review && !right && quiz.showCorrectAnswers && (
+                <p className="text-success mt-3 mb-0">
+                  <b>Correct answer:</b> {correctText(question)}
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      })}
+
+      {/* One question at a time needs the two arrows and the jump list. */}
+      {oneAtATime && (
+        <div className="mb-3 d-flex flex-wrap align-items-center">
+          <Button
+            variant="secondary"
+            className="me-2"
+            disabled={current === 0}
+            onClick={() => setCurrent(current - 1)}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="secondary"
+            className="me-3"
+            disabled={current === order.length - 1}
+            onClick={() => setCurrent(current + 1)}
+          >
+            Next
+          </Button>
+          <span className="me-2">Jump to:</span>
+          {order.map((row: any, index: number) => (
+            <Button
+              key={row.question._id}
+              size="sm"
+              className="me-1 mb-1"
+              variant={index === current ? "danger" : "outline-secondary"}
+              onClick={() => setCurrent(index)}
+            >
+              {index + 1}
+            </Button>
+          ))}
+        </div>
+      )}
+
+      {!review && (
+        <Button
+          id="wd-submit-quiz-btn"
+          variant="danger"
+          disabled={sending}
+          onClick={send}
+        >
+          Submit Quiz
+        </Button>
+      )}
+    </div>
+  );
 }

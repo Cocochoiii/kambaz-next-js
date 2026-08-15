@@ -1,83 +1,144 @@
 "use client";
 
+// The Quiz Editor. It has two tabs, Details and Questions.
+// Save keeps the changes. Save and Publish also publishes.
+// Cancel drops everything and goes back to the list.
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
 import { Button, Nav } from "react-bootstrap";
-import * as quizzesClient from "../../client";
-import { totalPoints } from "../../helpers";
+import { useDispatch } from "react-redux";
 import DetailsTab from "./DetailsTab";
 import QuestionsTab from "./QuestionsTab";
+import * as quizzesClient from "../../client";
+import { updateQuiz as updateQuizInStore } from "../../reducer";
+import { totalPoints } from "../../helpers";
+import { useIsFaculty } from "../../../../../Account/roles";
 
-// Quiz Editor: two tabs (Details, Questions). Save keeps changes without
-// publishing. Save & Publish publishes. Cancel throws the changes away.
 export default function QuizEditor() {
-    const { cid, qid } = useParams<{ cid: string; qid: string }>();
-    const router = useRouter();
-    const [quiz, setQuiz] = useState<any>(null);
-    const [tab, setTab] = useState<"details" | "questions">("details");
-    const { currentUser, viewAsStudent } = useSelector((s: any) => s.accountReducer);
-    const notFaculty = !!currentUser && (String(currentUser.role).toUpperCase() !== "FACULTY" || !!viewAsStudent);
+  const params = useParams<{ cid: string; qid: string }>();
+  const cid = params ? params.cid : "";
+  const qid = params ? params.qid : "";
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const isFaculty = useIsFaculty();
 
-    useEffect(() => {
-        (async () => {
-            const q = await quizzesClient.getQuiz(qid).catch(() => null);
-            setQuiz(q);
-        })();
-    }, [qid]);
+  const [quiz, setQuiz] = useState<any>(null);
+  // Details is the tab I see first.
+  const [tab, setTab] = useState("details");
 
-    useEffect(() => {
-        // Preview's "Edit Quiz" links here with ?tab=questions.
-        const t = new URLSearchParams(window.location.search).get("tab");
-        if (t === "questions") setTab("questions");
-    }, []);
+  const fetchQuiz = async () => {
+    const found = await quizzesClient.findQuizById(qid);
+    setQuiz(found);
+  };
 
-    useEffect(() => {
-        // Students can not edit a quiz.
-        if (notFaculty) router.replace(`/Courses/${cid}/Quizzes/${qid}`);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [notFaculty]);
+  useEffect(() => {
+    if (qid) {
+      fetchQuiz();
+    }
+  }, [qid]);
 
-    if (notFaculty) return null;
-    if (!quiz) return <div className="p-4 text-muted">Loading…</div>;
+  // Preview sends me here with ?tab=questions, so I open that tab.
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    if (query.get("tab") === "questions") {
+      setTab("questions");
+    }
+  }, []);
 
-    const set = (patch: any) => setQuiz((prev: any) => ({ ...prev, ...patch }));
-    const published = quiz.published !== false;
+  // A student can not edit a quiz.
+  // So I send them back to the details screen.
+  useEffect(() => {
+    if (!isFaculty) {
+      router.replace(`/Courses/${cid}/Quizzes/${qid}`);
+    }
+  }, [isFaculty, cid, qid, router]);
 
-    const save = async (publish?: boolean) => {
-        const payload = { ...quiz, points: totalPoints(quiz) };
-        if (publish !== undefined) payload.published = publish;
-        await quizzesClient.updateQuiz(payload);
-        if (publish) router.push(`/Courses/${cid}/Quizzes`);          // Save & Publish -> list
-        else router.push(`/Courses/${cid}/Quizzes/${qid}`);           // Save -> details
-    };
-    const cancel = () => router.push(`/Courses/${cid}/Quizzes`);      // Cancel -> list
+  if (!isFaculty) {
+    return null;
+  }
+  if (!quiz) {
+    return <div id="wd-quizzes-editor">Loading...</div>;
+  }
 
-    return (
-        <div className="p-4">
-            <div className="d-flex justify-content-between align-items-center mb-2">
-                <div className="text-muted">Points {totalPoints(quiz)}</div>
-                {published
-                    ? <span className="badge bg-success">Published</span>
-                    : <span className="badge bg-secondary">Not Published</span>}
-            </div>
+  // One small change of one field.
+  const set = (changes: any) => setQuiz({ ...quiz, ...changes });
 
-            <Nav variant="tabs" activeKey={tab} className="mb-3"
-                onSelect={(k) => setTab((k as any) || "details")}>
-                <Nav.Item><Nav.Link eventKey="details">Details</Nav.Link></Nav.Item>
-                <Nav.Item><Nav.Link eventKey="questions">Questions</Nav.Link></Nav.Item>
-            </Nav>
+  // publish is undefined for a plain Save. Then I leave the field
+  // alone, so a published quiz does not go back to not published.
+  const save = async (publish?: boolean) => {
+    const updated = { ...quiz, points: totalPoints(quiz) };
+    if (publish === true) {
+      updated.published = true;
+    }
+    await quizzesClient.updateQuiz(updated);
+    dispatch(updateQuizInStore(updated));
+    if (publish === true) {
+      router.push(`/Courses/${cid}/Quizzes`);
+    } else {
+      router.push(`/Courses/${cid}/Quizzes/${qid}`);
+    }
+  };
 
-            {tab === "details"
-                ? <DetailsTab quiz={quiz} set={set} />
-                : <QuestionsTab quiz={quiz} setQuiz={setQuiz} />}
+  return (
+    <div id="wd-quizzes-editor">
+      <div className="clearfix mb-3">
+        <span className="float-end fw-bold">Points {totalPoints(quiz)}</span>
+        <span className="float-end me-3">
+          {quiz.published ? "Published" : "Not Published"}
+        </span>
+      </div>
 
-            <hr />
-            <div className="d-flex justify-content-center gap-2">
-                <Button variant="light" className="border" onClick={cancel}>Cancel</Button>
-                <Button variant="secondary" onClick={() => save(false)}>Save</Button>
-                <Button variant="dark" onClick={() => save(true)}>Save &amp; Publish</Button>
-            </div>
-        </div>
-    );
+      <Nav variant="tabs" activeKey={tab} className="mb-4">
+        <Nav.Item>
+          <Nav.Link
+            id="wd-quiz-details-tab"
+            eventKey="details"
+            onClick={() => setTab("details")}
+          >
+            Details
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link
+            id="wd-quiz-questions-tab"
+            eventKey="questions"
+            onClick={() => setTab("questions")}
+          >
+            Questions
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
+
+      {tab === "details"
+        ? <DetailsTab quiz={quiz} set={set} />
+        : <QuestionsTab quiz={quiz} setQuiz={setQuiz} />}
+
+      <hr />
+
+      {/* Save keeps the changes. Cancel drops them. */}
+      <div className="clearfix mb-3">
+        <Button
+          id="wd-save-publish-btn"
+          className="btn btn-danger float-end"
+          onClick={() => save(true)}
+        >
+          Save &amp; Publish
+        </Button>
+        <Button
+          id="wd-save-btn"
+          className="btn btn-secondary me-2 float-end"
+          onClick={() => save()}
+        >
+          Save
+        </Button>
+        <Button
+          id="wd-cancel-btn"
+          className="btn btn-secondary me-2 float-end"
+          onClick={() => router.push(`/Courses/${cid}/Quizzes`)}
+        >
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
 }

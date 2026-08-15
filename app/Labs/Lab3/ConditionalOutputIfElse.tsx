@@ -1,3 +1,4 @@
+// if/else picks what the component returns.
 const ConditionalOutputIfElse = () => {
   const loggedIn = true;
   if (loggedIn) {

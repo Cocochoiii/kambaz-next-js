@@ -1,126 +1,240 @@
 "use client";
 
+// The editor of one question.
+// Title, points and the question text are the same for every type.
+// The part under them changes with the type.
 import { useState } from "react";
-import { Form, Button } from "react-bootstrap";
-import { v4 as uuid } from "uuid";
+import { Row, Col, Form, Button } from "react-bootstrap";
+import { FaPlus, FaTrash } from "react-icons/fa6";
 import RichText from "../../RichText";
+import { newId } from "../../helpers";
 
-// Multiple choice: add any number of options; check the correct one(s).
-function MultipleChoice({ q, set }: any) {
-    const choices = q.choices || [];
-    const update = (cs: any[]) => set({ choices: cs });
-    const addChoice = () => update([...choices, { _id: uuid(), text: "", correct: choices.length === 0 }]);
-    const removeChoice = (id: string) => update(choices.filter((c: any) => c._id !== id));
-    const toggleCorrect = (id: string) => update(choices.map((c: any) => (c._id === id ? { ...c, correct: !c.correct } : c)));
-    const setText = (id: string, text: string) => update(choices.map((c: any) => (c._id === id ? { ...c, text } : c)));
-    return (
-        <div>
-            <Form.Label>Answers (check the correct one(s))</Form.Label>
-            {choices.map((c: any) => (
-                <div key={c._id} className="d-flex align-items-center gap-2 mb-2">
-                    <Form.Check type="checkbox" title="Correct answer"
-                        checked={!!c.correct} onChange={() => toggleCorrect(c._id)} />
-                    <Form.Control as="textarea" rows={1} value={c.text} placeholder="Answer text"
-                        onChange={(e) => setText(c._id, e.target.value)} />
-                    <Button size="sm" variant="outline-danger" onClick={() => removeChoice(c._id)}>Remove</Button>
-                </div>
-            ))}
-            <Button size="sm" variant="outline-secondary" onClick={addChoice}>+ Add Another Answer</Button>
+// Multiple choice. I can add and remove choices, and I tick the
+// ones that are correct.
+function MultipleChoice({ question, set }: any) {
+  const choices = question.choices || [];
+
+  const setChoices = (list: any[]) => set({ choices: list });
+
+  return (
+    <div>
+      <Form.Label className="fw-bold">Answers</Form.Label>
+      {choices.map((choice: any) => (
+        <div key={choice._id} className="d-flex align-items-center mb-2">
+          <Form.Check
+            className="me-2"
+            title="This choice is correct"
+            checked={choice.correct === true}
+            onChange={() =>
+              setChoices(
+                choices.map((one: any) =>
+                  one._id === choice._id ? { ...one, correct: !one.correct } : one
+                )
+              )
+            }
+          />
+          <Form.Control
+            as="textarea"
+            rows={1}
+            placeholder="Possible answer"
+            value={choice.text || ""}
+            onChange={(e) =>
+              setChoices(
+                choices.map((one: any) =>
+                  one._id === choice._id ? { ...one, text: e.target.value } : one
+                )
+              )
+            }
+          />
+          <FaTrash
+            role="button"
+            aria-label="Remove answer"
+            className="text-danger ms-2"
+            onClick={() =>
+              setChoices(choices.filter((one: any) => one._id !== choice._id))
+            }
+          />
         </div>
-    );
+      ))}
+      <Button
+        size="sm"
+        variant="secondary"
+        onClick={() =>
+          setChoices([...choices, { _id: newId(), text: "", correct: false }])
+        }
+      >
+        <FaPlus className="me-2" />
+        Add Another Answer
+      </Button>
+    </div>
+  );
 }
 
-// True/false: correct answer is a boolean.
-function TrueFalse({ q, set }: any) {
-    return (
-        <div>
-            <Form.Label>Correct Answer</Form.Label>
-            <Form.Check type="radio" name={`tf-${q._id}`} label="True"
-                checked={q.correctAnswer === true} onChange={() => set({ correctAnswer: true })} />
-            <Form.Check type="radio" name={`tf-${q._id}`} label="False"
-                checked={q.correctAnswer === false} onChange={() => set({ correctAnswer: false })} />
-        </div>
-    );
+// True or false. Two radio buttons, one right answer.
+function TrueFalse({ question, set }: any) {
+  return (
+    <div>
+      <Form.Label className="fw-bold">Correct Answer</Form.Label>
+      <Form.Check
+        type="radio"
+        name={`wd-true-false-${question._id}`}
+        label="True"
+        checked={question.correctAnswer === true}
+        onChange={() => set({ correctAnswer: true })}
+      />
+      <Form.Check
+        type="radio"
+        name={`wd-true-false-${question._id}`}
+        label="False"
+        checked={question.correctAnswer === false}
+        onChange={() => set({ correctAnswer: false })}
+      />
+    </div>
+  );
 }
 
-// Fill in the blank: any number of acceptable answers (case-insensitive).
-function FillBlank({ q, set }: any) {
-    const answers = q.answers || [];
-    const update = (a: string[]) => set({ answers: a });
-    const addAnswer = () => update([...answers, ""]);
-    const removeAnswer = (i: number) => update(answers.filter((_: any, idx: number) => idx !== i));
-    const setAnswer = (i: number, val: string) => update(answers.map((a: string, idx: number) => (idx === i ? val : a)));
-    return (
-        <div>
-            <Form.Label>Possible Correct Answers (case-insensitive)</Form.Label>
-            {answers.map((a: string, i: number) => (
-                <div key={i} className="d-flex align-items-center gap-2 mb-2">
-                    <Form.Control as="textarea" rows={1} value={a} placeholder="Possible answer"
-                        onChange={(e) => setAnswer(i, e.target.value)} />
-                    <Button size="sm" variant="outline-danger" onClick={() => removeAnswer(i)}>Remove</Button>
-                </div>
-            ))}
-            <Button size="sm" variant="outline-secondary" onClick={addAnswer}>+ Add Another Answer</Button>
+// Fill in the blank. A list of answers I accept. The server does
+// not look at upper and lower case.
+function FillBlank({ question, set }: any) {
+  const answers = question.answers || [];
+  const setAnswers = (list: string[]) => set({ answers: list });
+
+  return (
+    <div>
+      <Form.Label className="fw-bold">
+        Possible Correct Answers
+      </Form.Label>
+      {answers.map((answer: string, index: number) => (
+        <div key={index} className="d-flex align-items-center mb-2">
+          <Form.Control
+            as="textarea"
+            rows={1}
+            placeholder="Possible answer"
+            value={answer}
+            onChange={(e) =>
+              setAnswers(
+                answers.map((one: string, i: number) =>
+                  i === index ? e.target.value : one
+                )
+              )
+            }
+          />
+          <FaTrash
+            role="button"
+            aria-label="Remove answer"
+            className="text-danger ms-2"
+            onClick={() =>
+              setAnswers(answers.filter((one: string, i: number) => i !== index))
+            }
+          />
         </div>
-    );
+      ))}
+      <Button
+        size="sm"
+        variant="secondary"
+        onClick={() => setAnswers([...answers, ""])}
+      >
+        <FaPlus className="me-2" />
+        Add Another Answer
+      </Button>
+    </div>
+  );
 }
 
-// Edit one question: shared Title/Type/Points/Question plus a type-specific part.
-export default function QuestionEditor({ question, onSave, onCancel }: any) {
-    // Work on a copy so Cancel discards changes.
-    const [q, setQ] = useState<any>({
-        ...question,
-        choices: question.choices ? question.choices.map((c: any) => ({ ...c })) : [],
-        answers: question.answers ? [...question.answers] : [],
-    });
-    const set = (patch: any) => setQ((p: any) => ({ ...p, ...patch }));
+export default function QuestionEditor({
+  question,
+  onSave,
+  onCancel,
+}: {
+  question: any;
+  onSave: (question: any) => void;
+  onCancel: () => void;
+}) {
+  // I work on my own copy. So Cancel really drops the changes.
+  const [mine, setMine] = useState<any>({
+    ...question,
+    choices: (question.choices || []).map((choice: any) => ({ ...choice })),
+    answers: [...(question.answers || [])],
+  });
 
-    const changeType = (type: string) => {
-        setQ((p: any) => {
-            const next = { ...p, type };
-            if (type === "MULTIPLE_CHOICE" && (!next.choices || next.choices.length === 0))
-                next.choices = [{ _id: uuid(), text: "", correct: true }, { _id: uuid(), text: "", correct: false }];
-            if (type === "TRUE_FALSE" && typeof next.correctAnswer !== "boolean") next.correctAnswer = true;
-            if (type === "FILL_BLANK" && (!next.answers || next.answers.length === 0)) next.answers = [""];
-            return next;
-        });
-    };
+  const set = (changes: any) => setMine({ ...mine, ...changes });
 
-    return (
-        <div className="p-3">
-            <div className="row g-3 mb-2">
-                <div className="col-md-7">
-                    <Form.Label>Title</Form.Label>
-                    <Form.Control value={q.title || ""} onChange={(e) => set({ title: e.target.value })} />
-                </div>
-                <div className="col-md-3">
-                    <Form.Label>Type</Form.Label>
-                    <Form.Select value={q.type} onChange={(e) => changeType(e.target.value)}>
-                        <option value="MULTIPLE_CHOICE">Multiple Choice</option>
-                        <option value="TRUE_FALSE">True/False</option>
-                        <option value="FILL_BLANK">Fill in the Blank</option>
-                    </Form.Select>
-                </div>
-                <div className="col-md-2">
-                    <Form.Label>Points</Form.Label>
-                    <Form.Control type="number" value={q.points ?? 0} onChange={(e) => set({ points: Number(e.target.value) })} />
-                </div>
-            </div>
+  // A new type may need a part the question does not have yet.
+  const changeType = (type: string) => {
+    const next = { ...mine, type };
+    if (type === "MULTIPLE_CHOICE" && next.choices.length === 0) {
+      next.choices = [
+        { _id: newId(), text: "", correct: true },
+        { _id: newId(), text: "", correct: false },
+      ];
+    }
+    if (type === "TRUE_FALSE" && typeof next.correctAnswer !== "boolean") {
+      next.correctAnswer = true;
+    }
+    if (type === "FILL_BLANK" && next.answers.length === 0) {
+      next.answers = [""];
+    }
+    setMine(next);
+  };
 
-            <Form.Group className="mb-3">
-                <Form.Label>Question</Form.Label>
-                <RichText value={q.question} onChange={(v: string) => set({ question: v })} minHeight={120} />
-            </Form.Group>
+  return (
+    <div className="p-3">
+      <Row className="mb-3">
+        <Col md={5}>
+          <Form.Label htmlFor="wd-question-title">Title</Form.Label>
+          <Form.Control
+            id="wd-question-title"
+            value={mine.title || ""}
+            onChange={(e) => set({ title: e.target.value })}
+          />
+        </Col>
+        <Col md={4}>
+          <Form.Label htmlFor="wd-question-type">Type</Form.Label>
+          <Form.Select
+            id="wd-question-type"
+            className="form-control"
+            value={mine.type}
+            onChange={(e) => changeType(e.target.value)}
+          >
+            <option value="MULTIPLE_CHOICE">Multiple Choice</option>
+            <option value="TRUE_FALSE">True/False</option>
+            <option value="FILL_BLANK">Fill in the Blank</option>
+          </Form.Select>
+        </Col>
+        <Col md={3}>
+          <Form.Label htmlFor="wd-question-points">Points</Form.Label>
+          <Form.Control
+            id="wd-question-points"
+            type="number"
+            value={mine.points === undefined ? 0 : mine.points}
+            onChange={(e) =>
+              set({ points: e.target.value === "" ? 0 : parseInt(e.target.value) })
+            }
+          />
+        </Col>
+      </Row>
 
-            {q.type === "MULTIPLE_CHOICE" && <MultipleChoice q={q} set={set} />}
-            {q.type === "TRUE_FALSE" && <TrueFalse q={q} set={set} />}
-            {q.type === "FILL_BLANK" && <FillBlank q={q} set={set} />}
+      <Form.Group className="mb-4">
+        <Form.Label>Question</Form.Label>
+        <RichText
+          value={mine.question}
+          onChange={(html: string) => set({ question: html })}
+        />
+      </Form.Group>
 
-            <hr />
-            <div className="d-flex gap-2">
-                <Button variant="light" className="border" onClick={onCancel}>Cancel</Button>
-                <Button variant="danger" onClick={() => onSave(q)}>Update Question</Button>
-            </div>
-        </div>
-    );
+      {mine.type === "MULTIPLE_CHOICE" && (
+        <MultipleChoice question={mine} set={set} />
+      )}
+      {mine.type === "TRUE_FALSE" && <TrueFalse question={mine} set={set} />}
+      {mine.type === "FILL_BLANK" && <FillBlank question={mine} set={set} />}
+
+      <hr />
+      <Button variant="secondary" className="me-2" onClick={onCancel}>
+        Cancel
+      </Button>
+      <Button variant="danger" onClick={() => onSave(mine)}>
+        Update Question
+      </Button>
+    </div>
+  );
 }

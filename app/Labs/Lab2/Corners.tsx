@@ -1,11 +1,20 @@
-export default function CornersEx(){
+// I can round all four corners or only some of them.
+export default function Corners() {
   return (
-    <div id="wd-css-borders">
-      <h3>Rounded corners</h3>
-      <p className="wd-rounded-corners-top wd-border-thin wd-border-blue wd-border-solid wd-padding-fat">Rounded corners on the top</p>
-      <p className="wd-rounded-corners-bottom wd-border-thin wd-border-blue wd-border-solid wd-padding-fat">Rounded corners at the bottom</p>
-      <p className="wd-rounded-corners-all-around wd-border-thin wd-border-blue wd-border-solid wd-padding-fat">Rounded corners all around</p>
-      <p className="wd-rounded-corners-inline wd-border-thin wd-border-blue wd-border-solid wd-padding-fat">Different rounded corners</p>
+    <div id="wd-css-rounded-corners">
+      <h2>Rounded corners</h2>
+      <p className="wd-rounded-corners-top wd-border-thin wd-border-blue wd-border-solid wd-padding-fat">
+        Rounded corners on the top
+      </p>
+      <p className="wd-rounded-corners-bottom wd-border-thin wd-border-blue wd-border-solid wd-padding-fat">
+        Rounded corners at the bottom
+      </p>
+      <p className="wd-rounded-corners-all-around wd-border-thin wd-border-blue wd-border-solid wd-padding-fat">
+        Rounded corners all around
+      </p>
+      <p className="wd-rounded-corners-inline wd-border-thin wd-border-blue wd-border-solid wd-padding-fat">
+        Different rounded corners
+      </p>
     </div>
   );
 }

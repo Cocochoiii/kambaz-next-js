@@ -1,128 +1,190 @@
 "use client";
 
+// The screen where a student takes the quiz.
+// The server grades the answers and keeps them, so I can come back
+// later and see my last try again.
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useParams } from "next/navigation";
 import { Button, Form } from "react-bootstrap";
-import * as quizzesClient from "../../client";
-import { totalPoints, availability } from "../../helpers";
+import { useSelector } from "react-redux";
 import QuizRunner from "../../QuizRunner";
-import { TopInfoRow, Instructions, LockNotice, AttemptHistory, SubmissionDetails } from "../../QuizChrome";
+import * as quizzesClient from "../../client";
+import { attemptLimit, availability, longDate, totalPoints } from "../../helpers";
 
-// Student quiz taking. Submitting stores an attempt (graded on the server).
-// A student can retake up to the limit and only sees the last attempt.
-export default function QuizTake() {
-    const { cid, qid } = useParams<{ cid: string; qid: string }>();
-    const router = useRouter();
-    const { currentUser } = useSelector((s: any) => s.accountReducer);
-    const [quiz, setQuiz] = useState<any>(null);
-    const [count, setCount] = useState(0);
-    const [last, setLast] = useState<any>(null);
-    const [best, setBest] = useState(0);
-    const [attempts, setAttempts] = useState<any[]>([]);
-    const [reviewing, setReviewing] = useState(false);
-    const [codeOk, setCodeOk] = useState(false);
-    const [codeInput, setCodeInput] = useState("");
+export default function TakeQuiz() {
+  const params = useParams<{ cid: string; qid: string }>();
+  const cid = params ? params.cid : "";
+  const qid = params ? params.qid : "";
 
-    const load = async () => {
-        const q = await quizzesClient.getQuiz(qid).catch(() => null);
-        setQuiz(q);
-        if (currentUser?._id) {
-            const a = await quizzesClient.getAttempts(qid, currentUser._id).catch(() => null);
-            setCount(a?.count || 0); setLast(a?.last || null); setBest(a?.best || 0); setAttempts(a?.attempts || []);
-        }
-    };
-    useEffect(() => {
-        load();
-        if (new URLSearchParams(window.location.search).get("review") === "1") setReviewing(true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qid, currentUser?._id]);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
-    if (!quiz) return <div className="p-4 text-muted">Loading…</div>;
+  const [quiz, setQuiz] = useState<any>(null);
+  const [attempts, setAttempts] = useState<any>({ count: 0, last: null, attempts: [] });
+  // review turns true after I submit.
+  // It is also true when I come back to read my last try.
+  const [review, setReview] = useState(false);
+  const [code, setCode] = useState("");
+  const [codeOk, setCodeOk] = useState(false);
 
-    const points = totalPoints(quiz);
-    const av = availability(quiz);
-    const locked = av.state !== "available";
-    const maxAttempts = quiz.multipleAttempts ? Number(quiz.howManyAttempts) || 1 : 1;
-    const exhausted = count >= maxAttempts;
-    const showCorrect = !!quiz.showCorrectAnswers;
-    const hasResults = !!last;
-    const lastAnswersMap = last ? Object.fromEntries((last.answers || []).map((x: any) => [x.questionId, x.answer])) : {};
-    const accessNeeded = !!quiz.accessCode && !codeOk;
-    const wantResults = reviewing || exhausted || (locked && hasResults);
-    const canStart = !locked && !exhausted;
-
-    const onSubmit = async (arr: any[], meta: any) => {
-        const res = await quizzesClient.submitAttempt(qid, { user: currentUser?._id, answers: arr, timeTaken: meta?.timeTaken || 0 }).catch(() => null);
-        await load();
-        setReviewing(true);
-        return res ? { score: res.score } : null;
-    };
-
-    const header = (
-        <div className="d-flex justify-content-between align-items-center mb-2">
-            <h3 className="mb-0">{quiz.title}</h3>
-            <Button variant="link" onClick={() => router.push(`/Courses/${cid}/Quizzes/${qid}`)}>Back to Details</Button>
-        </div>
-    );
-
-    if (wantResults && hasResults) {
-        return (
-            <div className="p-4">
-                {header}
-                <div className="row">
-                    <div className="col-lg-8">
-                        <TopInfoRow quiz={quiz} />
-                        <Instructions quiz={quiz} />
-                        {locked && <LockNotice quiz={quiz} />}
-                        <AttemptHistory attempts={attempts} points={points} />
-                        <QuizRunner quiz={quiz} mode="review" initialAnswers={lastAnswersMap} showCorrect={showCorrect} />
-                        {canStart && <div className="mt-3"><Button variant="dark" onClick={() => setReviewing(false)}>Take Again</Button></div>}
-                    </div>
-                    <div className="col-lg-4">
-                        <SubmissionDetails last={last} best={best} points={points} />
-                    </div>
-                </div>
-            </div>
-        );
+  const fetchAll = async () => {
+    const found = await quizzesClient.findQuizById(qid);
+    setQuiz(found);
+    if (currentUser) {
+      const mine = await quizzesClient.findAttempts(qid, currentUser._id);
+      setAttempts(mine);
     }
+  };
 
-    if (locked) {
-        return (
-            <div className="p-4">
-                {header}
-                <TopInfoRow quiz={quiz} />
-                <Instructions quiz={quiz} />
-                <LockNotice quiz={quiz} />
-            </div>
-        );
+  useEffect(() => {
+    if (qid) {
+      fetchAll();
     }
+  }, [qid, currentUser]);
 
-    if (accessNeeded) {
-        return (
-            <div className="p-4">
-                {header}
-                <TopInfoRow quiz={quiz} />
-                <div style={{ maxWidth: 360 }}>
-                    <div className="mb-2">This quiz requires an access code.</div>
-                    <Form.Control value={codeInput} onChange={(e) => setCodeInput(e.target.value)} placeholder="Access code" />
-                    <Button variant="dark" className="mt-2" onClick={() => setCodeOk(codeInput === quiz.accessCode)}>Enter</Button>
-                    {codeInput && codeInput !== quiz.accessCode && <div className="text-danger small mt-1">Incorrect code.</div>}
-                </div>
-            </div>
-        );
+  // The details screen sends me here with ?review=true.
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    if (query.get("review") === "true") {
+      setReview(true);
     }
+  }, []);
 
+  if (!quiz) {
+    return <div id="wd-take-quiz">Loading...</div>;
+  }
+
+  const points = totalPoints(quiz);
+  const open = availability(quiz);
+  const limit = attemptLimit(quiz);
+  const left = limit - attempts.count;
+  const last = attempts.last;
+
+  // The answers of my last try, as one object the runner understands.
+  const lastAnswers: any = {};
+  if (last) {
+    for (const item of last.answers || []) {
+      lastAnswers[item.questionId] = item.answer;
+    }
+  }
+
+  const submit = async (list: any[], timeTaken: number) => {
+    // The server can still say no, for example when the tries run out.
+    // Then I tell the student, instead of showing a dead screen.
+    try {
+      await quizzesClient.createAttempt(qid, {
+        user: currentUser ? currentUser._id : "",
+        answers: list,
+        timeTaken,
+      });
+    } catch (error: any) {
+      const message = error?.response?.data?.message;
+      window.alert(message || "I could not send your answers. Try again.");
+      return;
+    }
+    await fetchAll();
+    setReview(true);
+  };
+
+  const header = (
+    <div className="clearfix mb-3">
+      <Link
+        href={`/Courses/${cid}/Quizzes/${qid}`}
+        className="btn btn-secondary float-end"
+      >
+        Back to Quiz
+      </Link>
+      <h2 className="m-0">{quiz.title}</h2>
+    </div>
+  );
+
+  // The quiz is closed or it has not opened yet.
+  if (open.state !== "available" && !review) {
     return (
-        <div className="p-4">
-            {header}
-            <div className="d-flex justify-content-between align-items-center">
-                <div className="text-muted small">Attempt {count + 1} of {maxAttempts}</div>
-                {hasResults && <Button size="sm" variant="outline-secondary" onClick={() => setReviewing(true)}>Review last attempt</Button>}
-            </div>
-            <TopInfoRow quiz={quiz} />
-            <Instructions quiz={quiz} />
-            <QuizRunner quiz={quiz} mode="take" onSubmit={onSubmit} showCorrect={showCorrect} />
-        </div>
+      <div id="wd-take-quiz">
+        {header}
+        <hr />
+        <p className="text-danger">{open.label}</p>
+        <p>Available: {longDate(quiz.availableDate)} - {longDate(quiz.untilDate)}</p>
+      </div>
     );
+  }
+
+  // My last try. Every question gets a green check or a red cross.
+  if (review && last) {
+    return (
+      <div id="wd-take-quiz">
+        {header}
+        <hr />
+        <p className="fw-bold">
+          Score: {last.score} out of {points}
+        </p>
+        <p className="text-muted">
+          Attempt {last.attemptNumber} of {limit}, submitted{" "}
+          {new Date(last.submittedAt).toLocaleString()}
+        </p>
+        <QuizRunner key="review" quiz={quiz} mode="review"
+                    initialAnswers={lastAnswers} />
+        {open.state === "available" && left > 0 && (
+          <Button variant="danger" onClick={() => setReview(false)}>
+            Take the Quiz Again
+          </Button>
+        )}
+        {left <= 0 && (
+          <p className="text-muted">You used all {limit} attempts.</p>
+        )}
+      </div>
+    );
+  }
+
+  // No attempt is left.
+  if (left <= 0) {
+    return (
+      <div id="wd-take-quiz">
+        {header}
+        <hr />
+        <p>You used all {limit} attempts of this quiz.</p>
+      </div>
+    );
+  }
+
+  // The quiz asks for a code before it opens.
+  if (quiz.accessCode && !codeOk) {
+    return (
+      <div id="wd-take-quiz">
+        {header}
+        <hr />
+        <p>This quiz needs an access code.</p>
+        <div style={{ maxWidth: 320 }}>
+          <Form.Control
+            placeholder="Access code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+          <Button
+            variant="danger"
+            className="mt-2"
+            onClick={() => setCodeOk(code === quiz.accessCode)}
+          >
+            Start the Quiz
+          </Button>
+          {code !== "" && code !== quiz.accessCode && (
+            <p className="text-danger mt-2">This code is wrong.</p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div id="wd-take-quiz">
+      {header}
+      <hr />
+      <p className="text-muted">
+        Attempt {attempts.count + 1} of {limit}
+      </p>
+      <div dangerouslySetInnerHTML={{ __html: quiz.description || "" }} />
+      <QuizRunner key="take" quiz={quiz} mode="take" onSubmit={submit} />
+    </div>
+  );
 }

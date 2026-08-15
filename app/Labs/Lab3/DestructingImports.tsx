@@ -1,3 +1,4 @@
+// Three ways to import the same Math functions.
 import MathLib, { add, subtract, multiply, divide } from "./Math";
 import * as Matematica from "./Math";
 export default function DestructingImports() {
