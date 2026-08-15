@@ -1,3 +1,4 @@
+// A short arrow function does not need the return word.
 export default function ImpliedReturn() {
   const multiply = (a: number, b: number) => a * b;
   const fourTimesFive = multiply(4, 5);

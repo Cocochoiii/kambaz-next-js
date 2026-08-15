@@ -1,182 +1,234 @@
 "use client";
 
+// The Assignments screen.
+// The assignments come from the server. + Assignment opens the editor.
+// Delete and publish go to the server first.
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ListGroup, Badge, Button, Form, InputGroup } from "react-bootstrap";
-import {
-    BsGripVertical,
-    BsFileEarmarkText,
-    BsPlus,
-    BsSearch
-} from "react-icons/bs";
+import { BsGripVertical, BsPlus, BsThreeDotsVertical, BsSearch } from "react-icons/bs";
 import { FaPlus, FaTrash } from "react-icons/fa6";
-import { FaCheckCircle, FaBan } from "react-icons/fa";
-import { useSelector, useDispatch } from "react-redux";
-import { setAssignments, deleteAssignment, updateAssignment } from "./reducer";
+import { LiaFileAltSolid } from "react-icons/lia";
+import { useDispatch, useSelector } from "react-redux";
+import PublishToggle from "../Modules/PublishToggle";
+import KebabMenu from "../../../KebabMenu";
+import {
+  setAssignments,
+  addAssignment,
+  deleteAssignment,
+  updateAssignment,
+} from "./reducer";
+import * as coursesClient from "../../client";
 import * as assignmentsClient from "./client";
-import KebabMenu from "@/app/(Kambaz)/KebabMenu";
 import { useIsFaculty } from "../../../Account/roles";
 
+// The dates look like 2025-01-19. I cut the text myself.
+// If I do not, the two sides show different text.
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function shortDate(date?: string) {
+  if (!date) { return "-"; }
+  const [, month, day] = date.split("-");
+  return `${MONTHS[Number(month) - 1]} ${Number(day)}`;
+}
+
 export default function Assignments() {
-    const { cid } = useParams<{ cid: string }>();
-    const router = useRouter();
-    const dispatch = useDispatch();
-    const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-    const isFaculty = useIsFaculty();
+  const params = useParams<{ cid: string }>();
+  const cid = params ? params.cid : "";
+  const router = useRouter();
+  const dispatch = useDispatch();
 
-    const loadAssignments = async () => {
-        const list = await assignmentsClient.findAssignmentsForCourse(cid);
-        dispatch(setAssignments(list));
-    };
-    useEffect(() => {
-        loadAssignments();
-    }, [cid]);
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const isFaculty = useIsFaculty();
 
-    const [searchTerm, setSearchTerm] = useState("");
-    const courseAssignments = assignments
-        .filter((a: any) => a.course === cid)
-        .filter((a: any) => a.title.toLowerCase().includes(searchTerm.toLowerCase()))
-        // Students only see published assignments.
-        .filter((a: any) => isFaculty || a.published !== false);
+  // The seed data has no published field, and !undefined is true, so the
+  // old toggle did nothing on the first click. A missing field counts
+  // as published, the same way the list already draws it.
+  const isPublished = (a: any) => a.published !== false;
 
-    // Faculty publish toggle: persists on the server via the update endpoint.
-    const togglePublish = async (a: any) => {
-        const updated = { ...a, published: !(a.published !== false) };
-        await assignmentsClient.updateAssignment(updated);
-        dispatch(updateAssignment(updated));
-    };
+  // A student never sees an assignment that is not published.
+  const courseAssignments = assignments
+    .filter((a: any) => a.course === cid)
+    .filter((a: any) => isFaculty || isPublished(a));
 
-    const handleDelete = async (assignmentId: string) => {
-        if (window.confirm("Are you sure you want to delete this assignment?")) {
-            await assignmentsClient.deleteAssignment(assignmentId);
-            dispatch(deleteAssignment(assignmentId));
-        }
-    };
+  // Read the assignments of this course.
+  const fetchAssignments = async () => {
+    const found = await coursesClient.findAssignmentsForCourse(cid);
+    dispatch(setAssignments(found));
+  };
 
-    const handleAddAssignment = () => router.push(`/Courses/${cid}/Assignments/new`);
+  useEffect(() => {
+    if (cid) {
+      fetchAssignments();
+    }
+  }, [cid]);
 
-    // Availability status shown per assignment (changes with the current date).
-    const availabilityLabel = (a: any) => {
-        const now = Date.now();
-        if (a.availableFrom && now < new Date(a.availableFrom).getTime()) {
-            return `Not available until ${new Date(a.availableFrom).toLocaleDateString()}`;
-        }
-        if (a.availableUntil && now > new Date(a.availableUntil).getTime()) {
-            return "Closed";
-        }
-        if (a.availableUntil) {
-            return `Available until ${new Date(a.availableUntil).toLocaleDateString()}`;
-        }
-        return "Available";
-    };
+  // Publish only changes one field. So I reuse the update route.
+  const togglePublish = async (assignment: any) => {
+    const updated = { ...assignment, published: !isPublished(assignment) };
+    await assignmentsClient.updateAssignment(updated);
+    dispatch(updateAssignment(updated));
+  };
 
-    return (
-        <div id="wd-assignments" className="mt-2">
-            <div className="d-flex align-items-center gap-2 mb-3">
-                <InputGroup style={{ maxWidth: 380 }}>
-                    <InputGroup.Text><BsSearch /></InputGroup.Text>
-                    <Form.Control
-                        id="wd-search-assignment"
-                        placeholder="Search for Assignments"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </InputGroup>
-                {isFaculty && (
-                    <>
-                        <Button id="wd-add-assignment-group" variant="secondary" className="ms-auto" onClick={handleAddAssignment}>
-                            <FaPlus className="me-1" /> Group
-                        </Button>
-                        <Button id="wd-add-assignment" variant="danger" onClick={handleAddAssignment}>
-                            <FaPlus className="me-1" /> Assignment
-                        </Button>
-                    </>
-                )}
-            </div>
+  // The two menu items above the list. One PUT for each assignment.
+  const publishAll = async (published: boolean) => {
+    for (const assignment of courseAssignments) {
+      const updated = { ...assignment, published };
+      await assignmentsClient.updateAssignment(updated);
+      dispatch(updateAssignment(updated));
+    }
+  };
 
-            <div className="border rounded mb-3">
-                <div className="d-flex align-items-center justify-content-between px-3 py-2">
-                    <div className="d-flex align-items-center gap-2">
-                        <BsGripVertical className="fs-4 text-secondary" />
-                        <strong>ASSIGNMENTS</strong>
-                    </div>
-                    <div className="d-flex align-items-center gap-2">
-                        <Badge bg="light" text="dark" className="border">40% of Total</Badge>
-                        {isFaculty && (
-                            <>
-                                <Button size="sm" variant="light" onClick={handleAddAssignment}><BsPlus /></Button>
-                                <KebabMenu items={[{ label: "New Assignment", onClick: handleAddAssignment }]} />
-                            </>
-                        )}
-                    </div>
-                </div>
+  // Copy one assignment. The server gives the copy a new id.
+  const duplicateAssignment = async (assignment: any) => {
+    const { _id, __v, ...rest } = assignment;
+    const created = await coursesClient.createAssignmentForCourse(cid, {
+      ...rest,
+      title: `${assignment.title} (copy)`,
+    });
+    dispatch(addAssignment(created));
+  };
 
-                <ListGroup variant="flush" id="wd-assignment-list">
-                    {courseAssignments.map((assignment: any) => (
-                        <ListGroup.Item key={assignment._id} className="py-3 d-flex align-items-start">
-                            <div className="me-2 pt-1"><BsGripVertical className="text-secondary" /></div>
-                            <div className="me-3 pt-1"><BsFileEarmarkText className="text-success fs-5" /></div>
+  const removeAssignment = async (assignmentId: string) => {
+    // The book asks for a dialog.
+    if (window.confirm("Are you sure you want to remove this assignment?")) {
+      await assignmentsClient.deleteAssignment(assignmentId);
+      dispatch(deleteAssignment(assignmentId));
+    }
+  };
 
-                            <div className="flex-grow-1">
-                                <Link
-                                    className="wd-assignment-link fw-semibold text-decoration-none"
-                                    href={`/Courses/${cid}/Assignments/${assignment._id}`}
-                                >
-                                    {assignment.title}
-                                </Link>
-                                <div className="text-muted small">
-                                    Multiple Modules <span className="mx-2">|</span>
-                                    {availabilityLabel(assignment)}
-                                    <span className="mx-2">|</span>
-                                    {assignment.dueDate
-                                        ? <>Due {new Date(assignment.dueDate).toLocaleDateString()} at 11:59pm</>
-                                        : <>Due -</>
-                                    }
-                                    <span className="mx-2">|</span>
-                                    {assignment.points} pts
-                                </div>
-                            </div>
-
-                            <div className="ms-3 d-flex align-items-center gap-2">
-                                {/* Students see no controls; faculty can delete or edit */}
-                                {isFaculty && (
-                                    <>
-                                        <Button
-                                            variant="link"
-                                            className="p-0"
-                                            title={assignment.published !== false ? "Published — click to unpublish" : "Unpublished — click to publish"}
-                                            onClick={() => togglePublish(assignment)}
-                                        >
-                                            {assignment.published !== false ? (
-                                                <FaCheckCircle className="text-success" />
-                                            ) : (
-                                                <FaBan className="text-secondary" />
-                                            )}
-                                        </Button>
-                                        <Button
-                                            variant="link"
-                                            className="text-danger p-0"
-                                            onClick={() => handleDelete(assignment._id)}
-                                        >
-                                            <FaTrash />
-                                        </Button>
-                                        <KebabMenu
-                                            items={[
-                                                {
-                                                    label: "Edit",
-                                                    onClick: () =>
-                                                        router.push(`/Courses/${cid}/Assignments/${assignment._id}`),
-                                                },
-                                            ]}
-                                        />
-                                    </>
-                                )}
-                            </div>
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
-            </div>
+  return (
+    <div id="wd-assignments">
+      {/* The buttons float right, so I write the right one first. */}
+      <div className="clearfix mb-4">
+        {isFaculty && (
+          <>
+            <button
+              id="wd-add-assignment"
+              className="btn btn-lg btn-danger float-end"
+              onClick={() => router.push(`/Courses/${cid}/Assignments/new`)}
+            >
+              <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+              Assignment
+            </button>
+            <button id="wd-add-assignment-group" className="btn btn-lg btn-secondary me-2 float-end">
+              <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+              Group
+            </button>
+          </>
+        )}
+        <div className="input-group" style={{ width: "300px" }}>
+          <span className="input-group-text bg-white">
+            <BsSearch />
+          </span>
+          <input
+            id="wd-search-assignment"
+            className="form-control"
+            placeholder="Search for Assignments"
+          />
         </div>
-    );
+      </div>
+
+      {/* The ASSIGNMENTS group title */}
+      <div className="p-3 bg-secondary border border-secondary clearfix">
+        <BsGripVertical className="me-2 fs-3" />
+        <span id="wd-assignments-title" className="fw-bold">ASSIGNMENTS</span>
+        <div className="float-end d-flex align-items-center">
+          <span className="border border-dark rounded-pill px-2 py-1 me-2">40% of Total</span>
+          <BsPlus
+            role={isFaculty ? "button" : undefined}
+            aria-label="Add assignment"
+            className="fs-4"
+            onClick={
+              isFaculty
+                ? () => router.push(`/Courses/${cid}/Assignments/new`)
+                : undefined
+            }
+          />
+          {isFaculty ? (
+            <KebabMenu
+              variant="dark"
+              items={[
+                { label: "Publish all assignments", onClick: () => publishAll(true) },
+                { label: "Unpublish all assignments", onClick: () => publishAll(false) },
+              ]}
+            />
+          ) : (
+            <BsThreeDotsVertical className="fs-4" />
+          )}
+        </div>
+      </div>
+
+      <ul id="wd-assignment-list" className="list-group rounded-0">
+        {courseAssignments.map((assignment: any) => (
+          <li
+            key={assignment._id}
+            className={`wd-assignment-list-item list-group-item p-3 ps-1 d-flex align-items-center ${
+              isPublished(assignment) ? "" : "opacity-50"
+            }`}
+          >
+            <BsGripVertical className="me-2 fs-3" />
+            <LiaFileAltSolid className="me-3 fs-3 text-success" />
+            <div className="flex-fill">
+              <Link
+                href={`/Courses/${cid}/Assignments/${assignment._id}`}
+                className="wd-assignment-link fw-bold text-dark text-decoration-none"
+              >
+                {assignment.title}
+              </Link>
+              <p className="mb-0">
+                <span className="text-danger">Multiple Modules</span>
+                {" | "}<b>Not available until</b> {shortDate(assignment.availableFrom)} at 12:00am
+                {" | "}<b>Due</b> {shortDate(assignment.dueDate)} at 11:59pm
+                {" | "}{assignment.points} pts
+              </p>
+            </div>
+            <div className="ms-3 d-flex align-items-center">
+              {isFaculty && (
+                <FaTrash
+                  role="button"
+                  aria-label="Delete assignment"
+                  title="Delete this assignment"
+                  className="text-danger me-3"
+                  onClick={() => removeAssignment(assignment._id)}
+                />
+              )}
+              <PublishToggle
+                published={isPublished(assignment)}
+                onToggle={isFaculty ? () => togglePublish(assignment) : undefined}
+              />
+              {isFaculty ? (
+                <KebabMenu
+                  variant="dark"
+                  items={[
+                    {
+                      label: "Edit",
+                      onClick: () =>
+                        router.push(`/Courses/${cid}/Assignments/${assignment._id}`),
+                    },
+                    {
+                      label: "Duplicate",
+                      onClick: () => duplicateAssignment(assignment),
+                    },
+                    {
+                      label: isPublished(assignment) ? "Unpublish" : "Publish",
+                      onClick: () => togglePublish(assignment),
+                    },
+                    {
+                      label: "Delete",
+                      danger: true,
+                      onClick: () => removeAssignment(assignment._id),
+                    },
+                  ]}
+                />
+              ) : (
+                <BsThreeDotsVertical className="fs-4" />
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }

@@ -1,3 +1,4 @@
+// I unpack the parameters right in the argument list.
 export default function FunctionDestructing() {
   const add = (a: number, b: number) => a + b;
   const sum = add(1, 2);

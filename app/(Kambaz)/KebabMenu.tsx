@@ -1,50 +1,75 @@
 "use client";
 
-import React from "react";
-import { Dropdown } from "react-bootstrap";
+// The three dots menu Canvas puts at the end of a row.
+// I write it myself with a button and a list, so the click is mine.
+// I give it a list of items. Each item has its own click function.
+import { useEffect, useRef, useState } from "react";
 import { IoEllipsisVertical } from "react-icons/io5";
 
-export type KebabItem = {
-    label: string;
-    onClick: () => void;
-    danger?: boolean;
-};
+export default function KebabMenu({
+  items,
+  variant = "light",
+}: {
+  items: { label: string; onClick: () => void; danger?: boolean }[];
+  variant?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const boxRef = useRef<HTMLSpanElement>(null);
 
-// Toggle that shows only the dots (no default caret). No fixed color so it
-// inherits the surrounding text color and stays visible on any background.
-const DotsToggle = React.forwardRef<HTMLSpanElement, any>(({ onClick }, ref) => (
-    <span
-        ref={ref}
-        role="button"
-        onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onClick(e);
+  // A click anywhere else closes the menu.
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const closeOnOutside = (event: MouseEvent) => {
+      const box = boxRef.current;
+      if (box && !box.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", closeOnOutside);
+    return () => document.removeEventListener("mousedown", closeOnOutside);
+  }, [open]);
+
+  // The card behind me is a link, so I stop the click here.
+  const stop = (event: any) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  return (
+    <span ref={boxRef} className="wd-kebab-box" onClick={stop}>
+      <button
+        type="button"
+        aria-label="More"
+        aria-expanded={open}
+        className={`wd-kebab ${variant === "light" ? "wd-kebab-light" : ""}`}
+        onClick={(event) => {
+          stop(event);
+          setOpen(!open);
         }}
-    >
-        <IoEllipsisVertical className="fs-4" />
-    </span>
-));
-DotsToggle.displayName = "DotsToggle";
+      >
+        <IoEllipsisVertical />
+      </button>
 
-// Small reusable three-dots menu. Pass the actions you want in the list.
-export default function KebabMenu({ items }: { items: KebabItem[] }) {
-    return (
-        // align="end" opens the menu leftward; fixed strategy + high z-index keep it
-        // floating above every card so a neighboring card can never clip it.
-        <Dropdown align="end" onClick={(e) => e.stopPropagation()}>
-            <Dropdown.Toggle as={DotsToggle} />
-            <Dropdown.Menu renderOnMount popperConfig={{ strategy: "fixed" }} style={{ zIndex: 2000 }}>
-                {items.map((item, i) => (
-                    <Dropdown.Item
-                        key={i}
-                        className={item.danger ? "text-danger" : ""}
-                        onClick={item.onClick}
-                    >
-                        {item.label}
-                    </Dropdown.Item>
-                ))}
-            </Dropdown.Menu>
-        </Dropdown>
-    );
+      {open && (
+        <div className="wd-kebab-menu">
+          {items.map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              className={item.danger ? "wd-kebab-danger" : ""}
+              onClick={(event) => {
+                stop(event);
+                setOpen(false);
+                item.onClick();
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </span>
+  );
 }

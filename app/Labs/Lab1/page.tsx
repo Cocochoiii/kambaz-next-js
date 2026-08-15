@@ -1,9 +1,16 @@
 'use client';
 
+// Lab 1. The HTML exercises of Chapter 1.
+// It is also the landing page, so the header goes on top.
+import LabsHeader from "../LabsHeader";
+
 export default function Lab1() {
   return (
       <div id="wd-lab1">
         <h2>Lab 1</h2>
+
+        <LabsHeader />
+
         <h3>HTML Examples</h3>
 
         <div id="wd-h-tag">
@@ -133,7 +140,7 @@ export default function Lab1() {
 
             <h5>Text boxes</h5>
             <label>Biography:</label><br/>
-            {/* Use defaultValue to avoid React warning */}
+            {/* defaultValue. With value the field is read only. */}
             <textarea
                 id="wd-textarea"
                 cols={30}
@@ -196,11 +203,14 @@ export default function Lab1() {
             <input type="range" defaultValue="4" max="5" id="wd-text-fields-rating"/><br/>
             <label htmlFor="wd-text-fields-dob"> Date of birth: </label>
             <input type="date" defaultValue="2000-01-21" id="wd-text-fields-dob"/><br/>
-
-            <h4>Anchor tag</h4>
-            Please <a href="https://www.lipsum.com" id="wd-lipsum" target="_blank" rel="noreferrer">click here</a> to get dummy text<br/>
-            <a href="https://github.com/Cocochoiii" id="wd-github" target="_blank" rel="noreferrer">My GitHub</a>
           </form>
+        </div>
+
+        {/* The anchor tags go outside the form */}
+        <div id="wd-anchors">
+          <h4>Anchor tag</h4>
+          Please <a href="https://www.lipsum.com" id="wd-lipsum" target="_blank" rel="noreferrer">click here</a> to get dummy text<br/>
+          <a href="https://github.com/Cocochoiii" id="wd-github" target="_blank" rel="noreferrer">My GitHub</a>
         </div>
       </div>
   );

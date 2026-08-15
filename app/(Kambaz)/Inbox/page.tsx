@@ -1,135 +1,193 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
-import { Card, Button, Form, InputGroup, ListGroup, Badge } from "react-bootstrap";
-import { BsInbox, BsSearch } from "react-icons/bs";
+// The Inbox screen. Canvas has it, the book does not.
+// The list is on the left. The open message is on the right.
+// Reading one marks it as read on the server.
+import { useEffect, useState } from "react";
+import { Badge, Button, Col, ListGroup, Row } from "react-bootstrap";
+import { FaTrash } from "react-icons/fa6";
+import { FaUserCircle, FaEnvelope, FaEnvelopeOpen } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import MessageEditor from "./MessageEditor";
+import { setMessages, updateMessage, deleteMessage } from "./reducer";
+import * as client from "./client";
 
-type Msg = {
-    id: string;
-    from: string;
-    subject: string;
-    preview: string;
-    time: string;
-    unread?: boolean;
-    course?: string;
-};
+// I cut the date myself, so the server and the browser agree.
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-const MOCK: Msg[] = [
-    {
-        id: "1",
-        from: "Course Bot",
-        subject: "Welcome to your Inbox",
-        preview: "Welcome to Canvas.",
-        time: "now",
-        unread: true,
-    },
-    {
-        id: "2",
-        from: "CS5610 Staff",
-        subject: "Project 1 released",
-        preview: "Spec and starter code are available on Modules.",
-        time: "2h",
-        course: "5610",
-    },
-    {
-        id: "3",
-        from: "CS5200 TA",
-        subject: "Lab moved to Thursday",
-        preview: "Please check Zoom link in the course page.",
-        time: "yesterday",
-        course: "5200",
-    },
-    {
-        id: "4",
-        from: "CS5800 TA",
-        subject: "Midterm exam for next week",
-        preview: "Check the practice exam on module page.",
-        time: "yesterday",
-        course: "5800",
-    },
-];
+function shortDate(date?: string) {
+  if (!date) { return ""; }
+  const [, month, day] = date.slice(0, 10).split("-");
+  return `${MONTHS[Number(month) - 1]} ${Number(day)}`;
+}
 
-export default function InboxPage() {
-    const [q, setQ] = useState("");
+function longDate(date?: string) {
+  if (!date) { return ""; }
+  const [year, month, day] = date.slice(0, 10).split("-");
+  const clock = date.slice(11, 16);
+  return `${MONTHS[Number(month) - 1]} ${Number(day)}, ${year} at ${clock}`;
+}
 
-    const filtered = MOCK.filter(
-        m =>
-            m.subject.toLowerCase().includes(q.toLowerCase()) ||
-            m.from.toLowerCase().includes(q.toLowerCase()) ||
-            m.preview.toLowerCase().includes(q.toLowerCase())
-    );
+export default function Inbox() {
+  const { messages } = useSelector((state: any) => state.messagesReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { courses } = useSelector((state: any) => state.coursesReducer);
+  const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
+  const dispatch = useDispatch();
 
-    return (
-        <div id="wd-inbox" className="container-fluid py-4">
-            <div className="d-flex align-items-center mb-3 gap-2">
-                <BsInbox className="fs-3" />
-                <h2 className="m-0">Inbox</h2>
-                <span className="text-muted"> - placeholder</span>
-                <div className="ms-auto">
-                    <Link href="/Dashboard" className="btn btn-outline-secondary btn-sm">
-                        Back to Dashboard
-                    </Link>
+  // The message I am reading, and the compose dialog.
+  const [openId, setOpenId] = useState("");
+  const [show, setShow] = useState(false);
+  const [draft, setDraft] = useState({
+    course: "", to: "", subject: "", body: "",
+  });
+
+  const myId = currentUser ? currentUser._id : "";
+  const isFaculty = currentUser?.role === "FACULTY";
+
+  // Compose uses my courses. Faculty sees every course.
+  const myCourses = isFaculty
+    ? courses
+    : courses.filter((course: any) =>
+        enrollments.some(
+          (e: any) => e.user === myId && e.course === course._id
+        )
+      );
+
+  const fetchMessages = async () => {
+    const found = await client.findMyMessages();
+    dispatch(setMessages(found));
+  };
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchMessages();
+    }
+  }, [currentUser]);
+
+  // Opening a message marks it as read on the server.
+  const open = async (message: any) => {
+    setOpenId(message._id);
+    if (!message.read) {
+      const updated = await client.updateMessage({ ...message, read: true });
+      dispatch(updateMessage(updated));
+    }
+  };
+
+  const send = async () => {
+    await client.sendMessage(draft);
+    setDraft({ course: "", to: "", subject: "", body: "" });
+  };
+
+  const remove = async (messageId: string) => {
+    if (window.confirm("Are you sure you want to remove this message?")) {
+      await client.deleteMessage(messageId);
+      dispatch(deleteMessage(messageId));
+      if (openId === messageId) { setOpenId(""); }
+    }
+  };
+
+  const openMessage = messages.find((m: any) => m._id === openId);
+  const unread = messages.filter((m: any) => !m.read).length;
+
+  return (
+    <div id="wd-inbox">
+      {/* The button floats right, so it comes first. */}
+      <div className="clearfix mb-3">
+        <Button
+          id="wd-compose-message"
+          variant="danger"
+          className="float-end"
+          onClick={() => setShow(true)}
+        >
+          Compose
+        </Button>
+        <h2 className="float-start">
+          Inbox{" "}
+          {unread > 0 && (
+            <Badge bg="danger" id="wd-unread-count">{unread}</Badge>
+          )}
+        </h2>
+      </div>
+
+      <MessageEditor
+        show={show}
+        handleClose={() => setShow(false)}
+        message={draft}
+        setMessage={setDraft}
+        sendMessage={send}
+        myCourses={myCourses}
+        myId={myId}
+      />
+
+      <Row>
+        {/* The list of messages */}
+        <Col md={5}>
+          <ListGroup id="wd-message-list" className="rounded-0">
+            {messages.map((message: any) => (
+              <ListGroup.Item
+                key={message._id}
+                role="button"
+                onClick={() => open(message)}
+                className={
+                  message._id === openId
+                    ? "wd-message border-start border-4 border-danger"
+                    : "wd-message"
+                }
+              >
+                <FaTrash
+                  role="button"
+                  aria-label="Remove message"
+                  className="text-danger float-end mt-1"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    remove(message._id);
+                  }}
+                />
+                {/* A closed envelope means I have not read it yet. */}
+                {message.read
+                  ? <FaEnvelopeOpen className="text-secondary me-2" />
+                  : <FaEnvelope className="text-danger me-2" />}
+                <span className={message.read ? "" : "fw-bold"}>
+                  {message.subject}
+                </span>
+                <div className="text-muted small ms-4">
+                  {message.fromName} · {message.courseName} ·{" "}
+                  {shortDate(message.date)}
                 </div>
+              </ListGroup.Item>
+            ))}
+            {messages.length === 0 && (
+              <ListGroup.Item className="text-muted">
+                No messages yet.
+              </ListGroup.Item>
+            )}
+          </ListGroup>
+        </Col>
+
+        {/* The message I opened */}
+        <Col md={7}>
+          {!openMessage && (
+            <div className="text-muted" id="wd-no-message">
+              Choose a message to read it.
             </div>
-
-            <Card className="shadow-sm">
-                <Card.Header className="bg-white">
-                    <div className="d-flex gap-2 align-items-center">
-                        <InputGroup style={{ maxWidth: 420 }}>
-                            <InputGroup.Text>
-                                <BsSearch />
-                            </InputGroup.Text>
-                            <Form.Control
-                                placeholder="Search messages..."
-                                value={q}
-                                onChange={(e) => setQ(e.target.value)}
-                            />
-                        </InputGroup>
-                        <Form.Select style={{ maxWidth: 200 }} defaultValue="">
-                            <option value="">All courses</option>
-                            <option value="5610">CS5610</option>
-                            <option value="5520">CS5520</option>
-                            <option value="5200">CS5200</option>
-                            <option value="5004">CS5004</option>
-                            <option value="5800">CS5800</option>
-                            <option value="6510">CS6510</option>
-                            <option value="6620">CS6620</option>
-                        </Form.Select>
-                        <div className="ms-auto d-flex gap-2">
-                            <Button variant="primary">New Message</Button>
-                            <Button variant="outline-secondary">Mark all read</Button>
-                        </div>
-                    </div>
-                </Card.Header>
-
-                <ListGroup variant="flush">
-                    {filtered.length === 0 && (
-                        <ListGroup.Item className="py-5 text-center text-muted">
-                            No messages yet. This is a stub UI-hook it up to your data source when ready.
-                        </ListGroup.Item>
-                    )}
-
-                    {filtered.map((m) => (
-                        <ListGroup.Item
-                            key={m.id}
-                            action
-                            className="d-flex flex-column gap-1"
-                        >
-                            <div className="d-flex align-items-center">
-                                <strong className="me-2">{m.subject}</strong>
-                                {m.unread && <Badge bg="danger" pill>new</Badge>}
-                                <span className="ms-auto text-muted small">{m.time}</span>
-                            </div>
-                            <div className="text-muted small">
-                                From: {m.from}
-                                {m.course && <Badge bg="secondary" className="ms-2">Course {m.course}</Badge>}
-                            </div>
-                            <div className="text-body">{m.preview}</div>
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
-            </Card>
-        </div>
-    );
+          )}
+          {openMessage && (
+            <div id="wd-message-body-pane" className="border p-3">
+              <h4>{openMessage.subject}</h4>
+              <div className="mb-3">
+                <FaUserCircle className="me-2 fs-3 text-secondary" />
+                <b>{openMessage.fromName}</b>
+                <div className="text-muted small">
+                  {openMessage.courseName} · {longDate(openMessage.date)}
+                </div>
+              </div>
+              <p>{openMessage.body}</p>
+            </div>
+          )}
+        </Col>
+      </Row>
+    </div>
+  );
 }

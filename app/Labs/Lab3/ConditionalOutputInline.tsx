@@ -1,3 +1,4 @@
+// && shows the content only when the value is true.
 const ConditionalOutputInline = () => {
   const loggedIn = false;
   return (

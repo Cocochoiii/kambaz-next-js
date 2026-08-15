@@ -1,122 +1,203 @@
 "use client";
 
+// The panel on the right of the Users screen.
+// It reads one user by the uid in the URL.
+// Save and Delete go to the server, then tell the list what changed.
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { FormControl, FormSelect, Button } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
-import { FaPencil, FaCheck } from "react-icons/fa6";
-import { useDispatch } from "react-redux";
+import { FaCheck, FaPencil } from "react-icons/fa6";
+import { IoCloseSharp } from "react-icons/io5";
+import { useIsFaculty } from "../roles";
 import * as client from "../client";
-import {
-    updateUser as updateUserAction,
-    deleteUser as deleteUserAction,
-} from "./reducer";
 
-export default function PeopleDetails() {
-    const { uid } = useParams<{ uid: string }>();
-    const router = useRouter();
-    const dispatch = useDispatch();
-    const [user, setUser] = useState<any>(null);
-    const [editingName, setEditingName] = useState(false);
+export default function PeopleDetails({
+  onSaved,
+  onDeleted,
+}: {
+  onSaved: (user: any) => void;
+  onDeleted: (userId: string) => void;
+}) {
+  const params = useParams<{ uid: string }>();
+  const uid = params ? params.uid : "";
+  const router = useRouter();
 
-    const fetchUser = async () => {
-        if (!uid) return;
-        setUser(await client.findUserById(uid));
-    };
-    useEffect(() => {
-        fetchUser();
-    }, [uid]);
+  const isFaculty = useIsFaculty();
+  const [user, setUser] = useState<any>(null);
+  // name is the first and the last name in one field.
+  const [name, setName] = useState("");
+  const [editing, setEditing] = useState(false);
 
-    const save = async () => {
-        const updated = await client.updateUser(user); // returns updated user from DB
-        dispatch(updateUserAction(updated ?? user));
-        setEditingName(false);
-    };
+  const fetchUser = async () => {
+    const found = await client.findUserById(uid);
+    setUser(found);
+    setEditing(false);
+  };
 
-    const remove = async () => {
-        await client.deleteUser(user._id);
-        dispatch(deleteUserAction(user._id));
-        router.push("/Account/Users");
-    };
+  useEffect(() => {
+    if (uid) {
+      fetchUser();
+    }
+  }, [uid]);
 
-    const close = () => router.push("/Account/Users");
+  // The X closes the panel. The list stays on the screen.
+  const close = () => router.push("/Account/Users");
 
-    if (!user) return null;
+  const saveUser = async () => {
+    // The field holds "First Last". So I split it in two.
+    const parts = name.split(" ");
+    const firstName = editing && parts[0] ? parts[0] : user.firstName;
+    const lastName = editing && parts[1] ? parts[1] : user.lastName;
+    const updatedUser = { ...user, firstName, lastName };
+    const saved = await client.updateUser(updatedUser);
+    const result = saved ? saved : updatedUser;
+    setUser(result);
+    setEditing(false);
+    onSaved(result);
+  };
 
-    return (
-        <div
-            className="wd-people-details position-fixed top-0 end-0 bottom-0 bg-white p-3 shadow border-start"
-            style={{ width: 340, zIndex: 1050, overflowY: "auto" }}
+  const removeUser = async () => {
+    await client.deleteUser(user._id);
+    onDeleted(user._id);
+    router.push("/Account/Users");
+  };
+
+  if (!uid || !user) {
+    return null;
+  }
+
+  return (
+    <div
+      className="wd-people-details position-fixed top-0 end-0 bottom-0 bg-white p-4 shadow overflow-auto"
+      style={{ width: 340, zIndex: 1050 }}
+    >
+      <button
+        type="button"
+        onClick={close}
+        className="btn float-end wd-close-details"
+        aria-label="Close"
+      >
+        <IoCloseSharp className="fs-1" />
+      </button>
+
+      <div className="text-center mt-5">
+        <FaUserCircle className="text-secondary" style={{ fontSize: 80 }} />
+      </div>
+      <hr />
+
+      {/* The pencil opens the field. The check saves it. */}
+      <div className="text-danger fs-4">
+        {!editing && isFaculty && (
+          <FaPencil
+            role="button"
+            aria-label="Edit name"
+            onClick={() => {
+              setName(`${user.firstName || ""} ${user.lastName || ""}`.trim());
+              setEditing(true);
+            }}
+            className="float-end fs-5 mt-2 wd-edit"
+          />
+        )}
+        {editing && (
+          <FaCheck
+            role="button"
+            aria-label="Save name"
+            onClick={saveUser}
+            className="float-end fs-5 mt-2 me-2 wd-save"
+          />
+        )}
+        {!editing && (
+          <div
+            role={isFaculty ? "button" : undefined}
+            className="wd-name"
+            onClick={() => {
+              if (!isFaculty) {
+                return;
+              }
+              setName(`${user.firstName || ""} ${user.lastName || ""}`.trim());
+              setEditing(true);
+            }}
+          >
+            {user.firstName} {user.lastName}
+          </div>
+        )}
+        {editing && (
+          <Form.Control
+            className="w-75 wd-edit-name"
+            defaultValue={`${user.firstName || ""} ${user.lastName || ""}`.trim()}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                saveUser();
+              }
+            }}
+          />
+        )}
+      </div>
+
+      <b>Email</b>
+      {isFaculty ? (
+        <Form.Control
+          id="wd-edit-email"
+          type="email"
+          className="mb-2"
+          value={user.email || ""}
+          onChange={(e) => setUser({ ...user, email: e.target.value })}
+        />
+      ) : (
+        <p className="wd-email">{user.email}</p>
+      )}
+
+      <b>Roles</b>
+      {isFaculty ? (
+        <Form.Select
+          id="wd-edit-role"
+          className="form-control mb-2"
+          value={user.role || "USER"}
+          onChange={(e) => setUser({ ...user, role: e.target.value })}
         >
-            <button
-                type="button"
-                onClick={close}
-                className="btn-close float-end"
-                aria-label="Close"
-                id="wd-close-people-details"
-            />
-            <div className="text-center mb-3">
-                <FaUserCircle className="text-secondary" style={{ fontSize: 72 }} />
-            </div>
+          <option value="STUDENT">Student</option>
+          <option value="TA">Assistant</option>
+          <option value="FACULTY">Faculty</option>
+          <option value="ADMIN">Administrator</option>
+          <option value="USER">User</option>
+        </Form.Select>
+      ) : (
+        <p className="wd-roles">{user.role}</p>
+      )}
 
-            <div className="mb-3">
-                {!editingName ? (
-                    <div className="fs-5 wd-name">
-                        {user.firstName} {user.lastName}
-                        <FaPencil
-                            role="button"
-                            className="ms-2 text-primary fs-6"
-                            title="Edit name"
-                            onClick={() => setEditingName(true)}
-                        />
-                    </div>
-                ) : (
-                    <div className="d-flex gap-1">
-                        <FormControl
-                            value={user.firstName ?? ""}
-                            placeholder="First name"
-                            onChange={(e) => setUser({ ...user, firstName: e.target.value })}
-                        />
-                        <FormControl
-                            value={user.lastName ?? ""}
-                            placeholder="Last name"
-                            onChange={(e) => setUser({ ...user, lastName: e.target.value })}
-                        />
-                        <Button variant="success" onClick={save} title="Save name">
-                            <FaCheck />
-                        </Button>
-                    </div>
-                )}
-            </div>
+      <b>Login ID</b> <span className="wd-login-id">{user.loginId}</span> <br />
+      <b>Section</b> <span className="wd-section">{user.section}</span> <br />
+      <b>Total Activity</b>{" "}
+      <span className="wd-total-activity">{user.totalActivity}</span>
+      <hr />
 
-            <b>Roles</b>
-            <FormSelect
-                className="mb-3"
-                value={user.role ?? "STUDENT"}
-                onChange={(e) => setUser({ ...user, role: e.target.value })}
-            >
-                <option value="STUDENT">Student</option>
-                <option value="TA">Assistant</option>
-                <option value="FACULTY">Faculty</option>
-                <option value="ADMIN">Administrator</option>
-            </FormSelect>
-
-            <b>Login ID</b>
-            <p className="wd-login-id">{user.loginId}</p>
-            <b>Section</b>
-            <p className="wd-section">{user.section}</p>
-            <b>Total Activity</b>
-            <p className="wd-total-activity">{user.totalActivity}</p>
-
-            <Button onClick={save} variant="primary" className="w-100 mb-2" id="wd-save-user">
-                Save
-            </Button>
-            <Button onClick={remove} variant="danger" className="w-100 mb-2" id="wd-delete-user">
-                Delete
-            </Button>
-            <Button onClick={close} variant="secondary" className="w-100">
-                Cancel
-            </Button>
-        </div>
-    );
+      {isFaculty && (
+        <>
+          <Button
+            id="wd-save-user"
+            onClick={saveUser}
+            className="btn btn-primary w-100 mb-2"
+          >
+            Save
+          </Button>
+          <Button
+            id="wd-delete-user"
+            onClick={removeUser}
+            className="btn btn-danger w-100 mb-2 wd-delete"
+          >
+            Delete
+          </Button>
+        </>
+      )}
+      <Button
+        id="wd-cancel-user"
+        onClick={close}
+        className="btn btn-secondary w-100 wd-cancel"
+      >
+        Cancel
+      </Button>
+    </div>
+  );
 }

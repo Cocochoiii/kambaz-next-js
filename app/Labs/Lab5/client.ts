@@ -1,65 +1,57 @@
-"use client";
-
+// All the axios calls of Lab 5. One function per request.
 import axios from "axios";
+import { HTTP_SERVER } from "@/app/env";
 
-// Use the public env var so browser code gets the correct base URL
-const baseURL =
-    process.env.NEXT_PUBLIC_HTTP_SERVER || "http://localhost:4000";
+const ASSIGNMENT_API = `${HTTP_SERVER}/lab5/assignment`;
+const TODOS_API = `${HTTP_SERVER}/lab5/todos`;
 
-// Helpful to see what the client is calling
-if (typeof window !== "undefined") {
-    // eslint-disable-next-line no-console
-    console.log("[Lab5] HTTP baseURL =", baseURL);
-}
-
-// keep withCredentials false for Lab 5 to keep preflight simple
-export const http = axios.create({
-    baseURL,
-    withCredentials: false,
-});
-
-// ---- Lab 5 calls ----
-
-// Welcome
 export const fetchWelcomeMessage = async () => {
-    const { data } = await http.get(`/lab5/welcome`);
-    return data;
+  const { data } = await axios.get(`${HTTP_SERVER}/lab5/welcome`);
+  return data;
 };
 
-// Objects
 export const fetchAssignment = async () => {
-    const { data } = await http.get(`/lab5/assignment`);
-    return data;
+  const { data } = await axios.get(ASSIGNMENT_API);
+  return data;
 };
+
+// Change the title. The new title goes in the path.
 export const updateTitle = async (title: string) => {
-    const { data } = await http.get(
-        `/lab5/assignment/title/${encodeURIComponent(title)}`
-    );
-    return data;
+  const { data } = await axios.get(
+    `${ASSIGNMENT_API}/title/${encodeURIComponent(title)}`
+  );
+  return data;
 };
 
-// Todos
 export const fetchTodos = async () => {
-    const { data } = await http.get(`/lab5/todos`);
-    return data;
-};
-export const removeTodoLegacy = async (todo: any) => {
-    const { data } = await http.get(`/lab5/todos/${todo.id}/delete`);
-    return data;
-};
-export const createNewTodoLegacy = async () => {
-    const { data } = await http.get(`/lab5/todos/create`);
-    return data;
+  const { data } = await axios.get(TODOS_API);
+  return data;
 };
 
-// Proper REST versions (your server already supports them)
-export const deleteTodo = async (todo: any) => {
-    await http.delete(`/lab5/todos/${todo.id}`);
+// Old way to delete. It is a GET.
+export const removeTodo = async (todo: { id: number | string }) => {
+  const { data } = await axios.get(`${TODOS_API}/${todo.id}/delete`);
+  return data;
 };
-export const postNewTodo = async (todo: any) => {
-    const { data } = await http.post(`/lab5/todos`, todo);
-    return data;
+
+// Old way to create. It is also a GET.
+export const createTodo = async () => {
+  const { data } = await axios.get(`${TODOS_API}/create`);
+  return data;
 };
-export const updateTodo = async (todo: any) => {
-    await http.put(`/lab5/todos/${todo.id}`, todo);
+
+// The real POST. It answers with the new todo.
+export const postTodo = async (todo: { title: string; completed: boolean }) => {
+  const { data } = await axios.post(TODOS_API, todo);
+  return data;
+};
+
+export const deleteTodo = async (todo: { id: number | string }) => {
+  const { data } = await axios.delete(`${TODOS_API}/${todo.id}`);
+  return data;
+};
+
+export const updateTodo = async (todo: { id: number | string }) => {
+  const { data } = await axios.put(`${TODOS_API}/${todo.id}`, todo);
+  return data;
 };

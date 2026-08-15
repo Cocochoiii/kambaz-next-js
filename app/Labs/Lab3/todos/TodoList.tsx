@@ -1,3 +1,4 @@
+// I read the todos from JSON and map them into TodoItem rows.
 import { ListGroup } from "react-bootstrap";
 import TodoItem from "./TodoItem";
 import todos from "./todos.json";
@@ -6,7 +7,7 @@ export default function TodoList() {
     <div id="wd-todo-list">
       <h3>Todo List</h3>
       <ListGroup>
-        {todos.map((todo, i) => (<TodoItem key={i} todo={todo as any} />))}
+        {todos.map((todo, i) => (<TodoItem key={i} todo={todo} />))}
       </ListGroup>
       <hr />
     </div>

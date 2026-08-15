@@ -1,3 +1,4 @@
+// I unpack an object by name and an array by position.
 export default function Destructing() {
   const person = { name: "John", age: 25 };
   const { name, age } = person;

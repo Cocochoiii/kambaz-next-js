@@ -1,344 +1,100 @@
 "use client";
 
-import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Button, Modal, Form, Alert } from "react-bootstrap";
+// The Course Status box on the Home screen.
+// Publish and Unpublish are real. They change the course.
+// The buttons under them only show the Canvas layout.
+import { useParams } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { Button } from "react-bootstrap";
 import { MdDoNotDisturbAlt } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { BiImport } from "react-icons/bi";
 import { LiaFileImportSolid } from "react-icons/lia";
-import { FaHouse, FaBullhorn, FaChartLine, FaBell } from "react-icons/fa6";
-import { useSelector, useDispatch } from "react-redux";
-import * as coursesClient from "../../client";
+import { FaHouse, FaBullhorn, FaChartSimple, FaBell } from "react-icons/fa6";
 import { updateCourse } from "../../reducer";
-import * as announcementsClient from "../Announcements/client";
-import { addAnnouncement } from "../Announcements/reducer";
+import { useIsFaculty } from "../../../Account/roles";
+import * as coursesClient from "../../client";
 
 export default function CourseStatus() {
-    const { cid } = useParams<{ cid: string }>();
-    const router = useRouter();
-    const dispatch = useDispatch();
-    const [showImportModal, setShowImportModal] = useState(false);
-    const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
-    const [showHomePageModal, setShowHomePageModal] = useState(false);
-    const [announcement, setAnnouncement] = useState({ title: "", content: "" });
-    const [selectedHomePage, setSelectedHomePage] = useState("modules");
-    const [showSuccessAlert, setShowSuccessAlert] = useState("");
+  const params = useParams<{ cid: string }>();
+  const cid = params ? params.cid : "";
 
-    const { courses } = useSelector((state: any) => state.coursesReducer);
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { courses } = useSelector((state: any) => state.coursesReducer);
+  const dispatch = useDispatch();
+  const isFaculty = useIsFaculty();
 
-    // Course publish state comes from the course record and is saved to the server.
-    const course = courses.find((c: any) => c._id === cid);
-    const isPublished = course?.published !== false;
+  const course = courses.find((one: any) => one._id === cid);
+  const published = course ? course.published !== false : true;
 
+  // One PUT, then the store. The Dashboard card follows right away.
+  const setPublished = async (next: boolean) => {
+    if (!course || next === published) {
+      return;
+    }
+    const updated = { ...course, published: next };
+    await coursesClient.updateCourse(updated);
+    dispatch(updateCourse(updated));
+  };
 
-    // Toggle publish status (persisted to the server)
-    const handlePublishToggle = async () => {
-        if (!course) return;
-        const updated = { ...course, published: !isPublished };
-        await coursesClient.updateCourse(updated);
-        dispatch(updateCourse(updated));
-        setShowSuccessAlert(
-            isPublished ? "Course unpublished successfully" : "Course published successfully"
-        );
-        setTimeout(() => setShowSuccessAlert(""), 3000);
-    };
+  return (
+    <div id="wd-course-status" style={{ width: "350px" }}>
+      <h2>Course Status</h2>
 
-    // Handle import from existing courses
-    const handleImportContent = () => {
-        setShowImportModal(false);
-        setShowSuccessAlert("Content imported successfully");
-        setTimeout(() => setShowSuccessAlert(""), 3000);
-    };
+      <div className="d-flex">
+        <div className="w-50 pe-1">
+          <Button
+            id="wd-unpublish-course"
+            variant={published ? "secondary" : "dark"}
+            size="lg"
+            className="w-100 text-nowrap"
+            disabled={!isFaculty}
+            onClick={() => setPublished(false)}
+          >
+            <MdDoNotDisturbAlt className="me-2 fs-5" /> Unpublish
+          </Button>
+        </div>
+        <div className="w-50">
+          <Button
+            id="wd-publish-course"
+            variant={published ? "success" : "outline-success"}
+            size="lg"
+            className="w-100"
+            disabled={!isFaculty}
+            onClick={() => setPublished(true)}
+          >
+            <FaCheckCircle className="me-2 fs-5" /> Publish
+          </Button>
+        </div>
+      </div>
 
-    // Create a new announcement (saved to the server)
-    const handleCreateAnnouncement = async () => {
-        if (announcement.title && announcement.content) {
-            const created = await announcementsClient.createAnnouncement(cid, announcement);
-            dispatch(addAnnouncement(created));
-            setShowAnnouncementModal(false);
-            setAnnouncement({ title: "", content: "" });
-            setShowSuccessAlert("Announcement posted successfully");
-            setTimeout(() => setShowSuccessAlert(""), 3000);
-        }
-    };
+      {/* A small line, so I can see which one is on. */}
+      <p className="text-muted mt-2 mb-0" id="wd-course-status-text">
+        This course is {published ? "published" : "not published"}.
+      </p>
 
-    // Change home page
-    const handleChangeHomePage = () => {
-        setShowHomePageModal(false);
-        setShowSuccessAlert(`Home page set to ${selectedHomePage}`);
-        setTimeout(() => setShowSuccessAlert(""), 3000);
-    };
+      <br />
 
-    // View course screen
-    const handleViewCourseScreen = () => {
-        router.push(`/Courses/${cid}/Home`);
-    };
-
-    // View analytics
-    const handleViewAnalytics = () => {
-        router.push(`/Courses/${cid}/Grades`);
-    };
-
-    // View notifications
-    const handleViewNotifications = () => {
-        setShowSuccessAlert("No new notifications");
-        setTimeout(() => setShowSuccessAlert(""), 3000);
-    };
-
-    return (
-        <>
-            <div id="wd-course-status" style={{ width: 350 }}>
-                <h2>Course Status</h2>
-
-                {showSuccessAlert && (
-                    <Alert variant="success" className="mb-3">
-                        {showSuccessAlert}
-                    </Alert>
-                )}
-
-                <div className="d-flex mb-3">
-                    <div className="w-50 pe-1">
-                        <Button
-                            variant={isPublished ? "secondary" : "success"}
-                            className="w-100 text-nowrap"
-                            onClick={handlePublishToggle}
-                        >
-                            {isPublished ? (
-                                <>
-                                    <MdDoNotDisturbAlt className="me-2 fs-5" /> Unpublish
-                                </>
-                            ) : (
-                                <>
-                                    <FaCheckCircle className="me-2 fs-5" /> Publish
-                                </>
-                            )}
-                        </Button>
-                    </div>
-                    <div className="w-50">
-                        <Button
-                            variant={isPublished ? "success" : "secondary"}
-                            className="w-100"
-                            onClick={handlePublishToggle}
-                        >
-                            {isPublished ? (
-                                <>
-                                    <FaCheckCircle className="me-2 fs-5" /> Published
-                                </>
-                            ) : (
-                                <>
-                                    <MdDoNotDisturbAlt className="me-2 fs-5" /> Unpublished
-                                </>
-                            )}
-                        </Button>
-                    </div>
-                </div>
-
-                <Button
-                    variant="secondary"
-                    className="w-100 mt-1 text-start"
-                    onClick={() => setShowImportModal(true)}
-                >
-                    <BiImport className="me-2 fs-5" /> Import Existing Content
-                </Button>
-
-                <Button
-                    variant="secondary"
-                    className="w-100 mt-1 text-start"
-                    onClick={() => setShowImportModal(true)}
-                >
-                    <LiaFileImportSolid className="me-2 fs-5" /> Import from Commons
-                </Button>
-
-                <Button
-                    variant="secondary"
-                    className="w-100 mt-1 text-start"
-                    onClick={() => setShowHomePageModal(true)}
-                >
-                    <FaHouse className="me-2 fs-5" /> Choose Home Page
-                </Button>
-
-                <Button
-                    variant="secondary"
-                    className="w-100 mt-1 text-start"
-                    onClick={handleViewCourseScreen}
-                >
-                    <FaHouse className="me-2 fs-5" /> View Course Stream
-                </Button>
-
-                <Button
-                    variant="secondary"
-                    className="w-100 mt-1 text-start"
-                    onClick={() => setShowAnnouncementModal(true)}
-                >
-                    <FaBullhorn className="me-2 fs-5" /> New Announcement
-                </Button>
-
-                <Button
-                    variant="secondary"
-                    className="w-100 mt-1 text-start"
-                    onClick={handleViewAnalytics}
-                >
-                    <FaChartLine className="me-2 fs-5" /> New Analytics
-                </Button>
-
-                <Button
-                    variant="secondary"
-                    className="w-100 mt-1 text-start"
-                    onClick={handleViewNotifications}
-                >
-                    <FaBell className="me-2 fs-5" /> View Course Notifications
-                </Button>
-            </div>
-
-            {/* Import Content Modal */}
-            <Modal show={showImportModal} onHide={() => setShowImportModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Import Course Content</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Select Source Course</Form.Label>
-                            <Form.Select>
-                                <option>Select a course...</option>
-                                {courses
-                                    .filter((c: any) => c._id !== cid)
-                                    .map((course: any) => (
-                                        <option key={course._id} value={course._id}>
-                                            {course.name}
-                                        </option>
-                                    ))}
-                            </Form.Select>
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Content to Import</Form.Label>
-                            <Form.Check label="Assignments" defaultChecked />
-                            <Form.Check label="Modules" defaultChecked />
-                            <Form.Check label="Quizzes" />
-                            <Form.Check label="Files" />
-                            <Form.Check label="Pages" />
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowImportModal(false)}>
-                        Cancel
-                    </Button>
-                    <Button variant="primary" onClick={handleImportContent}>
-                        Import Content
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-
-            {/* New Announcement Modal */}
-            <Modal
-                show={showAnnouncementModal}
-                onHide={() => setShowAnnouncementModal(false)}
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>New Announcement</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Title</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={announcement.title}
-                                onChange={(e) =>
-                                    setAnnouncement({ ...announcement, title: e.target.value })
-                                }
-                                placeholder="Enter announcement title"
-                            />
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Message</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={4}
-                                value={announcement.content}
-                                onChange={(e) =>
-                                    setAnnouncement({ ...announcement, content: e.target.value })
-                                }
-                                placeholder="Enter announcement message"
-                            />
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button
-                        variant="secondary"
-                        onClick={() => setShowAnnouncementModal(false)}
-                    >
-                        Cancel
-                    </Button>
-                    <Button variant="primary" onClick={handleCreateAnnouncement}>
-                        Post Announcement
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-
-            {/* Choose Home Page Modal */}
-            <Modal
-                show={showHomePageModal}
-                onHide={() => setShowHomePageModal(false)}
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>Choose Home Page</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Check
-                            type="radio"
-                            label="Course Activity Stream"
-                            name="homepage"
-                            value="stream"
-                            checked={selectedHomePage === "stream"}
-                            onChange={(e) => setSelectedHomePage(e.target.value)}
-                            className="mb-2"
-                        />
-                        <Form.Check
-                            type="radio"
-                            label="Course Modules"
-                            name="homepage"
-                            value="modules"
-                            checked={selectedHomePage === "modules"}
-                            onChange={(e) => setSelectedHomePage(e.target.value)}
-                            className="mb-2"
-                        />
-                        <Form.Check
-                            type="radio"
-                            label="Assignments List"
-                            name="homepage"
-                            value="assignments"
-                            checked={selectedHomePage === "assignments"}
-                            onChange={(e) => setSelectedHomePage(e.target.value)}
-                            className="mb-2"
-                        />
-                        <Form.Check
-                            type="radio"
-                            label="Course Syllabus"
-                            name="homepage"
-                            value="syllabus"
-                            checked={selectedHomePage === "syllabus"}
-                            onChange={(e) => setSelectedHomePage(e.target.value)}
-                        />
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button
-                        variant="secondary"
-                        onClick={() => setShowHomePageModal(false)}
-                    >
-                        Cancel
-                    </Button>
-                    <Button variant="primary" onClick={handleChangeHomePage}>
-                        Save Selection
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </>
-    );
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+        <BiImport className="me-2 fs-5" /> Import Existing Content
+      </Button>
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+        <LiaFileImportSolid className="me-2 fs-5" /> Import from Commons
+      </Button>
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+        <FaHouse className="me-2 fs-5" /> Choose Home Page
+      </Button>
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+        <FaChartSimple className="me-2 fs-5" /> View Course Stream
+      </Button>
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+        <FaBullhorn className="me-2 fs-5" /> New Announcement
+      </Button>
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+        <FaChartSimple className="me-2 fs-5" /> New Analytics
+      </Button>
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+        <FaBell className="me-2 fs-5" /> View Course Notifications
+      </Button>
+    </div>
+  );
 }

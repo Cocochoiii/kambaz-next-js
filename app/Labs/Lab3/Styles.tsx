@@ -1,3 +1,4 @@
+// The style attribute takes a JSON object of CSS properties.
 export default function Styles() {
   const colorBlack = { color: "black" };
   const padding10px = { padding: "10px" };
