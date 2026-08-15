@@ -1,6 +1,6 @@
 "use client";
 
-// Class at a Glance. It opens when no post is picked.
+// Class at a Glance. It opens when I pick no post.
 // It shows the six numbers the project asks for.
 import {
   FaCheckCircle,

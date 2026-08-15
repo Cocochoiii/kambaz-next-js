@@ -10,7 +10,8 @@ import PazzaNav from "../PazzaNav";
 import { isPazzaInstructor } from "../helpers";
 import * as client from "../client";
 
-// Six of these are not required, so I show them but keep them off.
+// The project asks for one tab only.
+// So I show the other six and keep them off.
 const TABS = [
   "Manage Folders",
   "Manage Enrollment",

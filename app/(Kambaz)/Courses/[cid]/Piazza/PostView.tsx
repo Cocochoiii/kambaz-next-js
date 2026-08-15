@@ -36,7 +36,7 @@ export default function PostView({
   const [newDiscussion, setNewDiscussion] = useState("");
   const [postError, setPostError] = useState("");
 
-  // One comment at a time is open for editing.
+  // I let one comment open for editing at a time.
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
   // Every discussion and every reply keeps its own draft.
@@ -47,7 +47,8 @@ export default function PostView({
     setComments(list);
   };
 
-  // A new post opens, so I reset the screen and count the reader once.
+  // A new post opens. So I reset the screen.
+  // I also count the reader once.
   useEffect(() => {
     setEditingPost(false);
     setPostError("");
@@ -192,7 +193,8 @@ export default function PostView({
     </div>
   );
 
-  // A reply row. It can hold replies of its own, so it calls itself.
+  // A reply row. It can hold replies of its own.
+  // So the function calls itself.
   const replyRow = (row: any, depth: number): any => {
     const children = comments.filter((one) => one.kind === "reply" && one.parent === row._id);
     return (

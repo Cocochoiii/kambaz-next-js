@@ -81,7 +81,8 @@ function monthDay(date: Date): string {
 export type PostGroup = { key: string; label: string; posts: any[] };
 
 // The sidebar shows Today, then Yesterday, then Last Week.
-// Older posts land in a group named after their week, like 3/3 - 3/9.
+// An older post lands in a group named after its week.
+// That name looks like 3/3 - 3/9.
 export function groupPosts(posts: any[]): PostGroup[] {
     const groups: PostGroup[] = [];
     const push = (key: string, label: string, post: any) => {

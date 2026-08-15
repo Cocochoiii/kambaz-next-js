@@ -1,14 +1,18 @@
-# Kambaz Quizzes - Next.js client
+# Kambaz Quizzes and Pazza - Next.js client
 
 Coco Choi. CS5610 Web Development, Fall 2025, Section 04.
 
 This is my final project. I built it on top of my A6 work.
 A6 already had the courses, the modules and the assignments.
-The new part is **Quizzes**.
+Two parts are new.
 
-A faculty can write a quiz, add questions, publish it and preview it.
-A student can take the quiz. Later they can read their last try.
-The server grades every answer, so the browser never sees the key.
+**Quizzes.** A faculty can write a quiz, add questions, publish it and
+preview it. A student can take the quiz. Later they can read their last
+try. The server grades every answer, so the browser never sees the key.
+
+**Pazza.** Pazza is my clone of a class question board. Each course has
+its own board. A student asks a question and the class answers it. A
+faculty answers in their own section and manages the folders.
 
 ## Two projects
 
@@ -69,10 +73,14 @@ Faculty and Admin can edit. A Student only reads.
 | Assignments | add, delete, publish | read only |
 | Assignments | the editor form | a page it can only read |
 | Account > Users | + People, Save, Delete, role | only the table |
+| Pazza | Manage Class, and edit any post | their own posts only |
 
 A Faculty can press **Student View** at the top of a course. Then the
 course looks like a student screen. A gray bar at the bottom says so.
-Leave Student View turns it off.
+Leave Student View turns it off. Pazza follows the button too.
+
+Pazza treats a TA as an instructor. The rest of Kambaz does not, so a
+TA reads the modules and still runs the question board.
 
 ## Publish
 
@@ -180,6 +188,7 @@ They read the server too, in the same way as the modules.
 | --- | --- |
 | Announcements | the server. Faculty can post, edit and remove |
 | Quizzes | the server. Full CRUD. See the section below |
+| Pazza | the server. The question board. See the section below |
 | Zoom | the server. Faculty can add and remove |
 | People | the server joins the users and the enrollments |
 | Grade Book | the server. Faculty can change a score and release |
@@ -190,8 +199,6 @@ The Calendar keeps no data. The server puts the assignment due dates, the
 Zoom meetings and the announcements of my courses into one list. The
 screen has two tabs. Month draws a grid, and a click on a day opens that
 day. Agenda groups everything by day in one long list.
-
-Piazza is still an empty screen.
 
 No screen reads a JSON file any more. Every screen reads the server,
 and the server reads MongoDB. Nothing lives in memory now, so a sleeping
@@ -343,13 +350,90 @@ The quiz payload still carries the right answers, because the review
 screen marks each question green or red. A student who opens the
 network tab can read them. A real Canvas would strip them out first.
 
+## Pazza
+
+Pazza is the other final project part. It is a question board that
+lives inside a course. I open it from the course menu.
+
+### The screens
+
+| Screen | What it is for |
+| --- | --- |
+| Questions and Answers | the home of Pazza. It opens first |
+| Class at a Glance | the six numbers, when no post is open |
+| New Post | write a question or a note |
+| Post | read one post, answer it, and follow it up |
+| Manage Class | the folder settings, for an instructor only |
+
+The blue bar at the top never scrolls. Pazza owns a fixed height, and
+only the two columns below it carry a scroll bar.
+
+### The two columns
+
+The left column is the list of posts. A triangle hides it and shows it
+again. The posts sit in accordions named Today, Yesterday and Last
+Week. Older posts fall into a group named after their week.
+
+One row shows four things. The summary in bold, a badge for student or
+instructor, two lines of the body, and the time. The open post turns
+blue.
+
+The right column shows one of three things. It shows Class at a Glance
+when nothing is picked, the New Post form, or the post itself.
+
+### Folders
+
+A row of buttons under the blue bar filters the list. Only one folder
+at a time, so those buttons are radio inputs.
+
+A new post picks its folders with check boxes, because one post can sit
+in more than one folder.
+
+A course starts with eight folders. An instructor adds, renames and
+removes them on the Manage Class screen.
+
+### A post
+
+A question has two answer sections. Students write one collective
+answer, and instructors write another. The editor only appears when
+that section is still empty, and only for the right kind of user.
+
+Below the answers come the followup discussions. Each one has a
+Resolved button, an author, a time and a reply box. A reply can hold
+its own replies, so the box repeats down the thread.
+
+An instructor may edit and delete anything. Everybody else may edit and
+delete their own work.
+
+### What a student does not see
+
+| Thing | Faculty and TA | Student |
+| --- | --- | --- |
+| Manage Class tab | yes | no |
+| The Manage Class address | opens | goes back to Q&A |
+| A post sent to the instructors | reads it | only if it is theirs |
+| Student answer editor | no | yes, while the section is empty |
+| Instructor answer editor | yes, while the section is empty | no |
+| Edit and delete | anything | their own work |
+
+The Student View button on the course header flips Pazza too. So one
+faculty account can show both sides without a second window.
+
+### The view count
+
+Opening a post asks the server to add me to its readers. The server
+uses `$addToSet`, so one reader counts once. Coming back later does not
+raise the number.
+
 ## Folders
 
 - `app/env.ts` the address of the server
 - `app/(Kambaz)` the Kambaz screens
 - `app/(Kambaz)/ProjectFooter.tsx` the footer of the landing page
 - `app/(Kambaz)/Courses/[cid]/Quizzes` every quiz screen
+- `app/(Kambaz)/Courses/[cid]/Piazza` every Pazza screen
 - `app/Labs` the labs for chapters 1 to 5
+- `PAZZA_CHECKLIST.md` one row per Pazza requirement, for my demo
 
 ## The extra package
 
@@ -363,6 +447,10 @@ npm install
 The style sheet comes in at `app/layout.tsx`, next to Bootstrap. The box
 itself lives in one small file, `Quizzes/RichText.tsx`. Quill only runs
 in the browser. So I load it with `dynamic` and `ssr: false`.
+
+Pazza needs the same box, with a placeholder and a taller body. So it
+keeps its own small copy at `Piazza/RichText.tsx`. Both wrap the same
+package, and Pazza adds no new dependency.
 
 I tried the older `react-quill` first, and it crashed at once. That
 package calls `ReactDOM.findDOMNode`. React 19 dropped the call, and
